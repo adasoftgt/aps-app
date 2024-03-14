@@ -1,0 +1,296 @@
+# This "input" configures a global authorization rule to enable public access to
+# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
+input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
+
+type Todo @model {
+  id: ID!
+  name: String!
+  description: String
+}
+
+type Configuration @model {
+  id: ID!
+  name: String!
+
+  value: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Rol @model {
+  id: ID!
+  name: String! @index(name: "UniqueRolName", sortKeyFields: ["type"])
+  displayname: String!
+  type: String!
+  capabilities: [String!]!
+}
+
+type Capability @model {
+  id: ID!
+  name: String!
+  description: String
+  section: String
+}
+
+
+
+# --------------------------------------
+
+
+type Category @model {
+  id: ID!
+  name: String!
+}
+
+enum BatchStatus {
+    OPEN
+    ATRECEPTION
+    CLOSED
+    AVAILABLE
+    OVERDUE
+    CANCELLED
+    QUARANTINED
+    WAITING
+    SENT
+}
+
+type Batch @model {
+  id: ID!
+  sku: String!
+  expiration_date: String!
+  day: String!
+  month: String!
+  year: String!
+  quantity: Int!
+  status: BatchStatus!
+  userId: String!               # user_id cognito currentuser
+  locked: Boolean!              # bloquear Batch mientra se estrae chunk
+  product: Product @belongsTo
+  chunks: [BatchChunk] @hasMany
+}
+
+enum ProductStatus {
+  AVAILABLE     # disponible
+  ACTIVE
+  INACTIVE
+  SOLDOUT       # agotado
+  BOOKED        # reservado
+  DISCONTINUED  # descontinuado
+  INOFFER       # en oferta
+  BEATEN        # vencido
+  STAGED
+}
+
+
+
+type Product @model {
+    id: ID!
+    sku: String!             # codigo de producto
+    name: String!
+    description: String
+    category: Category!
+    quantity: Int!            # cantidad total de todos los lotes
+    status: ProductStatus!
+    userId: String! # user_id cognito currentuser
+    price: ProductPrice @hasOne
+    batches: [Batch] @hasMany
+    items: [InvoiceItem] @hasMany
+}
+
+type ProductPrice @model {
+    unit: Float!
+    offer: Float!
+    et: Float!
+    pharmacy: Float!
+    dateCreated: String!
+    userId: String!       # user_id cognito currentuser
+    product: Product @belongsTo
+}
+
+
+enum PaymentMethod {
+  CASH
+  CREDIT_CARD
+  DEBIT_CARD
+  BANK_TRANSFER
+  OTHER
+}
+
+
+type Payment @model {
+  id: ID!
+  amount: Float!
+  method: PaymentMethod!
+  reference: String
+  userId: String!         # user_id cognito currentuser auth
+  clientId: String!       # user_id cliente seleccionado
+  invoice: Invoice @belongsTo
+}
+
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum InvoiceItemStatus {
+  DRAFT
+  CONFIRMED
+}
+
+
+type InvoiceItem @model {
+  id: ID!
+  product: Product @belongsTo
+  chunks: [BatchChunk] @hasMany
+  price: Float!
+  total: Float!
+  status: InvoiceItemStatus!
+  invoice: Invoice @belongsTo
+  dateCreated: String!
+  
+}
+
+enum BatchChunkStatus {
+  SALES_QUANTITY
+  BONUS_QUANTITY
+}
+
+type BatchChunk @model {
+  id: ID!
+  quantity: Int!
+  status: BatchChunkStatus!
+  batch: Batch @belongsTo
+  item: InvoiceItem @belongsTo
+  dateCreated: String!
+  
+   
+}
+
+enum InvoiceTerm {
+  PAYMENT_ON_DELIVERY
+  ONE_WEEK
+  TWO_WEEKS
+  THREE_WEEKS
+  ONE_MONTH
+  TWO_MONTHS
+  THREE_MONTHS
+  FOUR_MONTHS
+  FIVE_MONTHS
+  SIX_MONTHS
+  SEVEN_MONTHS
+  EIGHT_MONTHS
+  NINE_MONTHS
+  TEN_MONTHS
+  ELEVEN_MONTHS
+  ONE_YEAR
+  TWO_YEAR
+}
+
+enum DiscountRateType {
+    FLAT
+    PERCENTAGE
+    MEXED
+}
+
+type DiscountRate @model {
+    id: ID!
+    type: DiscountRateType!
+    flat: Float
+    percentage: Float
+    userId: String!                 # user_id cognito currentuser auth
+    invoice: Invoice @belongsTo
+}
+
+type Invoice @model {
+    id: ID!                                   # identificador unico de factura
+    cashierId: String!                        # user_id cognito
+    clientId: String!                         # user_id cognito
+    total: Float!                             # Total a pagar de la factura
+    status: InvoiceStatus!                    # Estado de la factura
+    notes: String                             # Notas de la facura
+    amountPaid: Float                         # El monto total pagado hasta la fecha.
+    remainingBalance: Float                   # El saldo pendiente de la factura.
+    paymentCollectionDate: String             # Fecha que se tiene que recolectar el pago acorda con el cliente
+    term: InvoiceTerm!                        # Plazo que se al cliente para pagar factura
+    discounts: [DiscountRate] @hasMany        # Lista de tasa descuentos
+    digitalInvoice: Digifact @hasOne          # Datos de Factura electronica o digital
+    items: [InvoiceItem] @hasMany             # Lista de articulos de la factura
+    payment: [Payment] @hasMany               # Este payment contiene el pago mas reciente, si quere ver mas busque @model HistoricalPayment
+}
+
+
+type Digifact @model {
+    id: ID!
+    Referencia_interna_digifact: String!    # APS-FACT-' + codigo_factura o identificador de factura
+    Autorizacion: String!
+    Serie:String!
+    NUMERO: String!
+    Fecha_DTE: String!
+    NIT_EFACE: String!
+    NOMBRE_EFACE: String!
+    NIT_COMPRADOR: String!
+    NOMBRE_COMPRADOR: String!
+    Fecha_de_certificacion: String!
+    BACKPROCESOR: String!
+    invoice: Invoice @belongsTo
+}
+
+type UserConfiguration @model {
+  id: ID!                 # identificador unico de factura
+  userId: String!         # user_id cognito currentuser auth
+  name: String!
+  value: String!
+}
+
+type Customer @model{
+  id: ID!
+  name: String!
+  address: String!
+  nit: String
+  phone: String
+  owner: String
+  seller: String! # codigo de identificacion de usuario perfil seller
+  transportation_observations: String
+  observations: String
+  countryDepartment: String!
+  municipality: String!
+  carrier: String!
+  sector: String!
+}
+
+# type CountryDepartment @model{
+#  id: ID!
+#  name String!
+#  municipality: Municipality @hasMany
+# }
+
+# type Municipality @model{
+#  id: ID!
+#  name: String!
+#  contryDepartment: CountryDepartment @belongsTo
+# }
+
+
+# type Carrier @model{
+#  id: ID!
+#  name: String!
+# }
+
+# type Sector @model{
+#  id: ID!
+#  name: String!
+# }
+
+
+
+
+
+
+
+
+
+

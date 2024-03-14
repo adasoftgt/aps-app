@@ -1,0 +1,29 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-apsfarmadashboard-dev-231506-authRole",
+      "UnauthRoleArn": "arn:aws:iam::331238497812:role/amplify-apsfarmadashboard-dev-231506-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::331238497812:role/amplify-apsfarmadashboard-dev-231506-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-apsfarmadashboard-dev-231506-deployment",
+      "UnauthRoleName": "amplify-apsfarmadashboard-dev-231506-unauthRole",
+      "StackName": "amplify-apsfarmadashboard-dev-231506",
+      "StackId": "arn:aws:cloudformation:us-east-2:331238497812:stack/amplify-apsfarmadashboard-dev-231506/3a592eb0-aac0-11ee-8066-0a7de2c564cb",
+      "AmplifyAppId": "d2hzhe09e5vrvm"
+    },
+    "categories": {
+      "auth": {
+        "apsfarmadashboard03b307fd": {}
+      },
+      "api": {
+        "apsfarmadashboard": {}
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d2hzhe09e5vrvm",
+          "type": "manual"
+        }
+      }
+    }
+  }
+}
