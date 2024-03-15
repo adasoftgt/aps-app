@@ -73,6 +73,8 @@ import {
 
   import DropDownTypeDocument from "./DropDownTypeDocument";
 
+  import WhatInvoiceStatus from "./WhatInvoiceStatus";
+
   import {
     Editable,
     EditableInput,
@@ -580,7 +582,7 @@ function ListItems(){
                     <Flex style={{padding: "0 0 10px 0"}}>
                         <Card p='16px' >
                             <CardBody px='5px' style={{ textAlign: 'center' }}>
-                                {invoiceDraft.status}
+                                <WhatInvoiceStatus status={invoiceDraft.status}/>
                             </CardBody>
                         </Card>
                     </Flex>
@@ -594,18 +596,6 @@ function ListItems(){
                                     spacing={3}
                                     align="stretch"
                                     >
-                                    <Box h="40px" >
-                                        <FormControl display="flex" alignItems="center">
-                                            <FormLabel htmlFor="email-alerts" mb="0">
-                                            Necesitas editar
-                                            </FormLabel>
-                                            <Switch 
-                                            id="email-alerts" 
-                                            isChecked={editGlobalEnabled} // Vincula el estado al Switch
-                                            onChange={() => setEditGlobalEnabled(!editGlobalEnabled)} // Actualiza el estado al cambiar
-                                            />
-                                        </FormControl>
-                                    </Box>
                                     <Box w='40px' h='40px'>
                                         <FormControl display="flex" alignItems="center">
                                             <Tooltip label="Return a invoice">

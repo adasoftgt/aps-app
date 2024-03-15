@@ -56,6 +56,10 @@ import { ImCancelCircle } from "react-icons/im";
 import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
 
 import Moneda from "components/Monedas/Moneda";
+import { TypeDocument } from "models";
+
+import WhatInvoiceStatus from "components/invoices/WhatInvoiceStatus";
+import WhatInvoiceTerm from "components/invoices/WhatInvoiceTerm";
 
 function InvoiceRow(props) {
   /**
@@ -67,8 +71,9 @@ function InvoiceRow(props) {
   const {
     isLast,logo,
     id,index,
-    cashierId,clientId,notes,status,term,total,
+    cashierId,clientId,notes,status,term,total,typeDocument,
     
+
     onInvoiceCancel,
     
     //functions
@@ -221,7 +226,8 @@ function InvoiceRow(props) {
             fontWeight="bold"
             minWidth="100%"
           >
-            {status}
+            
+            <WhatInvoiceStatus status={status}/>
           </Text>
           
         </Td>
@@ -232,7 +238,18 @@ function InvoiceRow(props) {
             fontWeight="bold"
             minWidth="100%"
           >
-            {term}
+            <WhatDocument typeDocument={typeDocument} />
+          </Text>
+          
+        </Td>
+        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
+          <Text
+            fontSize="md"
+            color={titleColor}
+            fontWeight="bold"
+            minWidth="100%"
+          >
+            <WhatInvoiceTerm term={term} />
           </Text>
           
         </Td>
@@ -278,6 +295,33 @@ function InvoiceRow(props) {
   );
 }
 
+
+
+
+
+function WhatDocument(props){
+  const {typeDocument} =props
+  
+  switch(typeDocument){
+    case TypeDocument.INVOICE:
+      return(
+        <>Factura</>
+      )
+    case TypeDocument.SHIPPING:
+      return(
+        <>Envio</>
+      )
+    case TypeDocument.NOTE:
+      return(
+        <>Nota</>
+      )
+    default:
+      return null
+      
+    
+
+  }
+}
 
 function Controls(props){
   const {id,status,onView,onEdit,onInvoiceCancel,onDelete} = props

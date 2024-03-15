@@ -19,7 +19,7 @@ import {
     IconButton,
   
     Select,
-    Stack, HStack, VStack,
+    Stack, HStack, VStack,StackDivider,
   
     Box,
   } from "@chakra-ui/react";
@@ -66,6 +66,8 @@ import {
 
   import { format } from "date-fns";
 
+  import DropDownTypeDocument from "components/invoices/DropDownTypeDocument";
+
 
 function Invoices(){
     const textColor = useColorModeValue("gray.700", "white");
@@ -74,6 +76,8 @@ function Invoices(){
     const bgRole = useColorModeValue("hsla(0,0%,100%,.8)", "navy.800");
     
     const [items,setItems] = useState([])
+
+    
 
     //const [customerModel,setCustomerModel] = useState({})
 
@@ -87,6 +91,8 @@ function Invoices(){
         applyChanges,setApplyChanges,
         openContext,closeContext,isOpenContext,getValueOpenContext,CTX
     } = useUsers()
+
+    const [typeDocument,setTypeDocument] = useState(invoiceDraft.typeDocument ?? TypeDocument.INVOICE)
 
     const {userId} = useAuth()
 
@@ -105,6 +111,11 @@ function Invoices(){
 
     } = useTable()
 
+
+    const handleTypeDocument = async(typeDocument) =>{
+        setTypeDocument(typeDocument)
+
+    }
 
     const getItems = async(page = 0,limit = 0) => {
         try{  
@@ -208,7 +219,7 @@ function Invoices(){
                     status: InvoiceStatus.DRAFT,
                     term: InvoiceTerm.PAYMENT_ON_DELIVERY,
                     fecha: format(new Date(), 'dd/MM/yy'),
-                    typeDocument: TypeDocument.INVOICE
+                    typeDocument: typeDocument
                 })
             );
             await openContext(CTX.INVOICE_DRAFT,newInvoiceDraft.id)
@@ -398,6 +409,8 @@ function Invoices(){
                 <Card p='16px' >
                 
                     <CardBody px='5px'>
+                    
+                    
                     <FormControl display="flex" alignItems="center">
                         <FormLabel htmlFor="email-alerts" mb="0">
                         Necesitas editar
@@ -410,10 +423,20 @@ function Invoices(){
                     </FormControl>
                     <FormControl display="flex" alignItems="center">
                         <FormLabel htmlFor="email-alerts" mb="0">
-                        Create Invoice
+                        Create Document
                         </FormLabel>
-                        <IconButton aria-label="Search database" onClick={handleCreateInvoice} icon={<FiPlusSquare />} />
-                    </FormControl>  
+                       
+                        <Stack direction={["column", "row"]} spacing="24px" display="flex">
+                            <Box w="150px" h="40px" >
+                                <DropDownTypeDocument typeDocument={typeDocument} onTypeDocument={handleTypeDocument} />
+                            </Box>
+                            <Box w="40px" h="40px" >
+                                <IconButton aria-label="Search database" onClick={handleCreateInvoice} icon={<FiPlusSquare />} />
+                            </Box>
+                        </Stack>
+                    
+                    </FormControl>
+                    
                     
                     </CardBody>  
                 
@@ -437,7 +460,8 @@ function Invoices(){
                         <Th borderColor={borderColor} color="gray.400" >Nombre cajero</Th>
                         <Th borderColor={borderColor} color="gray.400" >Nombre de cliente</Th>
                         <Th borderColor={borderColor} color="gray.400" >Notas</Th>
-                        <Th borderColor={borderColor} color="gray.400" >Estatus</Th>
+                        <Th borderColor={borderColor} color="gray.400" >Estado</Th>
+                        <Th borderColor={borderColor} color="gray.400" >Tipo</Th>
                         <Th borderColor={borderColor} color="gray.400" >Terms</Th>
                         <Th borderColor={borderColor}>Total</Th>
                         </Tr>
@@ -456,6 +480,7 @@ function Invoices(){
                             status={item.status}
                             term={item.term}
                             total={item.total} // model
+                            typeDocument={item.typeDocument}
                             
                             // functions
                             onDelete={handleDelete}
