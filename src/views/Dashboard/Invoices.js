@@ -64,6 +64,9 @@ import {
   import InvoiceRow from "components/Tables/InvoiceRow";
 
 
+  import { format } from "date-fns";
+
+
 function Invoices(){
     const textColor = useColorModeValue("gray.700", "white");
     const borderColor = useColorModeValue("gray.200", "gray.600");
@@ -203,7 +206,8 @@ function Invoices(){
                     clientId: custumerId,
                     total: 0,
                     status: InvoiceStatus.DRAFT,
-                    term: InvoiceTerm.PAYMENT_ON_DELIVERY
+                    term: InvoiceTerm.PAYMENT_ON_DELIVERY,
+                    fecha: format(new Date(), 'dd/MM/yy')
                 })
             );
             await openContext(CTX.INVOICE_DRAFT,newInvoiceDraft.id)
