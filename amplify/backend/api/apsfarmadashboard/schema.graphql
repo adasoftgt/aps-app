@@ -220,6 +220,7 @@ type Invoice @model {
     digitalInvoice: Digifact @hasOne          # Datos de Factura electronica o digital
     items: [InvoiceItem] @hasMany             # Lista de articulos de la factura
     payment: [Payment] @hasMany               # Este payment contiene el pago mas reciente, si quere ver mas busque @model HistoricalPayment
+    fecha: String!
 }
 
 
