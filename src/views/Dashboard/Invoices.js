@@ -410,17 +410,6 @@ function Invoices(){
                 
                     <CardBody px='5px'>
                     
-                    
-                    <FormControl display="flex" alignItems="center">
-                        <FormLabel htmlFor="email-alerts" mb="0">
-                        Necesitas editar
-                        </FormLabel>
-                        <Switch 
-                        id="email-alerts" 
-                        isChecked={editGlobalEnabled} // Vincula el estado al Switch
-                        onChange={() => setEditGlobalEnabled(!editGlobalEnabled)} // Actualiza el estado al cambiar
-                        />
-                    </FormControl>
                     <FormControl display="flex" alignItems="center">
                         <FormLabel htmlFor="email-alerts" mb="0">
                         Create Document
