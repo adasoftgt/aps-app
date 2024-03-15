@@ -23,7 +23,8 @@ function SaleQuantity(props){
     // ----------------------- PROPS ----------------------------
     const {index,invoiceItemId,productId,onUpdateItem,onQuantity,typeQuantity} = props
 
-    
+    const [isChangeQuantity,setIsChangeQuantity] = useState(false)
+
     const [quantity,setQuantity] = useState(0)
     
     const quantityRef = useRef(quantity)
@@ -99,9 +100,8 @@ function SaleQuantity(props){
     },[contador])
 
     
-    
-    const handleQuantity = async() =>{
-        
+
+    const promiseQuantity = async() =>{
         return new Promise( async(resolve,reject) => {
         
             if(quantity != ''){
@@ -115,7 +115,7 @@ function SaleQuantity(props){
                             duration: 9000,
                             isClosable: true,
                         })
-                        return this
+                        resolve()//return this
                     }else{
                         if(quantityRef.current < quantity){
                             quantityRequest.current = quantity - quantityRef.current
@@ -242,7 +242,7 @@ function SaleQuantity(props){
                         // se mando actualizar los modelos
                         //onUpdateItem(index,false,'quantity',quantity)
                         
-                        return
+                        resolve()//return
                         
                     }else{
                         toast({
@@ -252,7 +252,7 @@ function SaleQuantity(props){
                             duration: 9000,
                             isClosable: true,
                         })
-                        return
+                        resolve()//return
                     }
 
                 }else{
@@ -302,12 +302,19 @@ function SaleQuantity(props){
                         duration: 9000,
                         isClosable: true,
                     })
+                    resolve()
                 }
                 
             }
-
+            
             resolve()
         })
+    }
+    
+    const handleQuantity = async() =>{
+        setIsChangeQuantity(true)
+        await promiseQuantity()
+        setIsChangeQuantity(false) 
     }
 
     
@@ -319,6 +326,7 @@ function SaleQuantity(props){
             onQuantity={handleQuantity}
             inStock={inStock}
             setQuantity={setQuantity}
+            isChangeQuantity={isChangeQuantity}
         />
         
         
@@ -330,7 +338,7 @@ function SaleQuantity(props){
 
 
 function Controls(props){
-    const {quantity,checkQuantityBatches,onQuantity,inStock,setQuantity} = props
+    const {quantity,checkQuantityBatches,onQuantity,inStock,setQuantity,isChangeQuantity} = props
 
     const {invoiceDraft} = useUsers()
     
@@ -354,7 +362,13 @@ function Controls(props){
                     <Box w="40px" h="40px">
                         <Tooltip label="Validar existencias">
                             <Box position="relative" display="inline-block">
-                                <IconButton icon={<GrValidate />} onClick={onQuantity} onMouseEnter={checkQuantityBatches} onMouseLeave={checkQuantityBatches}/>
+                                <IconButton 
+                                    icon={<GrValidate />} 
+                                    onClick={onQuantity} 
+                                    onMouseEnter={checkQuantityBatches} 
+                                    onMouseLeave={checkQuantityBatches}
+                                    isLoading={isChangeQuantity}
+                                />
                                 {inStock > 0 && (
                                     <Badge
                                     position="absolute"
