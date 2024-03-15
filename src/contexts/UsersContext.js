@@ -35,8 +35,22 @@ const UsersProvider = ({ children }) => {
   const [sellers,setSellers] = useState([])
   
   const [userOperationSelected,setUserOperationSelected] = useState(false)
+  /**
+   * @property {Object} invoiceDraft muestra modelo de la factura seleccionada por el usuario auth
+   */
   const [invoiceDraft,setInvoiceDraft] = useState(false)
+
+  /**
+   * @property {Object} customerModel muestra modelo del cliente por el usuario auth
+   */
   const [customerModel,setCustomerModel] = useState({})
+
+   /**
+   * @property {Object} paymentModel muestra modelo del payment por el usuario auth
+   */
+  const [paymentModel,setPaymentModel] = useState({})
+
+
   const configurations = useRef('')
 
   const [applyChanges,setApplyChanges] = useState(false)
@@ -327,6 +341,7 @@ const UsersProvider = ({ children }) => {
         userOperationSelected,setUserOperationSelected,
         invoiceDraft,setInvoiceDraft,
         customerModel,setCustomerModel,
+        paymentModel,setPaymentModel,
         applyChanges,setApplyChanges,
         configurations,
         openContext,closeContext,isOpenContext,getValueOpenContext,CTX
