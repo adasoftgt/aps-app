@@ -71,6 +71,8 @@ import {
 
   import { v4 as uuidv4 } from 'uuid';
 
+  import DropDownTypeDocument from "./DropDownTypeDocument";
+
   import {
     Editable,
     EditableInput,
@@ -81,6 +83,7 @@ import {
   import { Textarea } from '@chakra-ui/react'
 
 import Moneda from "components/Monedas/Moneda";
+import { TypeDocument } from "models";
 
 
 function ListItems(){
@@ -89,13 +92,24 @@ function ListItems(){
     const borderRoleColor = useColorModeValue("white", "transparent");
     const bgRole = useColorModeValue("hsla(0,0%,100%,.8)", "navy.800");
     
+    const {
+        userOperationSelected,setUserOperationSelected,
+        invoiceDraft,setInvoiceDraft,
+        configurations,
+        openContext,closeContext,isOpenContext,getValueOpenContext,CTX,
+    } = useUsers()
+
+
+    const { userId } = useAuth()
+
+
     // mensaje
     const toast = useToast()
     const [items,setItems] = useState([])
 
     const [customerId,setCustomerId] = useState('')
 
-    const [typeDocument,setTypeDocument] = useState('Factura')
+    const [typeDocument,setTypeDocument] = useState(invoiceDraft.typeDocument ?? TypeDocument.INVOICE)
 
     const [totalInvoice,setTotalInvoice] = useState(0)
 
@@ -192,15 +206,7 @@ function ListItems(){
     
     
 
-    const {
-        userOperationSelected,setUserOperationSelected,
-        invoiceDraft,setInvoiceDraft,
-        configurations,
-        openContext,closeContext,isOpenContext,getValueOpenContext,CTX,
-    } = useUsers()
-
-
-    const { userId } = useAuth()
+   
 
     /**
      * El contexto useUsers se revisa si existe la configuacion de invoice
@@ -549,8 +555,15 @@ function ListItems(){
     }
 
 
-    const handleTypeDocument = (typeDocument) =>{
-        // aqui porner desarrollo
+    const handleTypeDocument = async(typeDocument) =>{
+        setTypeDocument(typeDocument)
+        const invoice = await DataStore.query(Invoice,invoiceDraft.id);
+        const updatedInvoce = await DataStore.save(
+            Invoice.copyOf(invoice, updated => {
+                updated.typeDocument = typeDocument
+            })
+        );
+        
     }
 
    
@@ -755,13 +768,7 @@ function Controls(props){
                     </FormControl>
                 </Box>
                 <Box w='250px' h='40px'>
-                    <FormControl id="country">
-                        <Select placeholder="Select document" value={typeDocument} onChange={(event) => onTypeDocument(event.target.value) }>
-                            <option value="Factura" >Factura</option>
-                            <option value="Envio">Envio</option>
-                            <option value="Nota">Nota</option>
-                        </Select>
-                    </FormControl>
+                    <DropDownTypeDocument typeDocument={typeDocument} onTypeDocument={onTypeDocument} />
                 </Box>
                 </>
             )

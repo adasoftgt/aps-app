@@ -35,7 +35,7 @@ import {
   import Pagination from "components/Pagination/Paginacion.js"
   import Capabilities from "components/Capabilities/Capabilities.js"
   
-  import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, InvoiceStatus,Customer,BatchChunk,Batch } from "models";
+  import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, TypeDocument, InvoiceStatus,Customer,BatchChunk,Batch } from "models";
   
   import {USER_OPERATION} from "structures"
   
@@ -207,7 +207,8 @@ function Invoices(){
                     total: 0,
                     status: InvoiceStatus.DRAFT,
                     term: InvoiceTerm.PAYMENT_ON_DELIVERY,
-                    fecha: format(new Date(), 'dd/MM/yy')
+                    fecha: format(new Date(), 'dd/MM/yy'),
+                    typeDocument: TypeDocument.INVOICE
                 })
             );
             await openContext(CTX.INVOICE_DRAFT,newInvoiceDraft.id)

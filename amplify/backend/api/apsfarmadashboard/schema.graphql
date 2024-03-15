@@ -205,6 +205,12 @@ type DiscountRate @model {
     invoice: Invoice @belongsTo
 }
 
+enum TypeDocument {
+    INVOICE
+    SHIPPING
+    NOTE
+}
+
 type Invoice @model {
     id: ID!                                   # identificador unico de factura
     cashierId: String!                        # user_id cognito
@@ -221,6 +227,7 @@ type Invoice @model {
     items: [InvoiceItem] @hasMany             # Lista de articulos de la factura
     payment: [Payment] @hasMany               # Este payment contiene el pago mas reciente, si quere ver mas busque @model HistoricalPayment
     fecha: String!
+    typeDocument: TypeDocument!
 }
 
 
