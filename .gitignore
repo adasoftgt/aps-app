@@ -24,4 +24,6 @@ amplifytools.xcconfig
 **.sample
 .env
 build.zip
+.vs
+src/models
 #amplify-do-not-edit-end
