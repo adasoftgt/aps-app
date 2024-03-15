@@ -18,11 +18,13 @@ import Customers from 'views/Dashboard/Customers';
 
 import PrintAps from 'components/Prints/PrintAps';
 
+import Payments from 'views/Dashboard/Payments';
+
 
 import { FiPackage,FiFileText } from "react-icons/fi";
 import { FaUsersCog } from "react-icons/fa";
 import { FaUserShield } from "react-icons/fa";
-import { FaUsers } from "react-icons/fa6";
+import { FaUsers, FaFileInvoiceDollar } from "react-icons/fa6";
 
 import {
   HomeIcon,
@@ -147,6 +149,16 @@ var dashRoutes = [
         component: PrintAps,
         layout: "/admin",
         visibleInNav:false,
+        caps:['manage_options']
+      },
+      {
+        path: "/payments",
+        name: "Payments",
+        rtlName: "لوحة القيادة",
+        icon: <FaFileInvoiceDollar />,
+        component: Payments,
+        layout: "/admin",
+        visibleInNav:true,
         caps:['manage_options']
       },
     ]
