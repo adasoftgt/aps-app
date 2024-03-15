@@ -61,6 +61,8 @@ import { TypeDocument } from "models";
 import WhatInvoiceStatus from "components/invoices/WhatInvoiceStatus";
 import WhatInvoiceTerm from "components/invoices/WhatInvoiceTerm";
 
+import { FaFileInvoiceDollar } from "react-icons/fa6";
+
 function InvoiceRow(props) {
   /**
    * @property {String} displayname nombre a mostrar en el app
@@ -324,7 +326,7 @@ function WhatDocument(props){
 }
 
 function Controls(props){
-  const {id,status,onView,onEdit,onInvoiceCancel,onDelete} = props
+  const {id,status,onView,onEdit,onInvoiceCancel,onDelete,onInvoicePayment} = props
   
   switch(status){
     case InvoiceStatus.DRAFT:
@@ -339,7 +341,6 @@ function Controls(props){
         </>
         
       )
-    
     case InvoiceStatus.CANCELLED:
     case InvoiceStatus.PAID:
     case InvoiceStatus.OVERDUE:
@@ -348,22 +349,34 @@ function Controls(props){
           <IconButton aria-label="Settings" icon={<FiEye />} onClick={() => onView(id)} />
         </Box>
       )
-    default:
+      case InvoiceStatus.SENT:
         return (
           <>
             <Box w="40px" h="40px" bg="transparent">
-              <IconButton  aria-label="Delete" icon={<FiDelete />} onClick={() => onDelete(id)} />
+              <Tooltip label='Eliminar Factura'> 
+                <IconButton  aria-label="Delete" icon={<FiDelete />} onClick={() => onDelete(id)} />
+              </Tooltip>
             </Box>
             <Box w="40px" h="40px" bg="transparent">
-              <IconButton aria-label="Settings" icon={<FiEye />} onClick={() => onView(id)} />
+              <Tooltip label='Ver factura'>
+                <IconButton aria-label="Settings" icon={<FiEye />} onClick={() => onView(id)} />
+              </Tooltip>
             </Box>
             <Box w="40px" h="40px" bg="transparent">
               <Tooltip label='Canceled'>
                 <IconButton aria-label="Settings" icon={<ImCancelCircle />} onClick={() => onInvoiceCancel(id)} />
               </Tooltip>
             </Box>
+            <Box w="40px" h="40px" bg="transparent">
+              <Tooltip label='Pagos'>
+                <IconButton aria-label="Settings" icon={<FaFileInvoiceDollar />} onClick={() => onInvoicePayment(id)} />
+              </Tooltip>
+            </Box>
+            
           </>
         )
+      default:
+        return null
       
   }
 }
