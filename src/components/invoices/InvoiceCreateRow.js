@@ -48,7 +48,7 @@ import {
 import { FaGalacticSenate } from "react-icons/fa6";
 
 
-import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, InvoiceStatus, InvoiceItemStatus, UserConfiguration} from "models";
+import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, InvoiceStatus, InvoiceItemStatus, UserConfiguration,BatchChunkStatus} from "models";
   
 // Amplify datastore
 import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
@@ -213,6 +213,7 @@ import Moneda from "components/Monedas/Moneda";
               productId={enteredProductItemsId ?? productItemsId}
               onUpdateItem={onUpdateItem}
               onQuantity={handleQuantity}
+              typeQuantity={BatchChunkStatus.SALES_QUANTITY}
               index={index}
               
             />
@@ -227,11 +228,12 @@ import Moneda from "components/Monedas/Moneda";
               onChange={(e) => setBonus(e.target.value)}  
             /> */}
             
-            <BonusQuantity 
+            <SaleQuantity 
               invoiceItemId={itemId}
               productId={enteredProductItemsId ?? productItemsId}
               onUpdateItem={onUpdateItem}
               onQuantity={handleBonusQuantity}
+              typeQuantity={BatchChunkStatus.BONUS_QUANTITY}
               index={index}
               
             />
