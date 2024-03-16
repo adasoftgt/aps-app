@@ -36,7 +36,7 @@ import {React,useEffect,useState,useRef, useMemo} from "react";
 import {Capability} from "models"
 import { FaLessThanEqual } from "react-icons/fa";
 
-import { FiEdit, FiDelete, FiSettings, FiSave, FiArrowLeft, FiDollarSign, FiCheckCircle, FiBox, FiLayers, FiEye} from "react-icons/fi";
+import { FiEdit, FiDelete, FiSettings, FiSave, FiArrowLeft, FiDollarSign, FiCheckCircle, FiBox, FiLayers, FiEye, FiExternalLink} from "react-icons/fi";
 import { position } from "stylis";
 import ListRoles from "components/dropdowns/ListRoles";
 
@@ -63,6 +63,11 @@ import WhatInvoiceTerm from "components/invoices/WhatInvoiceTerm";
 
 import { FaFileInvoiceDollar } from "react-icons/fa6";
 
+
+import { useToast } from "@chakra-ui/react";
+
+import { Redirect } from 'react-router-dom';
+
 function InvoiceRow(props) {
   /**
    * @property {String} displayname nombre a mostrar en el app
@@ -85,8 +90,13 @@ function InvoiceRow(props) {
     
   } = props;
 
+  const [redirectPayments,setRedirectPayments] = useState(false)
+
+  const toast = useToast()
+
   const {
     invoiceDraft,setInvoiceDraft,
+    invoiceModel,setInvoiceModel,
     openContext,closeContext,isOpenContext,getValueOpenContext,CTX
   } = useUsers()
 
@@ -163,10 +173,39 @@ function InvoiceRow(props) {
     setInvoiceDraft(invoice)
   }
 
-  
+  const handleInvoiceOpenContext = async(id) =>{
+    //const isOpen = await isOpenContext(CTX.INVOICE_ID)
+    //if(!isOpen){
+      await openContext(CTX.INVOICE_ID,id)
+      const invoice = await DataStore.query(Invoice, id);
+      setInvoiceModel(invoice)
+      toast({
+        title: 'Open Context Invoice',
+        description: "We've Open Context for you.",
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      })
+    //}
+  }
 
+  const handleInvoicePayment = (id) =>{
+    handleInvoiceOpenContext(id)
+    setRedirectPayments(true)
+   
+    
+    
+    
+  }
   return (
     <>
+      {redirectPayments &&(
+        <Redirect 
+            to={{
+                pathname: '/admin/payments',
+            }} 
+        />
+      )}
       <Stack direction={["column", "row","left"]} spacing="24px">
         
         
@@ -177,6 +216,8 @@ function InvoiceRow(props) {
           onEdit={handleEdit} 
           onInvoiceCancel={onInvoiceCancel}
           onDelete={onDelete}
+          onInvoiceOpenContext={handleInvoiceOpenContext}
+          onInvoicePayment={handleInvoicePayment}
           />
 
       </Stack>    
@@ -326,7 +367,7 @@ function WhatDocument(props){
 }
 
 function Controls(props){
-  const {id,status,onView,onEdit,onInvoiceCancel,onDelete,onInvoicePayment} = props
+  const {id,status,onView,onEdit,onInvoiceCancel,onDelete,onInvoicePayment,onInvoiceOpenContext} = props
   
   switch(status){
     case InvoiceStatus.DRAFT:
@@ -370,6 +411,11 @@ function Controls(props){
             <Box w="40px" h="40px" bg="transparent">
               <Tooltip label='Pagos'>
                 <IconButton aria-label="Settings" icon={<FaFileInvoiceDollar />} onClick={() => onInvoicePayment(id)} />
+              </Tooltip>
+            </Box>
+            <Box w="40px" h="40px" bg="transparent">
+              <Tooltip label='Agregar a contexto'>
+                <IconButton aria-label="Settings" icon={<FiExternalLink />} onClick={() => onInvoiceOpenContext(id)} />
               </Tooltip>
             </Box>
             

@@ -50,6 +50,11 @@ const UsersProvider = ({ children }) => {
    */
   const [paymentModel,setPaymentModel] = useState({})
 
+   /**
+   * @property {Object} invoiceModel muestra modelo del payment por el usuario auth
+   */
+   const [invoiceModel,setInvoiceModel] = useState({})
+
 
   const configurations = useRef('')
 
@@ -342,6 +347,7 @@ const UsersProvider = ({ children }) => {
         invoiceDraft,setInvoiceDraft,
         customerModel,setCustomerModel,
         paymentModel,setPaymentModel,
+        invoiceModel,setInvoiceModel,
         applyChanges,setApplyChanges,
         configurations,
         openContext,closeContext,isOpenContext,getValueOpenContext,CTX

@@ -24,6 +24,10 @@ import React,{ useEffect, useState } from "react";
 import Cita from "components/Users/Cita";
 import ContextView from "components/Customers/ContextView";
 
+import { Invoice,Customer } from "models";
+
+import { DataStore } from "@aws-amplify/datastore";
+
 //import { useDisclosure } from "@chakra-ui/react
 
 function DrawerContext({ isOpen, onOpen, onClose }) {
@@ -31,6 +35,7 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
     
     const {
       customerModel,setCustomerModel,
+      invoiceModel,setInvoiceModel,
       openContext,closeContext,isOpenContext,getValueOpenContext,CTX
     } = useUsers()
 
@@ -41,16 +46,48 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
     const [isCustomer,setIsCustomer] = useState(false)
     const [customerId,setCustomerId] = useState('')
     
+    const verifyContext = async() =>{
+      /**
+       * Ver si existe contexto de customer
+       */
+      if(Object.keys(customerModel).length == 0){
+        const isOpen = await isOpenContext(CTX.CUSTOMER_ID)
+        //setIsCustomer(isOpenContext_aux)
+        if(isOpen){
+          const id = await getValueOpenContext(CTX.CUSTOMER_ID)
+          const model = await DataStore.query(Customer, id);
+          setCustomerModel(model)
+        }
+      }
+
+      /**
+       * Ver si existe contexto de invoice seleccioanda
+       */
+      if(Object.keys(invoiceModel).length == 0){
+        const isOpen = await isOpenContext(CTX.INVOICE_ID)
+        //setIsCustomer(isOpenContext_aux)
+        if(isOpen){
+          const id = await getValueOpenContext(CTX.INVOICE_ID)
+          const model = await DataStore.query(Invoice, id);
+          setInvoiceModel(model)
+        }
+      }
+    }
+    
+    
+    useEffect( ()=>{
+      verifyContext()
+      
+      return () =>{
+
+      }
+    },[customerModel,invoiceModel])
     
     useEffect( async() =>{
-      setIsUser(await isOpenContext(CTX.USER_ID))
-      setUserId(await getValueOpenContext(CTX.USER_ID))
-
-      const isOpenContext_aux = await isOpenContext(CTX.CUSTOMER_ID)
-      setIsCustomer(isOpenContext_aux)
-      const getValueOpenContext_aux = await getValueOpenContext(CTX.CUSTOMER_ID)
-      setCustomerId(getValueOpenContext_aux)
-
+      //setIsUser(await isOpenContext(CTX.USER_ID))
+      //setUserId(await getValueOpenContext(CTX.USER_ID))
+      verifyContext()
+      
       return () => {
         // Código de limpieza
       };
@@ -64,11 +101,15 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
     }
 
     const closeContextCustomer = async() =>{
-      setIsCustomer(false)
       await closeContext(CTX.CUSTOMER_ID)
       setCustomerModel({})
-      
     }
+
+    const closeContextInvoice = async() =>{
+      await closeContext(CTX.INVOICE_ID)
+      setInvoiceModel({})
+    }
+
 
     return (
       <>
@@ -78,24 +119,11 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
             <DrawerHeader borderBottomWidth="1px">Viewer Context</DrawerHeader>
             <DrawerBody>
               <h2>Contexts</h2>
-              {isUser &&  (
-                <HStack spacing="24px">
-                  <Box w="40px" h="40px" >
-                    <Tooltip label="Close Context">
-                      <IconButton icon={<MdFilterAltOff />} onClick={closeContextUser} />
-                    </Tooltip>
-                  </Box>
-                  <Box w="150px" h="40px" >
-                    <Text fontSize="xl">User</Text>
-                  </Box>
-                  <Cita userId={userId}/>
-                </HStack>
-              )}
-
-              <ContextView id={customerId} isActiveContext={isCustomer} onCloseContext={closeContextCustomer} onClose={onClose}/>
+              <ContextView model={customerModel} onCloseContext={closeContextCustomer} onClose={onClose} nameCtx="Customer" dataCtx={customerModel.name ?? ''} path="/admin/customers"/>
+              <ContextView model={invoiceModel} onCloseContext={closeContextInvoice} onClose={onClose} nameCtx="Invoice" dataCtx={invoiceModel.id} path="/admin/invoices"/>
               
-              <p>Some contents...</p>
-              <p>Some contents...</p>
+              
+              <p></p>
             </DrawerBody>
           </DrawerContent>
         </Drawer>
