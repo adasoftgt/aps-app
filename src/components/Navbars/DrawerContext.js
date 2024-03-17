@@ -36,6 +36,8 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
     const {
       customerModel,setCustomerModel,
       invoiceModel,setInvoiceModel,
+      verifyContext,
+      applyChanges,setApplyChanges,
       openContext,closeContext,isOpenContext,getValueOpenContext,CTX
     } = useUsers()
 
@@ -46,37 +48,11 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
     const [isCustomer,setIsCustomer] = useState(false)
     const [customerId,setCustomerId] = useState('')
     
-    const verifyContext = async() =>{
-      /**
-       * Ver si existe contexto de customer
-       */
-      if(Object.keys(customerModel).length == 0){
-        const isOpen = await isOpenContext(CTX.CUSTOMER_ID)
-        //setIsCustomer(isOpenContext_aux)
-        if(isOpen){
-          const id = await getValueOpenContext(CTX.CUSTOMER_ID)
-          const model = await DataStore.query(Customer, id);
-          setCustomerModel(model)
-        }
-      }
-
-      /**
-       * Ver si existe contexto de invoice seleccioanda
-       */
-      if(Object.keys(invoiceModel).length == 0){
-        const isOpen = await isOpenContext(CTX.INVOICE_ID)
-        //setIsCustomer(isOpenContext_aux)
-        if(isOpen){
-          const id = await getValueOpenContext(CTX.INVOICE_ID)
-          const model = await DataStore.query(Invoice, id);
-          setInvoiceModel(model)
-        }
-      }
-    }
+       
     
-    
-    useEffect( ()=>{
-      verifyContext()
+    useEffect( async()=>{
+      await verifyContext()
+      setApplyChanges(!applyChanges)
       
       return () =>{
 
@@ -86,7 +62,8 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
     useEffect( async() =>{
       //setIsUser(await isOpenContext(CTX.USER_ID))
       //setUserId(await getValueOpenContext(CTX.USER_ID))
-      verifyContext()
+      await verifyContext()
+      setApplyChanges(!applyChanges)
       
       return () => {
         // Código de limpieza

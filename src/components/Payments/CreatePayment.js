@@ -45,6 +45,8 @@ import { PaymentMethod } from "models";
 
 import DropDownPaymentMethod from "./DropDownPaymentMethod";
 
+import { Redirect } from "react-router-dom/cjs/react-router-dom";
+
 
 function CreatePayment(props){
     const textColor = useColorModeValue("gray.700", "white");
@@ -54,7 +56,12 @@ function CreatePayment(props){
 
     const {setCreateCustomer} = props
     const toast = useToast()
-    const { sellers } = useUsers()
+    const { 
+        sellers,
+        invoiceModel,setInvoiceModel,
+        verifyContext,
+        applyChanges,setApplyChanges,
+    } = useUsers()
 
     const { 
       editRow,
@@ -108,6 +115,8 @@ function CreatePayment(props){
     const [paymentMethod,setPaymentMethod] = useState(PaymentMethod.CASH)
     const [referencia,setReferencia] = useState('')
 
+    const [redirect,setRedirect] = useState(false)
+
 
     const handlePaymentMethod = () =>{
         
@@ -135,50 +144,33 @@ function CreatePayment(props){
       })
     }
     
-    useEffect( () =>{
-      const departamento = newCountryDepartment ?? false
-      if(departamento){
-        const municipios = configAsp.departamentos[departamento] ?? []
-        setMunicipios(municipios)
-      }
-    },[newCountryDepartment])
 
 
-    
-    const handleCreateCustomer = async() => {
-      const newCustomer = await DataStore.save(
-        new Customer({
-          name: newName,
-          address: newAddress,
-          nit: newNit,
-          phone: newPhone,
-          owner: newOwner,
-          seller: newSeller,
-          transportation_observations: newTransportation_observations,
-          observations: newObservations,
-          countryDepartment: newCountryDepartment,
-          municipality: newMunicipality,
-          carrier: newCarrier,
-          sector: newSector,
-        })
-      );
+    useEffect( async()=>{
+        if(Object.keys(invoiceModel).length == 0){
+            const data = await verifyContext()
+            if(Object.keys(data.invoiceModel).length == 0){
+                setRedirect(true)
+            }
+        }
+        
+        
+        
+        return () =>{
 
-      setTotal( total + 1)
-
-      toast({
-        title: 'Create Customer',
-        description: "We've Create the Customer for you.",
-        status: 'success',
-        duration: 9000,
-        isClosable: true,
-      })
-
-      await inputsClear()
-    }
+        }
+    },[invoiceModel])
 
 
     return(
         <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
+                {redirect &&(
+                    <Redirect 
+                        to={{
+                            pathname: '/admin/noinvoice',
+                        }} 
+                    />
+                )}
                 <Flex style={{padding: "0 0 10px 0"}}>
                     <Card p='16px' >
                       <CardBody px='5px'>
@@ -232,7 +224,7 @@ function CreatePayment(props){
                         <Flex align='center' mb='20px'>
                           <HStack spacing="24px">
                             <Button colorScheme="blue"
-                              onClick={handleCreateCustomer}
+                              //onClick={handleCreateCustomer}
                             >Crear</Button>
                           </HStack>
                         </Flex>

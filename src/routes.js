@@ -22,6 +22,8 @@ import Payments from 'views/Dashboard/Payments';
 
 import CreatePayment from 'components/Payments/CreatePayment';
 
+import NoInvoice from 'components/errors/NoInvoice';
+
 
 import { FiPackage,FiFileText, FiDollarSign } from "react-icons/fi";
 import { FaUsersCog } from "react-icons/fa";
@@ -237,6 +239,16 @@ var dashRoutes = [
         visibleInNav:false
       },
     ],
+  },
+  {
+    path: "/noinvoice",
+    name: "NoInvoice",
+    rtlName: "لوحة القيادة",
+    icon: <FaUserShield />,
+    component: NoInvoice,
+    layout: "/admin",
+    visibleInNav:false,
+    caps:['manage_options']
   },
 ];
 export default dashRoutes;

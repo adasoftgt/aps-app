@@ -331,7 +331,43 @@ const UsersProvider = ({ children }) => {
 
   }
 
-  
+  /**
+   * Verifiar los contexto antes de utilizarlos
+   */
+  const verifyContext = async() =>{
+    var data = {'invoiceModel':{},'customerModel':{}}
+    return new Promise( async(resolve,reject) => {
+      /**
+       * Ver si existe contexto de customer
+       */
+      if(Object.keys(customerModel).length == 0){
+        const isOpen = await isOpenContext(CTX.CUSTOMER_ID)
+        //setIsCustomer(isOpenContext_aux)
+        if(isOpen){
+          const id = await getValueOpenContext(CTX.CUSTOMER_ID)
+          const model = await DataStore.query(Customer, id);
+          data.customerModel = model 
+          setCustomerModel(model)
+        }
+      }
+
+      /**
+       * Ver si existe contexto de invoice seleccioanda
+       */
+      if(Object.keys(invoiceModel).length == 0){
+        const isOpen = await isOpenContext(CTX.INVOICE_ID)
+        //setIsCustomer(isOpenContext_aux)
+        if(isOpen){
+          const id = await getValueOpenContext(CTX.INVOICE_ID)
+          const model = await DataStore.query(Invoice, id);
+          data.invoiceModel = model
+          setInvoiceModel(model)
+        }
+      }
+
+      resolve(data)
+    })
+  }
   
   
 
@@ -348,6 +384,7 @@ const UsersProvider = ({ children }) => {
         customerModel,setCustomerModel,
         paymentModel,setPaymentModel,
         invoiceModel,setInvoiceModel,
+        verifyContext,
         applyChanges,setApplyChanges,
         configurations,
         openContext,closeContext,isOpenContext,getValueOpenContext,CTX
