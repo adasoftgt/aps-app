@@ -19,6 +19,17 @@ import {
     Button,
  } from "@chakra-ui/react"
 
+ import {
+    Table,
+    Thead,
+    Tbody,
+    Tfoot,
+    Tr,
+    Th,
+    Td,
+    TableCaption,
+  } from "@chakra-ui/react"
+
 // Custom components
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
@@ -27,25 +38,26 @@ import CardHeader from "components/Card/CardHeader.js";
 // ICONS FI
 import { FiArrowLeft,FiPlusSquare, FiDollarSign, FiEdit} from "react-icons/fi";
 
-import {React, useEffect, useState} from "react"
+import {React, useEffect, useState, useRef} from "react"
 
 import configAsp from "config/config";
 
-import { Customer } from "models";
+import { Customer, Payment, PaymentMethod } from "models";
   
 // Amplify datastore
 import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
 
 import { useUsers } from "contexts/UsersContext";
+import { useAuth } from "contexts/AuthContext";
 import { useTable } from "contexts/TableContext";
 
 import { useToast } from "@chakra-ui/react";
 
-import { PaymentMethod } from "models";
-
 import DropDownPaymentMethod from "./DropDownPaymentMethod";
 
 import { Redirect } from "react-router-dom/cjs/react-router-dom";
+
+import Moneda from "components/Monedas/Moneda";
 
 
 function CreatePayment(props){
@@ -59,6 +71,7 @@ function CreatePayment(props){
     const { 
         sellers,
         invoiceModel,setInvoiceModel,
+        customerModel,setCustomerModel,
         verifyContext,
         applyChanges,setApplyChanges,
     } = useUsers()
@@ -110,15 +123,41 @@ function CreatePayment(props){
     const [municipios,setMunicipios] = useState([])
 
 
+    const {userId} = useAuth()
 
     const [amount,setAmount] = useState(0)
     const [paymentMethod,setPaymentMethod] = useState(PaymentMethod.CASH)
     const [referencia,setReferencia] = useState('')
 
+    const [amountPaid,setAmountPaid] = useState(0)
+    const [remainingBalance,setRemainingBalance] = useState(0)
+
     const [redirect,setRedirect] = useState(false)
 
 
     const handlePaymentMethod = () =>{
+       
+    }
+
+    const handleCreatePayment = async() =>{
+        const newPayment = await DataStore.save(
+            new Payment({
+                amount: parseFloat(amount.replace(/[^\d.]/g, '')),
+                method: paymentMethod,
+                reference: referencia,
+                userId: userId,
+                clientId: customerModel.id,
+                invoice: invoiceModel
+            })
+        );
+        toast({
+            title: 'Created Payment',
+            description: "We've created the payment for you.",
+            status: 'success',
+            duration: 9000,
+            isClosable: true,
+        })
+        await inputsClear()
         
     }
 
@@ -126,20 +165,10 @@ function CreatePayment(props){
 
     const inputsClear = () =>{
       return new Promise( (resolve,reject) => {
-        setNewName(name)
-        setNewAddress(address)
-        setNewNit(nit)
-        setNewPhone(phone)
-        setNewOwner(owner)
-        setNewSeller(seller)
-        setNewTransportation_observations(transportation_observations)
-        setNewObservations(observations)
-        setNewCountryDepartment(countryDepartment)
-        setNewMunicipality(municipality)
-        setNewCarrier(carrier)
-        setNewSector(sector)
-        setMunicipios([])
-        setCreateCustomer(false)
+        setAmount(0)
+        setPaymentMethod(PaymentMethod.CASH)
+        setReferencia('')
+
         resolve();
       })
     }
@@ -161,6 +190,54 @@ function CreatePayment(props){
         }
     },[invoiceModel])
 
+    const handleChange = (value) =>{
+        setAmount(value)
+    }
+
+    const handleAmount = (value) =>{
+        const formatCurrency = (value) => {
+            // Eliminar cualquier carácter que no sea un número o un punto decimal
+            const formattedValue = value.replace(/[^\d.]/g, '');
+        
+            // Dividir el valor en partes antes y después del punto decimal
+            const parts = formattedValue.split('.');
+        
+            // Formatear la parte entera con separadores de miles
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        
+            // Unir las partes nuevamente
+            return parts.join('.');
+            };
+        setAmount(formatCurrency(value))
+    }
+
+    useEffect( async() =>{
+        const items = await DataStore.query(Payment, 
+            i => i.invoicePaymentId.eq(invoiceModel.id),
+        );
+
+        var amount = 0
+
+        for (let index = 0; index < items.length; index++) {
+            const element = items[index];
+            amount = amount + element.amount 
+        }
+
+        setAmountPaid(amount)
+
+        return () =>{
+
+        }
+        
+        
+    },[invoiceModel])
+
+
+    useEffect( () =>{
+        setRemainingBalance(invoiceModel.total - amountPaid ?? 0)
+    },[invoiceModel,amountPaid])
+    
+
 
     return(
         <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
@@ -174,7 +251,35 @@ function CreatePayment(props){
                 <Flex style={{padding: "0 0 10px 0"}}>
                     <Card p='16px' >
                       <CardBody px='5px'>
-                        
+                        <Table variant="striped" colorScheme="teal">
+                            <TableCaption>Saldos de factura</TableCaption>
+                            <Thead>
+                                <Tr>
+                                    <Th>Descripción</Th>
+                                    <Th>Monto</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody>
+                                <Tr>
+                                    <Td>Monto total</Td>
+                                    <Td><Moneda amount={invoiceModel.total ?? '0.00'} /></Td>
+                                </Tr>
+                                <Tr>
+                                    <Td>Monto pagado</Td>
+                                    <Td><Moneda amount={amountPaid ?? '0.00'} /></Td>
+                                </Tr>
+                                <Tr>
+                                    <Td>Saldo</Td>
+                                    <Td><Moneda amount={remainingBalance ?? '0.00'} /></Td>
+                                </Tr>
+                            </Tbody>
+                            <Tfoot>
+                                <Tr>
+                                    <Th>Descripción</Th>
+                                    <Th>Monto</Th>
+                                </Tr>
+                            </Tfoot>
+                        </Table>
                       </CardBody>
                     </Card>
                   </Flex>
@@ -201,7 +306,7 @@ function CreatePayment(props){
                             <Input 
                               type="text"
                               value={amount}
-                              onChange={(e) => setAmount(e.target.value)} 
+                              onChange={(e) => handleAmount(e.target.value)} 
                             />
                             <FormHelperText>Ingrese el monto</FormHelperText>
                           </FormControl>
@@ -224,7 +329,7 @@ function CreatePayment(props){
                         <Flex align='center' mb='20px'>
                           <HStack spacing="24px">
                             <Button colorScheme="blue"
-                              //onClick={handleCreateCustomer}
+                              onClick={handleCreatePayment}
                             >Crear</Button>
                           </HStack>
                         </Flex>
@@ -236,5 +341,23 @@ function CreatePayment(props){
               </Flex>
     )
 }
+
+
+const CurrencyInput = ({ value, onChange }) => {
+    return (
+      <InputMask
+        mask="999,999,999.99"
+        maskChar="_"
+        value={value}
+        onChange={onChange}
+      >
+        {() => <input placeholder="Enter amount" />}
+      </InputMask>
+    );
+  };
+
+
+
+  
 
 export default CreatePayment
