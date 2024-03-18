@@ -126,12 +126,21 @@ function Payments(){
 
     const getItems = async(page = 0,limit = 0) => {
         try{ 
+            
             const pageOfset = page - 1
-            var condicion = (i) => i.and(
-                i => [
-                    i.invoicePaymentId.eq(invoiceModel.id),
-                ]
-            )
+            if(Object.keys(invoiceModel).length == 0){
+                var condicion = (i) => i.and(
+                    i => [
+                        i.userId.eq(userId),
+                    ]
+                ) 
+            }else{
+                var condicion = (i) => i.and(
+                    i => [
+                        i.invoicePaymentId.eq(invoiceModel.id),
+                    ]
+                )
+            }
 
           
           const payments = await DataStore.query(Payment, 
@@ -408,32 +417,38 @@ function Payments(){
     
     return (
         <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
-            {invoiceDraft &&(
+            {/* {invoiceDraft &&(
                 <Redirect 
                     to={{
                         pathname: '/admin/invoice_create',
                     }} 
                 />
-            )}
+            )} */}
             <Flex style={{padding: "0 0 10px 0"}}>
                 <Card p='16px' >
                 
                     <CardBody px='5px'>
                     
                     <FormControl display="flex" alignItems="center">
-                        <FormLabel htmlFor="email-alerts" mb="0">
-                        Add Payment
-                        </FormLabel>
+                        
                        
-                        <Stack direction={["column", "row"]} spacing="24px" display="flex">
-                            <Box w="40px" h="40px" >
-                                <NavLink to="/admin/createpayment">
-                                    <Tooltip label="Add payment">
-                                        <IconButton aria-label="Search database" icon={<FiPlusSquare />} />
-                                    </Tooltip>
-                                </NavLink>
-                            </Box>
-                        </Stack>
+                        {Object.keys(invoiceModel).length != 0 && (
+                            <>
+                                <FormLabel htmlFor="email-alerts" mb="0">
+                                Add Payment
+                                </FormLabel>
+                                <Stack direction={["column", "row"]} spacing="24px" display="flex">
+                                    <Box w="40px" h="40px" >
+                                        <NavLink to="/admin/createpayment">
+                                            <Tooltip label="Add payment">
+                                                <IconButton aria-label="Search database" icon={<FiPlusSquare />} />
+                                            </Tooltip>
+                                        </NavLink>
+                                    </Box>
+                                </Stack>
+                            </>
+                        )}
+                        
                     
                     </FormControl>
                     

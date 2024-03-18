@@ -146,7 +146,7 @@ function CreatePayment(props){
                 method: paymentMethod,
                 reference: referencia,
                 userId: userId,
-                clientId: customerModel.id,
+                clientId: userId,
                 invoice: invoiceModel
             })
         );
