@@ -44,6 +44,7 @@ import { useUsers } from "contexts/UsersContext";
 import { useTable } from "contexts/TableContext"; 
 
 import ApsInput from "./Propertys/ApsInput";
+import ApsDropDown from "./Propertys/ApsDropDown";
 
 import {ProductPrice,Batch,BatchStatus,Invoice,InvoiceStatus} from "models";
 
@@ -65,6 +66,8 @@ import { FaFileInvoiceDollar } from "react-icons/fa6";
 
 import UserName from "components/Users/UserName";
 
+import { OptionsPaymentMethod } from "components/Payments/DropDownPaymentMethod";
+
 function PaymentRow(props) {
   /**
    * @property {String} displayname nombre a mostrar en el app
@@ -79,6 +82,7 @@ function PaymentRow(props) {
     
 
     onInvoiceCancel,
+    onUpdateProperty,
     
     //functions
     fillInputsEdit,
@@ -210,22 +214,39 @@ function PaymentRow(props) {
           </Text>
         </Td>
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-           <WhatPaymentMethod  paymentMethod={method}/>
+           {/* <WhatPaymentMethod  paymentMethod={method}/> */}
+           <ApsDropDown
+              updateProperty={onUpdateProperty}
+              id={id} 
+              elements={<OptionsPaymentMethod />}
+              placeholder="Ingrese el metodo de pago"
+              value= {method}
+              keyProperty="method"
+              CustomText={WhatPaymentMethod}
+          />
         </Td>
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-          <Moneda amount={amount}/>
+          {/* <Moneda amount={amount}/> */}
+          <ApsInput
+              updateProperty={onUpdateProperty}
+              id={id} 
+              type="text"
+              placeholder="Ingrese el monto"
+              value= {parseFloat(amount).toFixed(2)}
+              keyProperty="amount"
+              isCurrency={true}
+          />
         </Td>
        
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-          <Text
-            fontSize="md"
-            color={titleColor}
-            fontWeight="bold"
-            minWidth="100%"
-          >
-            
-            {reference}
-          </Text>
+          <ApsInput
+              updateProperty={onUpdateProperty}
+              id={id} 
+              type="text"
+              placeholder="Ingrese la referencia"
+              value= {reference}
+              keyProperty="reference"
+          />
           
         </Td>
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
@@ -266,9 +287,9 @@ function PaymentRow(props) {
 
 
 function WhatPaymentMethod(props){
-  const {paymentMethod} = props
+  const {value} = props
   
-  switch(paymentMethod){
+  switch(value){
     case PaymentMethod.CASH:
       return <>Efectivo</>
     case PaymentMethod.CREDIT_CARD:

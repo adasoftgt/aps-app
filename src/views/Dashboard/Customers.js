@@ -165,7 +165,13 @@ function Customers(){
               })
             );
           }
-    
+          toast({
+            title: 'Update Custormer Proprety',
+            description: "We've update Customer for you.",
+            status: 'success',
+            duration: 9000,
+            isClosable: true,
+        })
         }catch(err){
           console.log(err)
         }

@@ -40,21 +40,30 @@ enum PaymentMethod {
   BANK_TRANSFER
   OTHER
 } */
-function DropDownPaymentMethod(props){
+export default function DropDownPaymentMethod(props){
 
     const {paymentmethod,onPaymentMethod} = props
     
     return (
         <FormControl id="country">
             <Select placeholder="Select Method" value={paymentmethod} onChange={(event) => onPaymentMethod(event.target.value) }>
-                <option value={PaymentMethod.CASH} >EFECTIVO</option>
-                <option value={PaymentMethod.CREDIT_CARD}>TARJETA DE CREDITO</option>
-                <option value={PaymentMethod.DEBIT_CARD}>TARJETA DE DEBITO</option>
-                <option value={PaymentMethod.BANK_TRANSFER}>TRANSFERENCIA</option>
-                <option value={PaymentMethod.OTHER}>OTRO</option>
+                <OptionsPaymentMethod />
             </Select>
         </FormControl>
     )
 }
 
-export default DropDownPaymentMethod
+export function OptionsPaymentMethod(){
+    return (
+        <>
+            <option value={PaymentMethod.CASH} >EFECTIVO</option>
+            <option value={PaymentMethod.CREDIT_CARD}>TARJETA DE CREDITO</option>
+            <option value={PaymentMethod.DEBIT_CARD}>TARJETA DE DEBITO</option>
+            <option value={PaymentMethod.BANK_TRANSFER}>TRANSFERENCIA</option>
+            <option value={PaymentMethod.OTHER}>OTRO</option>
+        </>
+    )
+    
+    
+}
+

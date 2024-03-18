@@ -191,14 +191,12 @@ function Payments(){
 
         getItems(currentPage,pageSize) // pimera pagina
 
+        
+
         return () =>{
 
         }
     }, []);
-
-    useEffect( () =>{
-        getItems(currentPage,pageSize)
-    },[invoiceModel])
     
     
     useEffect( async() => {
@@ -206,7 +204,7 @@ function Payments(){
         return () =>{
 
         }
-    }, [customerModel]);
+    }, [customerModel,invoiceModel]);
 
       
     
@@ -414,6 +412,32 @@ function Payments(){
         })
 
     }
+
+    async function updateProperty(id, key, newValue) {
+        try{
+    
+          const original = await DataStore.query(Payment, id);
+        
+          if (original) {
+            const updatedPost = await DataStore.save(
+              Payment.copyOf(original, updated => {
+                updated[key] = newValue
+              })
+            );
+          }
+
+            toast({
+                title: 'Update Payment Proprety',
+                description: "We've update Payment for you.",
+                status: 'success',
+                duration: 9000,
+                isClosable: true,
+            })
+    
+        }catch(err){
+          console.log(err)
+        }
+    }
     
     return (
         <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
@@ -495,6 +519,7 @@ function Payments(){
                             // functions
                             onDelete={handleDelete}
                             onInvoiceCancel={handleInvoiceCancel}
+                            onUpdateProperty={updateProperty}
                             
                             isLast={false}
                             logo={''}
