@@ -22,6 +22,7 @@ import {
     Stack, HStack, VStack,StackDivider,
   
     Box,
+    Tooltip,
   } from "@chakra-ui/react";
   // Custom components
   import Card from "components/Card/Card.js";
@@ -35,7 +36,7 @@ import {
   import Pagination from "components/Pagination/Paginacion.js"
   import Capabilities from "components/Capabilities/Capabilities.js"
   
-  import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, TypeDocument, InvoiceStatus,Customer,BatchChunk,Batch,PaymentMethod } from "models";
+  import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, TypeDocument, InvoiceStatus,Customer,BatchChunk,Batch,Payment,PaymentMethod } from "models";
   
   import {USER_OPERATION} from "structures"
   
@@ -67,6 +68,8 @@ import {
 
   import { format } from "date-fns";
 
+  import { NavLink } from "react-router-dom/cjs/react-router-dom.min";
+
  
   import DropDownPaymentMethod from "components/Payments/DropDownPaymentMethod";
 
@@ -90,6 +93,8 @@ function Payments(){
         userOperationSelected,setUserOperationSelected,
         invoiceDraft,setInvoiceDraft,
         customerModel,setCustomerModel,
+        invoiceModel,setInvoiceModel,
+        verifyContext,
         applyChanges,setApplyChanges,
         openContext,closeContext,isOpenContext,getValueOpenContext,CTX
     } = useUsers()
@@ -120,25 +125,16 @@ function Payments(){
     }
 
     const getItems = async(page = 0,limit = 0) => {
-        try{  
+        try{ 
             const pageOfset = page - 1
             var condicion = (i) => i.and(
                 i => [
-                    i.cashierId.eq(userId),
-                    i.clientId.eq(customerModel.id)
+                    i.invoicePaymentId.eq(invoiceModel.id),
                 ]
             )
-            if(Object.keys(customerModel).length === 0){
-                condicion = (i) => i.and(
-                    i => [
-                        i.cashierId.eq(userId)
-                    ]
-                )
-            }
 
-            console.log('8ab636d8-78d6-4b8f-a8dc-25fecaf217f7',condicion)
           
-          const products = await DataStore.query(Invoice, 
+          const payments = await DataStore.query(Payment, 
             condicion, 
             {
             page: pageOfset,
@@ -146,7 +142,7 @@ function Payments(){
             sort: (i) => i.createdAt(SortDirection.ASCENDING)
           })
     
-          setItems(products)
+          setItems(payments)
           
         }catch(err){
           console.log('Code: 7def93d4-4d86-4165-88b9-0c7141788933 Error: recolectar items',err)
@@ -175,13 +171,25 @@ function Payments(){
      * Iniciando la solicitudad de los items
      */
     useEffect( async() => {
+        
         await DataStore.start();
+        
+        // verificar si existe contexto
+        if(Object.keys(invoiceModel).length == 0){
+            const data = await verifyContext()
+            setInvoiceModel(data.invoiceModel)
+        }
+
         getItems(currentPage,pageSize) // pimera pagina
 
         return () =>{
 
         }
     }, []);
+
+    useEffect( () =>{
+        getItems(currentPage,pageSize)
+    },[invoiceModel])
     
     
     useEffect( async() => {
@@ -414,15 +422,16 @@ function Payments(){
                     
                     <FormControl display="flex" alignItems="center">
                         <FormLabel htmlFor="email-alerts" mb="0">
-                        Create Payment
+                        Add Payment
                         </FormLabel>
                        
                         <Stack direction={["column", "row"]} spacing="24px" display="flex">
-                            <Box w="200px" h="40px" >
-                                <DropDownPaymentMethod  paymentMethod={paymentMethod} onPaymentMethod={handlePaymentMethod}/>
-                            </Box>
                             <Box w="40px" h="40px" >
-                                <IconButton aria-label="Search database" onClick={handlePayment} icon={<FiPlusSquare />} />
+                                <NavLink to="/admin/createpayment">
+                                    <Tooltip label="Add payment">
+                                        <IconButton aria-label="Search database" icon={<FiPlusSquare />} />
+                                    </Tooltip>
+                                </NavLink>
                             </Box>
                         </Stack>
                     
@@ -437,7 +446,7 @@ function Payments(){
             <Card overflowX={{ sm: "scroll", xl: "hidden" }} pb="0px">
                 <CardHeader p="6px 0px 22px 0px">
                     <Text fontSize="xl" color={textColor} fontWeight="bold">
-                    Invoices Table
+                    Payments Table
                     </Text>
                 </CardHeader>
                 
@@ -446,15 +455,13 @@ function Payments(){
                     <Thead>
                         <Tr my=".8rem" pl="0px" color="gray.400" >
                         <Th pl="0px" borderColor={borderColor} color="gray.400" >
-                            Codigo de factura
+                            Código
                         </Th>
-                        <Th borderColor={borderColor} color="gray.400" >Nombre cajero</Th>
-                        <Th borderColor={borderColor} color="gray.400" >Nombre de cliente</Th>
-                        <Th borderColor={borderColor} color="gray.400" >Notas</Th>
-                        <Th borderColor={borderColor} color="gray.400" >Estado</Th>
-                        <Th borderColor={borderColor} color="gray.400" >Tipo</Th>
-                        <Th borderColor={borderColor} color="gray.400" >Terms</Th>
-                        <Th borderColor={borderColor}>Total</Th>
+                        <Th borderColor={borderColor} color="gray.400" >Código Factura</Th>
+                        <Th borderColor={borderColor} color="gray.400" >Método de pago</Th>
+                        <Th borderColor={borderColor} color="gray.400" >Monto</Th>
+                        <Th borderColor={borderColor} color="gray.400" >Referencia</Th>
+                        <Th borderColor={borderColor} color="gray.400" >Operador</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
@@ -464,20 +471,15 @@ function Payments(){
                             <PaymentRow
                             id={item.id}
                             index={index}
-                            cashierId={item.cashierId}
+                            userId={item.userId}
                             clientId={item.clientId}
-                            notes={item.notes}
-                            //quantity={item.quantity}
-                            status={item.status}
-                            term={item.term}
-                            total={item.total} // model
-                            typeDocument={item.typeDocument}
-                            
+                            reference={item.reference}
+                            method={item.method}
+                            amount={item.amount}
+                            invoicePaymentId={item.invoicePaymentId}
                             // functions
                             onDelete={handleDelete}
                             onInvoiceCancel={handleInvoiceCancel}
-                            //fillInputsEdit={fillInputsEdit}
-                            //setListBatchStatus={setListBatchStatus}
                             
                             isLast={false}
                             logo={''}

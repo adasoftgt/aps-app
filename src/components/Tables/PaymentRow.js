@@ -33,7 +33,7 @@ import {
 
 import {React,useEffect,useState,useRef, useMemo} from "react";
 
-import {Capability} from "models"
+import {Capability, PaymentMethod, Payment} from "models"
 import { FaLessThanEqual } from "react-icons/fa";
 
 import { FiEdit, FiDelete, FiSettings, FiSave, FiArrowLeft, FiDollarSign, FiCheckCircle, FiBox, FiLayers, FiEye} from "react-icons/fi";
@@ -63,6 +63,8 @@ import WhatInvoiceTerm from "components/invoices/WhatInvoiceTerm";
 
 import { FaFileInvoiceDollar } from "react-icons/fa6";
 
+import UserName from "components/Users/UserName";
+
 function PaymentRow(props) {
   /**
    * @property {String} displayname nombre a mostrar en el app
@@ -73,7 +75,7 @@ function PaymentRow(props) {
   const {
     isLast,logo,
     id,index,
-    cashierId,clientId,notes,status,term,total,typeDocument,
+    userId,clientId,reference,method,amount,invoicePaymentId,
     
 
     onInvoiceCancel,
@@ -197,28 +199,21 @@ function PaymentRow(props) {
           </Text>
         </Td>
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-          <Text
+           <Text
             fontSize="md"
             color={titleColor}
             fontWeight="bold"
             minWidth="100%"
           >
-            {cashierId}
+            
+            {invoicePaymentId}
           </Text>
         </Td>
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-           <CustomerName id={clientId}/>
+           <WhatPaymentMethod  paymentMethod={method}/>
         </Td>
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-          <Text
-            fontSize="md"
-            color={titleColor}
-            fontWeight="bold"
-            minWidth="100%"
-          >
-            {notes ? 'SI' : 'NO'}
-          </Text>
-          
+          <Moneda amount={amount}/>
         </Td>
        
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
@@ -229,7 +224,7 @@ function PaymentRow(props) {
             minWidth="100%"
           >
             
-            <WhatInvoiceStatus status={status}/>
+            {reference}
           </Text>
           
         </Td>
@@ -240,57 +235,24 @@ function PaymentRow(props) {
             fontWeight="bold"
             minWidth="100%"
           >
-            <WhatDocument typeDocument={typeDocument} />
+            <UserName userId={userId} />
           </Text>
           
         </Td>
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-          <Text
+          {/* <Text
             fontSize="md"
             color={titleColor}
             fontWeight="bold"
             minWidth="100%"
           >
             <WhatInvoiceTerm term={term} />
-          </Text>
+          </Text> */}
           
         </Td>
-        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-          <Text
-            fontSize="md"
-            color={titleColor}
-            fontWeight="bold"
-            minWidth="100%"
-          >
-            <Moneda amount={parseFloat(total).toFixed(2)}/>
-          </Text>
-          
-        </Td>
+       
         
-        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-        {price &&(
-          <List spacing={3}>
-            <ListItem>
-              <ListIcon as={FiCheckCircle} color="green.500" />
-              Unit: {price.unit}
-            </ListItem>
-            <ListItem>
-              <ListIcon as={FiCheckCircle} color="green.500" />
-              Offer: {price.offer}
-            </ListItem>
-            <ListItem>
-              <ListIcon as={FiCheckCircle} color="green.500" />
-              Et: {price.et}
-            </ListItem>
-            {/* You can also use custom icons from react-icons */}
-            <ListItem>
-              <ListIcon as={FiCheckCircle} color="green.500" />
-              Pharmacy: {price.pharmacy}
-            </ListItem>
-          </List>
-        )}
-          
-        </Td>
+       
         
       </Tr>
     </>
@@ -301,27 +263,24 @@ function PaymentRow(props) {
 
 
 
-function WhatDocument(props){
-  const {typeDocument} =props
+
+
+function WhatPaymentMethod(props){
+  const {paymentMethod} = props
   
-  switch(typeDocument){
-    case TypeDocument.INVOICE:
-      return(
-        <>Factura</>
-      )
-    case TypeDocument.SHIPPING:
-      return(
-        <>Envio</>
-      )
-    case TypeDocument.NOTE:
-      return(
-        <>Nota</>
-      )
+  switch(paymentMethod){
+    case PaymentMethod.CASH:
+      return <>Efectivo</>
+    case PaymentMethod.CREDIT_CARD:
+      return <>Tarjeta de credito</>
+    case PaymentMethod.DEBIT_CARD:
+      return <>Tarjeta de debito</>
+    case PaymentMethod.BANK_TRANSFER:
+      return <>Tranferencia Bancaria</>
+    case PaymentMethod.OTHER:
+      return <>Otro</>
     default:
       return null
-      
-    
-
   }
 }
 
