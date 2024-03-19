@@ -22,6 +22,7 @@ import {
     Stack, HStack, VStack,StackDivider,
   
     Box,
+    Tooltip,
   } from "@chakra-ui/react";
   // Custom components
   import Card from "components/Card/Card.js";
@@ -35,7 +36,7 @@ import {
   import Pagination from "components/Pagination/Paginacion.js"
   import Capabilities from "components/Capabilities/Capabilities.js"
   
-  import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, TypeDocument, InvoiceStatus,Customer,BatchChunk,Batch } from "models";
+  import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, TypeDocument, InvoiceStatus,Customer,BatchChunk,Batch, Payment } from "models";
   
   import {USER_OPERATION} from "structures"
   
@@ -452,12 +453,15 @@ function Invoices(){
                         <Th borderColor={borderColor} color="gray.400" >Estado</Th>
                         <Th borderColor={borderColor} color="gray.400" >Tipo</Th>
                         <Th borderColor={borderColor} color="gray.400" >Terms</Th>
+                        <Tooltip label="Pendiente de pago">
+                            <Th borderColor={borderColor} color="gray.400" >P.P</Th>
+                        </Tooltip>
                         <Th borderColor={borderColor}>Total</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
                         
-                        {items.map((item, index, arr) => {
+                        {items.map( (item, index, arr) => {
                         return (
                             <InvoiceRow
                             id={item.id}
@@ -470,7 +474,7 @@ function Invoices(){
                             term={item.term}
                             total={item.total} // model
                             typeDocument={item.typeDocument}
-                            
+                            currentPage={currentPage}
                             // functions
                             onDelete={handleDelete}
                             onInvoiceCancel={handleInvoiceCancel}

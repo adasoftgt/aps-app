@@ -45,7 +45,7 @@ import { useTable } from "contexts/TableContext";
 
 import ApsInput from "./Propertys/ApsInput";
 
-import {ProductPrice,Batch,BatchStatus,Invoice,InvoiceStatus} from "models";
+import {ProductPrice,Batch,BatchStatus,Invoice,InvoiceStatus,Payment} from "models";
 
 import CustomerName from "components/Customers/CustomerName";
 
@@ -69,6 +69,14 @@ import { useToast } from "@chakra-ui/react";
 import { Redirect } from 'react-router-dom';
 
 function InvoiceRow(props) {
+  
+  const textColor = useColorModeValue("gray.500", "white");
+  const titleColor = useColorModeValue("gray.700", "white");
+  const bgStatus = useColorModeValue("gray.400", "navy.900");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+  
+  const balanceActivoColor = useColorModeValue("gray", "gray");
+  
   /**
    * @property {String} displayname nombre a mostrar en el app
    * @property {String} name Nombre del rol
@@ -79,6 +87,7 @@ function InvoiceRow(props) {
     isLast,logo,
     id,index,
     cashierId,clientId,notes,status,term,total,typeDocument,
+    currentPage,
     
 
     onInvoiceCancel,
@@ -102,7 +111,9 @@ function InvoiceRow(props) {
 
   const [price, setPrice] = useState([])
   const [productBatches,setProductBatches] = useState([])
-  //const [productQuantity,setProductQuantity] = useState(0)
+  const [remainingBalance,setRemainingBalance] = useState(0)
+
+  const [remainingBalanceColor,setRemainingBalanceColor] = useState('transparent')
   
   const productQuantity = useMemo( () =>{
     let contador = 0
@@ -141,10 +152,7 @@ function InvoiceRow(props) {
     }
   },[])
 
-  const textColor = useColorModeValue("gray.500", "white");
-  const titleColor = useColorModeValue("gray.700", "white");
-  const bgStatus = useColorModeValue("gray.400", "navy.900");
-  const borderColor = useColorModeValue("gray.200", "gray.600");
+  
 
 
   const { 
@@ -197,6 +205,39 @@ function InvoiceRow(props) {
     
     
   }
+  /**
+   * Este efecto cargar el balance que tienes la facturas
+   */
+  useEffect( async() =>{
+
+    const items = await DataStore.query(Payment, 
+        i => i.invoicePaymentId.eq(id),
+    );
+    // monto pagado
+    var amount = 0
+
+    for (let index = 0; index < items.length; index++) {
+        const element = items[index];
+        amount = amount + element.amount 
+    }
+
+    const balance = parseFloat(total) - parseFloat(amount) 
+    setRemainingBalance(balance)
+    
+    return () =>{
+
+    }
+  },[total,currentPage,id])
+
+
+  useEffect( () =>{
+    console.log('c808d622-b5f9-4e67-bbd5-4790cd749771',remainingBalance)
+    if(remainingBalance != 0){
+      setRemainingBalanceColor(balanceActivoColor)
+    }else{
+      setRemainingBalanceColor('transparent')
+    }
+  },[remainingBalance,currentPage,id])
   return (
     <>
       {redirectPayments &&(
@@ -221,7 +262,7 @@ function InvoiceRow(props) {
           />
 
       </Stack>    
-      <Tr>
+      <Tr style={{backgroundColor:remainingBalanceColor}}>
         <Td
           minWidth={{ sm: "250px" }}
           pl="0px"
@@ -296,6 +337,10 @@ function InvoiceRow(props) {
           </Text>
           
         </Td>
+        <Td>
+          <Moneda amount={remainingBalance}/>
+        </Td>
+
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
           <Text
             fontSize="md"
@@ -305,31 +350,6 @@ function InvoiceRow(props) {
           >
             <Moneda amount={parseFloat(total).toFixed(2)}/>
           </Text>
-          
-        </Td>
-        
-        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-        {price &&(
-          <List spacing={3}>
-            <ListItem>
-              <ListIcon as={FiCheckCircle} color="green.500" />
-              Unit: {price.unit}
-            </ListItem>
-            <ListItem>
-              <ListIcon as={FiCheckCircle} color="green.500" />
-              Offer: {price.offer}
-            </ListItem>
-            <ListItem>
-              <ListIcon as={FiCheckCircle} color="green.500" />
-              Et: {price.et}
-            </ListItem>
-            {/* You can also use custom icons from react-icons */}
-            <ListItem>
-              <ListIcon as={FiCheckCircle} color="green.500" />
-              Pharmacy: {price.pharmacy}
-            </ListItem>
-          </List>
-        )}
           
         </Td>
         

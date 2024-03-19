@@ -8,7 +8,7 @@ function Moneda(props){
 
     const formatCurrency = (amount) => {
         // Convertir a string
-        const strAmount = amount.toString();
+        const strAmount = (amount != '0') ? amount.toString() : '0.00'
       
         // Separar la parte entera y decimal
         const [integerPart, decimalPart] = strAmount.split('.');
