@@ -107,6 +107,18 @@ type ProductPrice @model {
     product: Product @belongsTo
 }
 
+enum BatchPaymentStatus {
+  OPEN
+  CLOSE
+}
+
+type BatchPayment @model {
+  id: ID!
+  payments: [Payment] @hasMany
+  status: BatchPaymentStatus!
+  recordDate: String!
+  closeDate: String
+}
 
 enum PaymentMethod {
   CASH
@@ -124,8 +136,11 @@ type Payment @model {
   reference: String
   userId: String!         # user_id cognito currentuser auth
   clientId: String!       # user_id cliente seleccionado
+  batch: BatchPayment @belongsTo
   invoice: Invoice @belongsTo
 }
+
+
 
 
 enum InvoiceStatus {
