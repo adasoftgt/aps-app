@@ -22,7 +22,7 @@ AWS.config.update({
 const UsersContext = createContext();
 
 
-import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, InvoiceStatus, InvoiceItemStatus, UserConfiguration,Customer} from "models";
+import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, InvoiceStatus, InvoiceItemStatus, UserConfiguration,Customer,Configuration} from "models";
   
 // Amplify datastore
 import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore'
@@ -55,6 +55,10 @@ const UsersProvider = ({ children }) => {
    */
    const [invoiceModel,setInvoiceModel] = useState({})
 
+  /**
+   * Autoincremetable de customer
+   */
+  const [customerAi,setCustomerAi] = useState(0)
 
   const configurations = useRef('')
 
@@ -368,6 +372,78 @@ const UsersProvider = ({ children }) => {
       resolve(data)
     })
   }
+
+/**
+ * Creacion o modificacion de la configuracion de auto-icrementable de customer
+ */
+useEffect( async() =>{
+  
+  const customerAiConfiguration = await DataStore.query(Configuration, 
+    c => c.name.eq('customerAi')
+  );
+
+  const configSize = Object.keys(customerAiConfiguration).length
+  if(configSize == 0){
+    await DataStore.save(
+      new Configuration({
+          name: "customerAi",
+          value: "0",
+      })
+    );
+  }else if(configSize > 1){
+    
+    for (let index = 1; index < customerAiConfiguration.length; index++) {
+      const element = customerAiConfiguration[index];
+      customerAiConfiguration.splice(index,1)
+      await DataStore.delete(element)
+      
+    }
+    const customerAiConfigurationAux = customerAiConfiguration[0]
+    await DataStore.save(
+      Configuration.copyOf(customerAiConfigurationAux, updated => {
+          updated.value = customerAi
+      })
+    );
+    
+  }else{
+    if(customerAi != ''){
+      try{
+        const customerAiConfigurationAux = customerAiConfiguration[0]
+        await DataStore.save(
+          Configuration.copyOf(customerAiConfigurationAux, updated => {
+              updated.value = customerAi
+          })
+        );
+      }catch(err){
+        console.log(err)
+      }
+    }
+  }
+
+  
+
+
+  return () =>{
+    
+  }
+},[customerAi])
+  
+/**
+ * Obtener el custormer auto-increment si ya exite en DataStore
+ */
+const getValueConfiguration = (name) =>{
+  return new Promise( async(resolve,reject) =>{
+    const customerAiConfiguration = await DataStore.query(Configuration, 
+      c => c.name.eq(name)
+    );
+  
+    const configSize = Object.keys(customerAiConfiguration).length
+    if(configSize != 0){
+      resolve(customerAiConfiguration[0].value)
+    }
+  })
+}
+
   
   
 
@@ -384,10 +460,15 @@ const UsersProvider = ({ children }) => {
         customerModel,setCustomerModel,
         paymentModel,setPaymentModel,
         invoiceModel,setInvoiceModel,
-        verifyContext,
-        applyChanges,setApplyChanges,
         configurations,
-        openContext,closeContext,isOpenContext,getValueOpenContext,CTX
+        // CONFIGURATIONS
+        getValueConfiguration,
+        // valor de cliente autoincrementable
+        customerAi,setCustomerAi,
+        // CONTEXTOS
+        verifyContext,
+        openContext,closeContext,isOpenContext,getValueOpenContext,CTX,
+        applyChanges,setApplyChanges,
     }}>
       {children}
     </UsersContext.Provider>

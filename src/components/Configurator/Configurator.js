@@ -10,13 +10,17 @@ import {
   Flex, Link,
   Switch,
   Text,
+  Tooltip,
   useColorMode,
-  useColorModeValue
+  useColorModeValue,
+  Input,
 } from "@chakra-ui/react";
 import { HSeparator } from "components/Separator/Separator";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import GitHubButton from "react-github-btn";
 import { FaFacebook, FaTwitter } from "react-icons/fa";
+
+import { useUsers } from "contexts/UsersContext";
 
 export default function Configurator(props) {
   const {
@@ -28,6 +32,12 @@ export default function Configurator(props) {
     fixed,
     ...rest
   } = props;
+
+  const {
+    customerAi,setCustomerAi,
+    getValueConfiguration,
+  } = useUsers()
+
   const [switched, setSwitched] = useState(props.isChecked);
 
   const { colorMode, toggleColorMode } = useColorMode();
@@ -42,6 +52,24 @@ export default function Configurator(props) {
   const secondaryButtonColor = useColorModeValue("gray.700", "white");
   const bgDrawer = useColorModeValue("white", "navy.800");
   const settingsRef = React.useRef();
+
+
+  /**
+   * Cargar datos de configuracion de auto-incrementable de customer
+   */
+  useEffect( async()=>{
+    try{
+      const customerAiValue = await getValueConfiguration('customerAi')
+      setCustomerAi(customerAiValue)
+    }catch(err){
+      console.log('4cc564c9-4c5e-4ef8-971c-7c7188393c59',err)
+    }
+    return () =>{
+
+    }
+
+  },[isOpen])
+
   return (
     <>
       <Drawer
@@ -55,7 +83,7 @@ export default function Configurator(props) {
           <DrawerHeader pt="24px" px="24px">
             <DrawerCloseButton />
             <Text fontSize="xl" fontWeight="bold" mt="16px">
-              Argon Chakra Configurator
+              Aps Farma Configurator
             </Text>
             <Text fontSize="md" mb="16px">
               See your dashboard options.
@@ -99,7 +127,7 @@ export default function Configurator(props) {
               </Flex>
 
               <HSeparator />
-              <Box mt="24px">
+              {/* <Box mt="24px">
                 <Box>
                   <Link
                     href="https://www.creative-tim.com/product/argon-dashboard-chakra?ref=creativetim-pud"
@@ -179,7 +207,22 @@ export default function Configurator(props) {
                     </Link>
                   </Flex>
                 </Box>
-              </Box>
+              </Box> */}
+              <br></br>
+              <Flex
+                justifyContent="space-between"
+                alignItems="center"
+                mb="24px"
+              >
+                <Tooltip label="Customer AutoIncrement">
+                  <Text fontSize="md" fontWeight="600" mb="16px">
+                    Customer_AI
+                  </Text>
+                </Tooltip>
+               
+                <Input placeholder="25" value={customerAi} width='50%' onChange={(e) => setCustomerAi(e.target.value)}/>
+              </Flex>
+              <HSeparator />
             </Flex>
           </DrawerBody>
         </DrawerContent>
