@@ -42,7 +42,7 @@ const Pagination = ({ total, currentPage, pageSize, onPageChange }) => {
         )}
         <Box w="40px" h="40px" bg="transparent">
           <IconButton  aria-label="Delete" icon={<FiChevronRight />} 
-            isDisabled={currentPage === Math.ceil(total / pageSize)}
+            //isDisabled={currentPage === Math.ceil(total / pageSize)}
             onClick={() => onPageChange(currentPage + 1)}
           />
         </Box>

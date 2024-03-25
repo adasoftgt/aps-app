@@ -21,7 +21,6 @@ import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
 function ContextView(props){
     const {model, isActiveContext, onCloseContext, onClose, nameCtx, dataCtx,path} = props
 
-
     //const [customer,setCustomer] = useState([])
     
 
@@ -34,7 +33,7 @@ function ContextView(props){
     
     return (
         <>
-            {Object.keys(model).length != 0 &&  (
+            {Object.keys(model ?? {}).length != 0 &&  (
                 <HStack spacing="24px">
                     <Box w="40px" h="40px" >
                         <Tooltip label="Close Context">

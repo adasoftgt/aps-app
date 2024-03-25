@@ -96,7 +96,7 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
             <DrawerHeader borderBottomWidth="1px">Viewer Context</DrawerHeader>
             <DrawerBody>
               <h2>Contexts</h2>
-              <ContextView model={customerModel} onCloseContext={closeContextCustomer} onClose={onClose} nameCtx="Customer" dataCtx={customerModel.name ?? ''} path="/admin/customers"/>
+              <ContextView model={customerModel} onCloseContext={closeContextCustomer} onClose={onClose} nameCtx="Customer" dataCtx={customerModel?.name ?? ''} path="/admin/customers"/>
               <ContextView model={invoiceModel} onCloseContext={closeContextInvoice} onClose={onClose} nameCtx="Invoice" dataCtx={invoiceModel.id} path="/admin/invoices"/>
               
               

@@ -22,6 +22,7 @@ import {
     Stack, HStack, VStack,
   
     Box,
+    Progress,
   } from "@chakra-ui/react";
   // Custom components
   import Card from "components/Card/Card.js";
@@ -63,6 +64,8 @@ import {
   
   import ListBatch from "components/product/ListBatch";
 
+  import Papa from 'papaparse'
+
 
 function Customers(){
     const textColor = useColorModeValue("gray.700", "white");
@@ -76,10 +79,16 @@ function Customers(){
     const [createCustomer,setCreateCustomer] = useState(false) 
     
     const [customers,setCustomers] = useState([])
+
+    const [csvData, setCsvData] = useState([]);
+    const [fileCustomers,setFileCustomers] = useState(false)
+    const [progressValue,setProgressValue] = useState(0)
+
   
     const {
         userOperationSelected,setUserOperationSelected,
         invoiceDraft,setInvoiceDraft,
+        customerAi,setCustomerAi,
     } = useUsers()
 
     console.log('userOperationSelected',userOperationSelected)
@@ -176,13 +185,80 @@ function Customers(){
           console.log(err)
         }
     }
+
+
+    
+    const handleFileUpload = async() => {
+        const file = fileCustomers
+        const reader = new FileReader();
+        const todoslosCustomers = await DataStore.query(Customer); // Consulta todos los registros del schema
+        await Promise.all(todoslosCustomers.map(dato => DataStore.delete(dato))); // Elimina todos los registros
+        setCustomerAi('0')
+        reader.onload = async(e) => {
+            const text = e.target.result;
+            const result = Papa.parse(text, { header: true }); // Parsear el contenido CSV
+            const customers = result.data
+            const position = customers.length - 1
+            console.log('29db5772-1d71-4f11-a4fb-2257cb25ff96',customers[position])   
+            var customerList = []
+            var codigo = '0';
+            for (let index = 0; index < customers.length; index++) {
+                const customer = customers[index];
+                if(customer?.CODIGO != ''){
+                    const newCustomer = new Customer({
+                        code: customer?.CODIGO ?? "",
+                        name: customer?.CLIENTES ?? "",
+                        address: customer?.DIRECCION ?? "",
+                        nit: customer?.NIT ?? "",
+                        phone: customer?.TELEFONO ?? "",
+                        owner: customer?.PROPIETARIO ?? "",
+                        seller: "3a282772-f4c0-43cf-b8ab-f13a3e35d8e3",
+                        transportation_observations: customer["OBSERVACIONES DE TRANSPORTE"] ?? "",
+                        observations: customer["OTRAS OBSERVACIONES"] ?? "",
+                        countryDepartment: customer?.DEPARTAMENTO ?? "",
+                        municipality: customer?.MUNICIPIO ?? "",
+                        carrier: customer?.TRASPORTE ?? "SIN TRANSPORTE",
+                        sector: customer?.SECTOR ?? "SIN SECTOR",
+                    })
+                    customerList = [...customerList,newCustomer]
+                    codigo = customer?.CODIGO ?? ""
+                    try{
+                        const newCustomerStore = await DataStore.save(
+                            newCustomer
+                        );
+                    console.log('f61c5f65-3f46-451c-b62f-5f7de89392c4',index,newCustomerStore)
+                    }catch(err){
+                        console.log('b88ce198-ab3f-460f-b824-1530902a0994',err)
+                    }
+                    if (index % 100 === 0) {
+                        setProgressValue((index * 100) / customers.length)
+                    }
+                }
+                
+            }
+            if(progressValue != 100){
+                setProgressValue(100)
+            }
+            console.log('72a12284-5971-4798-b933-f40b30e4998b',codigo)
+            setCustomerAi(codigo.toString())
+            getCustomers(currentPage,pageSize)
+        };
+
+        reader.readAsText(file);
+    };
+
+    const handleFileChange = (event) =>{
+        setFileCustomers(event.target.files[0])
+    }
     
     return (
         <>
             {createCustomer ? (
                 <Create setCreateCustomer={setCreateCustomer}/>
             ):(
+                <>
                 <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
+                    
                     <Flex style={{padding: "0 0 10px 0"}}>
                         <Card p='16px' >
                         
@@ -192,13 +268,20 @@ function Customers(){
                                     Create Customer
                                     </FormLabel>
                                     <IconButton aria-label="Search database" onClick={handleCreateCostumer} icon={<FiPlusSquare />} />
-                                </FormControl>  
+                                </FormControl> 
+                                <Pagination
+                                total={total}
+                                currentPage={currentPage}
+                                pageSize={pageSize}
+                                onPageChange={setCurrentPage}
+                                /> 
                             
                             </CardBody>  
                         
                         
                         </Card>
                     </Flex>
+                    
                     <Card overflowX={{ sm: "scroll", xl: "hidden" }} pb="0px">
                         <CardHeader p="6px 0px 22px 0px">
                             <Text fontSize="xl" color={textColor} fontWeight="bold">
@@ -265,15 +348,41 @@ function Customers(){
                                 })}
                             </Tbody>
                             </Table>
-                            <Pagination
-                            total={total}
-                            currentPage={currentPage}
-                            pageSize={pageSize}
-                            onPageChange={setCurrentPage}
-                            />
+                           
                         </CardBody>
+                        
                     </Card>
+                   
                 </Flex>
+                <Flex style={{padding: "0 0 10px 0"}}>
+                        <Card p='16px' >
+                            <CardBody px='5px'>
+                                <Pagination
+                                total={total}
+                                currentPage={currentPage}
+                                pageSize={pageSize}
+                                onPageChange={setCurrentPage}
+                                />
+                            </CardBody>
+                        </Card>
+                </Flex>
+                <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
+                    <Flex style={{padding: "0 0 10px 0"}}>
+                        <Card p='16px' >
+                            <Progress hasStripe value={progressValue} />
+                            <VStack spacing={4} align="flex-start">
+                                <Input type="file" onChange={handleFileChange} />
+                                
+                                <Button colorScheme="blue" onClick={handleFileUpload} disabled={!fileCustomers} >
+                                
+                                    Subir archivo
+                                </Button>
+                            </VStack>
+                        </Card>
+                    </Flex>
+                </Flex>
+                </>
+                
             )}
         </>
     )

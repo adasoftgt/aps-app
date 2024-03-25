@@ -344,28 +344,32 @@ const UsersProvider = ({ children }) => {
       /**
        * Ver si existe contexto de customer
        */
-      if(Object.keys(customerModel).length == 0){
-        const isOpen = await isOpenContext(CTX.CUSTOMER_ID)
-        //setIsCustomer(isOpenContext_aux)
-        if(isOpen){
-          const id = await getValueOpenContext(CTX.CUSTOMER_ID)
-          const model = await DataStore.query(Customer, id);
-          data.customerModel = model 
-          setCustomerModel(model)
+      if(customerModel){
+        if(Object.keys(customerModel).length == 0){
+          const isOpen = await isOpenContext(CTX.CUSTOMER_ID)
+          //setIsCustomer(isOpenContext_aux)
+          if(isOpen){
+            const id = await getValueOpenContext(CTX.CUSTOMER_ID)
+            const model = await DataStore.query(Customer, id);
+            data.customerModel = model 
+            setCustomerModel(model)
+          }
         }
       }
 
       /**
        * Ver si existe contexto de invoice seleccioanda
        */
-      if(Object.keys(invoiceModel).length == 0){
-        const isOpen = await isOpenContext(CTX.INVOICE_ID)
-        //setIsCustomer(isOpenContext_aux)
-        if(isOpen){
-          const id = await getValueOpenContext(CTX.INVOICE_ID)
-          const model = await DataStore.query(Invoice, id);
-          data.invoiceModel = model
-          setInvoiceModel(model)
+      if(invoiceModel){
+        if(Object.keys(invoiceModel).length == 0){
+          const isOpen = await isOpenContext(CTX.INVOICE_ID)
+          //setIsCustomer(isOpenContext_aux)
+          if(isOpen){
+            const id = await getValueOpenContext(CTX.INVOICE_ID)
+            const model = await DataStore.query(Invoice, id);
+            data.invoiceModel = model
+            setInvoiceModel(model)
+          }
         }
       }
 
