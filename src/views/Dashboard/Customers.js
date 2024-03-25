@@ -211,8 +211,9 @@ function Customers(){
                             <Thead>
                                 <Tr my=".8rem" pl="0px" color="gray.400" >
                                 <Th pl="0px" borderColor={borderColor} color="gray.400" >
-                                    Name
+                                    Codigo
                                 </Th>
+                                <Th borderColor={borderColor} color="gray.400" >Name</Th>
                                 <Th borderColor={borderColor} color="gray.400" >Adress</Th>
                                 <Th borderColor={borderColor} color="gray.400" >nit</Th>
                                 <Th borderColor={borderColor} color="gray.400" >Phone</Th>
@@ -229,23 +230,24 @@ function Customers(){
                             </Thead>
                             <Tbody>
                                 
-                                {customers.map((customers, index, arr) => {
+                                {customers.map((customer, index, arr) => {
                                 return (
                                     <CustormersRow
-                                    id={customers.id}
+                                    id={customer.id}
                                     index={index}
-                                    name={customers.name}
-                                    address={customers.address}
-                                    nit={customers.nit}
-                                    phone={customers.phone}
-                                    owner={customers.owner}
-                                    seller={customers.seller} // model
-                                    transportation_observations={customers.transportation_observations}
-                                    observations={customers.observations}
-                                    countryDepartment={customers.countryDepartment}
-                                    municipality={customers.municipality}
-                                    carrier={customers.carrier}
-                                    sector={customers.sector}
+                                    code={customer.code}
+                                    name={customer.name}
+                                    address={customer.address}
+                                    nit={customer.nit}
+                                    phone={customer.phone}
+                                    owner={customer.owner}
+                                    seller={customer.seller} // model
+                                    transportation_observations={customer.transportation_observations}
+                                    observations={customer.observations}
+                                    countryDepartment={customer.countryDepartment}
+                                    municipality={customer.municipality}
+                                    carrier={customer.carrier}
+                                    sector={customer.sector}
                                     
                                     // functions
                                     

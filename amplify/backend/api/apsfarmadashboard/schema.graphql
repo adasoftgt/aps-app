@@ -271,6 +271,7 @@ type UserConfiguration @model {
 
 type Customer @model{
   id: ID!
+  code: String
   name: String!
   address: String!
   nit: String

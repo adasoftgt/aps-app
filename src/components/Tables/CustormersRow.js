@@ -76,7 +76,7 @@ function CustormersRow(props) {
   const {
     isLast,logo,
     id,index,
-    name,address,nit,phone,owner,seller,// model
+    code,name,address,nit,phone,owner,seller,// model
     transportation_observations,observations,countryDepartment,municipality,carrier,sector,
     
     
@@ -165,8 +165,18 @@ function CustormersRow(props) {
             fontWeight="bold"
             minWidth="100%"
           >
-            {name}
+            {code}
           </Text>
+        </Td>
+        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
+          <ApsInput
+              updateProperty={updateProperty}
+              id={id} 
+              type="text"
+              placeholder="Ingrese el nombre"
+              value= {name}
+              keyProperty="name"
+          />
         </Td>
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
           <ApsInput

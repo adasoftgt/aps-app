@@ -429,7 +429,9 @@ useEffect( async() =>{
 },[customerAi])
   
 /**
- * Obtener el custormer auto-increment si ya exite en DataStore
+ * Obtener value de una configuacion si ya exite en DataStore
+ * @param {String} name nombre de la configuracion
+ * @returns {String} value
  */
 const getValueConfiguration = (name) =>{
   return new Promise( async(resolve,reject) =>{
@@ -437,10 +439,34 @@ const getValueConfiguration = (name) =>{
       c => c.name.eq(name)
     );
   
+    // verificar si tiene keys la consulta
     const configSize = Object.keys(customerAiConfiguration).length
     if(configSize != 0){
       resolve(customerAiConfiguration[0].value)
     }
+  })
+}
+
+/**
+ * Obtener el auto-increment de una configuracion y gardar el resultado de DataStore
+ * @param {String} name nombre de la metadata de la configuracion
+ * @returns {String} numero actual mas uno
+ */
+const getAutoIncrementConfiguration = async(name) =>{
+  return new Promise( async(resolve,reject) =>{
+    const value = await getValueConfiguration(name)
+    const customerAiConfiguration = await DataStore.query(Configuration, 
+      c => c.name.eq(name)
+    );
+    const newValue = (parseInt(value) + 1).toString()
+    const customerAiConfigurationAux = customerAiConfiguration[0]
+    await DataStore.save(
+      Configuration.copyOf(customerAiConfigurationAux, updated => {
+          updated.value = newValue
+      })
+    );
+
+    resolve(newValue)
   })
 }
 
@@ -463,6 +489,7 @@ const getValueConfiguration = (name) =>{
         configurations,
         // CONFIGURATIONS
         getValueConfiguration,
+        getAutoIncrementConfiguration,
         // valor de cliente autoincrementable
         customerAi,setCustomerAi,
         // CONTEXTOS

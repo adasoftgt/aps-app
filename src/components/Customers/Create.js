@@ -47,7 +47,11 @@ function Create(props){
 
     const {setCreateCustomer} = props
     const toast = useToast()
-    const { sellers } = useUsers()
+    const { 
+      sellers,
+      customerAi,setCustomerAi,
+      getAutoIncrementConfiguration,
+    } = useUsers()
 
     const { 
       editRow,
@@ -80,7 +84,7 @@ function Create(props){
       carrier,
       sector,
     } = props
-
+    
     const [newName,setNewName] = useState(name)
     const [newAddress,setNewAddress] = useState(address)
     const [newNit,setNewNit] = useState(nit)
@@ -127,8 +131,10 @@ function Create(props){
 
     
     const handleCreateCustomer = async() => {
+      const code = await getAutoIncrementConfiguration('customerAi')
       const newCustomer = await DataStore.save(
         new Customer({
+          code: code,
           name: newName,
           address: newAddress,
           nit: newNit,
