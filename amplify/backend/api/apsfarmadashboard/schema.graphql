@@ -11,10 +11,7 @@ type Todo @model {
 type Configuration @model {
   id: ID!
   name: String!
-
   value: String!
-  createdAt: String!
-  updatedAt: String!
 }
 
 type Rol @model {

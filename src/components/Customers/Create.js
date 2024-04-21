@@ -28,7 +28,7 @@ import {React, useEffect, useState} from "react"
 
 import configAsp from "config/config";
 
-import { Customer } from "models";
+import { Customer,Configuration } from "models";
   
 // Amplify datastore
 import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
@@ -37,6 +37,8 @@ import { useUsers } from "contexts/UsersContext";
 import { useTable } from "contexts/TableContext";
 
 import { useToast } from "@chakra-ui/react";
+
+import { v4 as uuidv4 } from 'uuid';
 
 
 function Create(props){
@@ -163,6 +165,24 @@ function Create(props){
       await inputsClear()
     }
 
+    useEffect( async() =>{
+      const subscription = DataStore.observeQuery(
+        Configuration, 
+        c => c.and( c => [
+          c.name.eq('customerAi'),
+          c.id.eq('ff35fde6-7616-45f2-967f-8885280a9a4a')
+          ]),
+          { forceNetwork: true }
+      ).subscribe( async({ items }) => {
+        console.log('252bc465-4eea-47a8-b3b4-3e618709e16d',items)
+        setCustomerAi(items[0].value)
+      })
+
+      return () =>{
+        subscription.unsubscribe();
+      }
+    },[])
+
 
     return(
         <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
@@ -257,7 +277,7 @@ function Create(props){
                         <Flex align='center' mb='20px'>
                           <FormControl id="email">
                             <FormLabel>Vendedor</FormLabel>
-                            <Select placeholder="Select vendedor" 
+                            <Select key={uuidv4()} placeholder="Select vendedor" 
                                 value={newSeller} 
                                 onChange={(event) => setNewSeller(event.target.value)}
                             >
@@ -265,7 +285,7 @@ function Create(props){
                               {sellers?.map( (seller, index, arr) =>{
                                 const user_id = seller.Attributes.find(attribute => attribute.Name === 'sub')?.Value;
                                 return(
-                                  <option value={user_id}>{seller.Username}</option>
+                                  <option key={uuidv4()} value={user_id}>{seller.Username}</option>
                                 )
                               })}
                             </Select>
@@ -308,7 +328,7 @@ function Create(props){
                               
                               {departamentosList.map( (departamento, index, arr) =>{
                                 return(
-                                  <option value={departamento}>{departamento}</option>
+                                  <option key={uuidv4()} value={departamento}>{departamento}</option>
                                 )
                               })}
                             </Select>
@@ -344,7 +364,7 @@ function Create(props){
                               
                               {configAsp.carriers.map( (carrier, index, arr) =>{
                                 return(
-                                  <option value={carrier}>{carrier}</option>
+                                  <option key={uuidv4()} value={carrier}>{carrier}</option>
                                 )
                               })}
                             </Select>
@@ -362,7 +382,7 @@ function Create(props){
                               
                               {configAsp.sectors.map( (sector, index, arr) =>{
                                 return(
-                                  <option value={sector}>{sector}</option>
+                                  <option key={uuidv4()} value={sector}>{sector}</option>
                                 )
                               })}
                             </Select>

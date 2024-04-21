@@ -58,7 +58,7 @@ const UsersProvider = ({ children }) => {
   /**
    * Autoincremetable de customer
    */
-  const [customerAi,setCustomerAi] = useState(0)
+  const [customerAi,setCustomerAi] = useState('')
 
   const configurations = useRef('')
 
@@ -380,57 +380,60 @@ const UsersProvider = ({ children }) => {
 /**
  * Creacion o modificacion de la configuracion de auto-icrementable de customer
  */
-useEffect( async() =>{
+// useEffect( async() =>{
   
-  const customerAiConfiguration = await DataStore.query(Configuration, 
-    c => c.name.eq('customerAi')
-  );
+//   const customerAiConfiguration = await DataStore.query(Configuration, 
+//     c => c.and( c => [
+//       c.name.eq('customerAi'),
+//       c.id.eq('ff35fde6-7616-45f2-967f-8885280a9a4a')
+//     ])
+//   );
 
-  const configSize = Object.keys(customerAiConfiguration).length
-  if(configSize == 0){
-    await DataStore.save(
-      new Configuration({
-          name: "customerAi",
-          value: "0",
-      })
-    );
-  }else if(configSize > 1){
+//   // const configSize = Object.keys(customerAiConfiguration).length
+//   // if(configSize == 0){
+//   //   await DataStore.save(
+//   //     new Configuration({
+//   //         name: "customerAi",
+//   //         value: "0",
+//   //     })
+//   //   );
+//   // }else if(configSize > 1){
     
-    for (let index = 1; index < customerAiConfiguration.length; index++) {
-      const element = customerAiConfiguration[index];
-      customerAiConfiguration.splice(index,1)
-      await DataStore.delete(element)
+//   //   for (let index = 1; index < customerAiConfiguration.length; index++) {
+//   //     const element = customerAiConfiguration[index];
+//   //     customerAiConfiguration.splice(index,1)
+//   //     await DataStore.delete(element)
       
-    }
-    const customerAiConfigurationAux = customerAiConfiguration[0]
-    await DataStore.save(
-      Configuration.copyOf(customerAiConfigurationAux, updated => {
-          updated.value = customerAi
-      })
-    );
+//   //   }
+//   //   const customerAiConfigurationAux = customerAiConfiguration[0]
+//   //   await DataStore.save(
+//   //     Configuration.copyOf(customerAiConfigurationAux, updated => {
+//   //         updated.value = customerAi
+//   //     })
+//   //   );
     
-  }else{
-    if(customerAi != ''){
-      try{
-        const customerAiConfigurationAux = customerAiConfiguration[0]
-        await DataStore.save(
-          Configuration.copyOf(customerAiConfigurationAux, updated => {
-              updated.value = customerAi
-          })
-        );
-      }catch(err){
-        console.log(err)
-      }
-    }
-  }
+//   // }else{
+//     if(customerAi != ''){
+//       try{
+//         const customerAiConfigurationAux = customerAiConfiguration[0]
+//         await DataStore.save(
+//           Configuration.copyOf(customerAiConfigurationAux, updated => {
+//               updated.value = customerAi
+//           })
+//         );
+//       }catch(err){
+//         console.log(err)
+//       }
+//     }
+//   //}
 
   
 
 
-  return () =>{
+//   return () =>{
     
-  }
-},[customerAi])
+//   }
+// },[customerAi])
   
 /**
  * Obtener value de una configuacion si ya exite en DataStore
