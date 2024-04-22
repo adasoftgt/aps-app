@@ -22,7 +22,7 @@ AWS.config.update({
 const UsersContext = createContext();
 
 
-import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, InvoiceStatus, InvoiceItemStatus, UserConfiguration,Customer} from "models";
+import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, InvoiceStatus, InvoiceItemStatus, UserConfiguration,Customer,Configuration} from "models";
   
 // Amplify datastore
 import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore'
@@ -35,8 +35,31 @@ const UsersProvider = ({ children }) => {
   const [sellers,setSellers] = useState([])
   
   const [userOperationSelected,setUserOperationSelected] = useState(false)
+  /**
+   * @property {Object} invoiceDraft muestra modelo de la factura seleccionada por el usuario auth
+   */
   const [invoiceDraft,setInvoiceDraft] = useState(false)
+
+  /**
+   * @property {Object} customerModel muestra modelo del cliente por el usuario auth
+   */
   const [customerModel,setCustomerModel] = useState({})
+
+   /**
+   * @property {Object} paymentModel muestra modelo del payment por el usuario auth
+   */
+  const [paymentModel,setPaymentModel] = useState({})
+
+   /**
+   * @property {Object} invoiceModel muestra modelo del payment por el usuario auth
+   */
+   const [invoiceModel,setInvoiceModel] = useState({})
+
+  /**
+   * Autoincremetable de customer
+   */
+  const [customerAi,setCustomerAi] = useState('')
+
   const configurations = useRef('')
 
   const [applyChanges,setApplyChanges] = useState(false)
@@ -312,7 +335,148 @@ const UsersProvider = ({ children }) => {
 
   }
 
+  /**
+   * Verifiar los contexto antes de utilizarlos
+   */
+  const verifyContext = async() =>{
+    var data = {'invoiceModel':{},'customerModel':{}}
+    return new Promise( async(resolve,reject) => {
+      /**
+       * Ver si existe contexto de customer
+       */
+      if(customerModel){
+        if(Object.keys(customerModel).length == 0){
+          const isOpen = await isOpenContext(CTX.CUSTOMER_ID)
+          //setIsCustomer(isOpenContext_aux)
+          if(isOpen){
+            const id = await getValueOpenContext(CTX.CUSTOMER_ID)
+            const model = await DataStore.query(Customer, id);
+            data.customerModel = model 
+            setCustomerModel(model)
+          }
+        }
+      }
+
+      /**
+       * Ver si existe contexto de invoice seleccioanda
+       */
+      if(invoiceModel){
+        if(Object.keys(invoiceModel).length == 0){
+          const isOpen = await isOpenContext(CTX.INVOICE_ID)
+          //setIsCustomer(isOpenContext_aux)
+          if(isOpen){
+            const id = await getValueOpenContext(CTX.INVOICE_ID)
+            const model = await DataStore.query(Invoice, id);
+            data.invoiceModel = model
+            setInvoiceModel(model)
+          }
+        }
+      }
+
+      resolve(data)
+    })
+  }
+
+/**
+ * Creacion o modificacion de la configuracion de auto-icrementable de customer
+ */
+// useEffect( async() =>{
   
+//   const customerAiConfiguration = await DataStore.query(Configuration, 
+//     c => c.and( c => [
+//       c.name.eq('customerAi'),
+//       c.id.eq('ff35fde6-7616-45f2-967f-8885280a9a4a')
+//     ])
+//   );
+
+//   // const configSize = Object.keys(customerAiConfiguration).length
+//   // if(configSize == 0){
+//   //   await DataStore.save(
+//   //     new Configuration({
+//   //         name: "customerAi",
+//   //         value: "0",
+//   //     })
+//   //   );
+//   // }else if(configSize > 1){
+    
+//   //   for (let index = 1; index < customerAiConfiguration.length; index++) {
+//   //     const element = customerAiConfiguration[index];
+//   //     customerAiConfiguration.splice(index,1)
+//   //     await DataStore.delete(element)
+      
+//   //   }
+//   //   const customerAiConfigurationAux = customerAiConfiguration[0]
+//   //   await DataStore.save(
+//   //     Configuration.copyOf(customerAiConfigurationAux, updated => {
+//   //         updated.value = customerAi
+//   //     })
+//   //   );
+    
+//   // }else{
+//     if(customerAi != ''){
+//       try{
+//         const customerAiConfigurationAux = customerAiConfiguration[0]
+//         await DataStore.save(
+//           Configuration.copyOf(customerAiConfigurationAux, updated => {
+//               updated.value = customerAi
+//           })
+//         );
+//       }catch(err){
+//         console.log(err)
+//       }
+//     }
+//   //}
+
+  
+
+
+//   return () =>{
+    
+//   }
+// },[customerAi])
+  
+/**
+ * Obtener value de una configuacion si ya exite en DataStore
+ * @param {String} name nombre de la configuracion
+ * @returns {String} value
+ */
+const getValueConfiguration = (name) =>{
+  return new Promise( async(resolve,reject) =>{
+    const customerAiConfiguration = await DataStore.query(Configuration, 
+      c => c.name.eq(name)
+    );
+  
+    // verificar si tiene keys la consulta
+    const configSize = Object.keys(customerAiConfiguration).length
+    if(configSize != 0){
+      resolve(customerAiConfiguration[0].value)
+    }
+  })
+}
+
+/**
+ * Obtener el auto-increment de una configuracion y gardar el resultado de DataStore
+ * @param {String} name nombre de la metadata de la configuracion
+ * @returns {String} numero actual mas uno
+ */
+const getAutoIncrementConfiguration = async(name) =>{
+  return new Promise( async(resolve,reject) =>{
+    const value = await getValueConfiguration(name)
+    const customerAiConfiguration = await DataStore.query(Configuration, 
+      c => c.name.eq(name)
+    );
+    const newValue = (parseInt(value) + 1).toString()
+    const customerAiConfigurationAux = customerAiConfiguration[0]
+    await DataStore.save(
+      Configuration.copyOf(customerAiConfigurationAux, updated => {
+          updated.value = newValue
+      })
+    );
+
+    resolve(newValue)
+  })
+}
+
   
   
 
@@ -327,9 +491,18 @@ const UsersProvider = ({ children }) => {
         userOperationSelected,setUserOperationSelected,
         invoiceDraft,setInvoiceDraft,
         customerModel,setCustomerModel,
-        applyChanges,setApplyChanges,
+        paymentModel,setPaymentModel,
+        invoiceModel,setInvoiceModel,
         configurations,
-        openContext,closeContext,isOpenContext,getValueOpenContext,CTX
+        // CONFIGURATIONS
+        getValueConfiguration,
+        getAutoIncrementConfiguration,
+        // valor de cliente autoincrementable
+        customerAi,setCustomerAi,
+        // CONTEXTOS
+        verifyContext,
+        openContext,closeContext,isOpenContext,getValueOpenContext,CTX,
+        applyChanges,setApplyChanges,
     }}>
       {children}
     </UsersContext.Provider>

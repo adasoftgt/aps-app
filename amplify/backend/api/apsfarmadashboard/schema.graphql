@@ -11,10 +11,7 @@ type Todo @model {
 type Configuration @model {
   id: ID!
   name: String!
-
   value: String!
-  createdAt: String!
-  updatedAt: String!
 }
 
 type Rol @model {
@@ -107,6 +104,18 @@ type ProductPrice @model {
     product: Product @belongsTo
 }
 
+enum BatchPaymentStatus {
+  OPEN
+  CLOSE
+}
+
+type BatchPayment @model {
+  id: ID!
+  payments: [Payment] @hasMany
+  status: BatchPaymentStatus!
+  recordDate: String!
+  closeDate: String
+}
 
 enum PaymentMethod {
   CASH
@@ -124,8 +133,11 @@ type Payment @model {
   reference: String
   userId: String!         # user_id cognito currentuser auth
   clientId: String!       # user_id cliente seleccionado
+  batch: BatchPayment @belongsTo
   invoice: Invoice @belongsTo
 }
+
+
 
 
 enum InvoiceStatus {
@@ -205,6 +217,12 @@ type DiscountRate @model {
     invoice: Invoice @belongsTo
 }
 
+enum TypeDocument {
+    INVOICE
+    SHIPPING
+    NOTE
+}
+
 type Invoice @model {
     id: ID!                                   # identificador unico de factura
     cashierId: String!                        # user_id cognito
@@ -220,7 +238,8 @@ type Invoice @model {
     digitalInvoice: Digifact @hasOne          # Datos de Factura electronica o digital
     items: [InvoiceItem] @hasMany             # Lista de articulos de la factura
     payment: [Payment] @hasMany               # Este payment contiene el pago mas reciente, si quere ver mas busque @model HistoricalPayment
-    date: String
+    fecha: String!
+    typeDocument: TypeDocument!
 }
 
 
@@ -249,6 +268,7 @@ type UserConfiguration @model {
 
 type Customer @model{
   id: ID!
+  code: String
   name: String!
   address: String!
   nit: String

@@ -33,7 +33,7 @@ function InfoCustomer(props){
     const [customer,setCustomer] = useState([])
     const [sellerUserName,setSellerUserName] = useState('')
 
-    const {sellers} = useUsers()
+    const {sellers,invoiceDraft} = useUsers()
     
 
     useEffect( async() =>{
@@ -96,7 +96,7 @@ function InfoCustomer(props){
                           Fecha: 
                         </Box>
                         <Box w='auto' h='40px' >
-                          {format(new Date(), 'dd/MM/yy')}
+                          {invoiceDraft.fecha}
                         </Box>
                       </HStack>
                     </Box>

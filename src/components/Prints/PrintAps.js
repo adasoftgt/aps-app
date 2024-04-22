@@ -6,6 +6,8 @@ import { Box, Flex, Text, Image } from '@chakra-ui/react';
   import CardBody from "components/Card/CardBody.js";
   import CardHeader from "components/Card/CardHeader.js";
 
+  import InvoicePDF from './InvoicePDF';
+
 function PrintAps(props){
   const {invoiceItems = []} = props
 
@@ -31,7 +33,7 @@ function PrintAps(props){
     ));
   };
 
-  return (
+  /*return (
     <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
       <Box p={4}>
         <Flex style={{padding: "0 0 10px 0"}}>
@@ -74,7 +76,20 @@ function PrintAps(props){
         <PiePagina total={100.25} />
       </Box>
     </Flex>
-  );
+  );*/
+  return (
+    <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
+      <Box p={4}>
+        <Flex style={{padding: "0 0 10px 0"}}>
+          <Card p='16px' >
+              <CardBody px='5px' style={{ textAlign: 'center' }}>
+                < InvoicePDF />
+              </CardBody>
+          </Card>
+        </Flex> 
+      </Box> 
+    </Flex>    
+  )
 }
 
 

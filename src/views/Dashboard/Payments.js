@@ -36,7 +36,7 @@ import {
   import Pagination from "components/Pagination/Paginacion.js"
   import Capabilities from "components/Capabilities/Capabilities.js"
   
-  import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, TypeDocument, InvoiceStatus,Customer,BatchChunk,Batch, Payment } from "models";
+  import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, TypeDocument, InvoiceStatus,Customer,BatchChunk,Batch,Payment,PaymentMethod } from "models";
   
   import {USER_OPERATION} from "structures"
   
@@ -62,15 +62,19 @@ import {
   
   import ListBatch from "components/product/ListBatch";
 
-  import InvoiceRow from "components/Tables/InvoiceRow";
+  //import InvoiceRow from "components/Tables/InvoiceRow";
+  import PaymentRow from "components/Tables/PaymentRow";
 
 
   import { format } from "date-fns";
 
-  import DropDownTypeDocument from "components/invoices/DropDownTypeDocument";
+  import { NavLink } from "react-router-dom/cjs/react-router-dom.min";
+
+ 
+  import DropDownPaymentMethod from "components/Payments/DropDownPaymentMethod";
 
 
-function Invoices(){
+function Payments(){
     const textColor = useColorModeValue("gray.700", "white");
     const borderColor = useColorModeValue("gray.200", "gray.600");
     const borderRoleColor = useColorModeValue("white", "transparent");
@@ -89,11 +93,13 @@ function Invoices(){
         userOperationSelected,setUserOperationSelected,
         invoiceDraft,setInvoiceDraft,
         customerModel,setCustomerModel,
+        invoiceModel,setInvoiceModel,
+        verifyContext,
         applyChanges,setApplyChanges,
         openContext,closeContext,isOpenContext,getValueOpenContext,CTX
     } = useUsers()
 
-    const [typeDocument,setTypeDocument] = useState(invoiceDraft.typeDocument ?? TypeDocument.INVOICE)
+    const [paymentMethod,setPaymentMethod] = useState(PaymentMethod.CASH)
 
     const {userId} = useAuth()
 
@@ -113,31 +119,31 @@ function Invoices(){
     } = useTable()
 
 
-    const handleTypeDocument = async(typeDocument) =>{
-        setTypeDocument(typeDocument)
+    const handlePaymentMethod = async(paymentMethod) =>{
+        setPaymentMethod(paymentMethod)
 
     }
 
     const getItems = async(page = 0,limit = 0) => {
-        try{  
+        try{ 
+            
             const pageOfset = page - 1
-            var condicion = (i) => i.and(
-                i => [
-                    i.cashierId.eq(userId),
-                    i.clientId.eq(customerModel.id)
-                ]
-            )
-            if(Object.keys(customerModel).length === 0){
-                condicion = (i) => i.and(
+            if(Object.keys(invoiceModel).length == 0){
+                var condicion = (i) => i.and(
                     i => [
-                        i.cashierId.eq(userId)
+                        i.userId.eq(userId),
+                    ]
+                ) 
+            }else{
+                var condicion = (i) => i.and(
+                    i => [
+                        i.invoicePaymentId.eq(invoiceModel.id),
                     ]
                 )
             }
 
-            console.log('8ab636d8-78d6-4b8f-a8dc-25fecaf217f7',condicion)
           
-          const products = await DataStore.query(Invoice, 
+          const payments = await DataStore.query(Payment, 
             condicion, 
             {
             page: pageOfset,
@@ -145,7 +151,7 @@ function Invoices(){
             sort: (i) => i.createdAt(SortDirection.ASCENDING)
           })
     
-          setItems(products)
+          setItems(payments)
           
         }catch(err){
           console.log('Code: 7def93d4-4d86-4165-88b9-0c7141788933 Error: recolectar items',err)
@@ -174,8 +180,18 @@ function Invoices(){
      * Iniciando la solicitudad de los items
      */
     useEffect( async() => {
+        
         await DataStore.start();
+        
+        // verificar si existe contexto
+        if(Object.keys(invoiceModel).length == 0){
+            const data = await verifyContext()
+            setInvoiceModel(data.invoiceModel)
+        }
+
         getItems(currentPage,pageSize) // pimera pagina
+
+        
 
         return () =>{
 
@@ -188,7 +204,7 @@ function Invoices(){
         return () =>{
 
         }
-    }, [customerModel]);
+    }, [customerModel,invoiceModel]);
 
       
     
@@ -208,7 +224,7 @@ function Invoices(){
     },[total])
     
    
-    const handleCreateInvoice = async() =>{
+    const handlePayment = async() =>{
         const isCustumerOpenContext = await isOpenContext(CTX.CUSTOMER_ID)
         if(isCustumerOpenContext){
             const custumerId = await getValueOpenContext(CTX.CUSTOMER_ID)
@@ -396,34 +412,67 @@ function Invoices(){
         })
 
     }
+
+    async function updateProperty(id, key, newValue) {
+        try{
+    
+          const original = await DataStore.query(Payment, id);
+        
+          if (original) {
+            const updatedPost = await DataStore.save(
+              Payment.copyOf(original, updated => {
+                updated[key] = newValue
+              })
+            );
+          }
+
+            toast({
+                title: 'Update Payment Proprety',
+                description: "We've update Payment for you.",
+                status: 'success',
+                duration: 9000,
+                isClosable: true,
+            })
+    
+        }catch(err){
+          console.log(err)
+        }
+    }
     
     return (
         <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
-            {invoiceDraft &&(
+            {/* {invoiceDraft &&(
                 <Redirect 
                     to={{
                         pathname: '/admin/invoice_create',
                     }} 
                 />
-            )}
+            )} */}
             <Flex style={{padding: "0 0 10px 0"}}>
                 <Card p='16px' >
                 
                     <CardBody px='5px'>
                     
                     <FormControl display="flex" alignItems="center">
-                        <FormLabel htmlFor="email-alerts" mb="0">
-                        Create Document
-                        </FormLabel>
+                        
                        
-                        <Stack direction={["column", "row"]} spacing="24px" display="flex">
-                            <Box w="150px" h="40px" >
-                                <DropDownTypeDocument typeDocument={typeDocument} onTypeDocument={handleTypeDocument} />
-                            </Box>
-                            <Box w="40px" h="40px" >
-                                <IconButton aria-label="Search database" onClick={handleCreateInvoice} icon={<FiPlusSquare />} />
-                            </Box>
-                        </Stack>
+                        {Object.keys(invoiceModel).length != 0 && (
+                            <>
+                                <FormLabel htmlFor="email-alerts" mb="0">
+                                Add Payment
+                                </FormLabel>
+                                <Stack direction={["column", "row"]} spacing="24px" display="flex">
+                                    <Box w="40px" h="40px" >
+                                        <NavLink to="/admin/createpayment">
+                                            <Tooltip label="Add payment">
+                                                <IconButton aria-label="Search database" icon={<FiPlusSquare />} />
+                                            </Tooltip>
+                                        </NavLink>
+                                    </Box>
+                                </Stack>
+                            </>
+                        )}
+                        
                     
                     </FormControl>
                     
@@ -436,7 +485,7 @@ function Invoices(){
             <Card overflowX={{ sm: "scroll", xl: "hidden" }} pb="0px">
                 <CardHeader p="6px 0px 22px 0px">
                     <Text fontSize="xl" color={textColor} fontWeight="bold">
-                    Invoices Table
+                    Payments Table
                     </Text>
                 </CardHeader>
                 
@@ -445,41 +494,32 @@ function Invoices(){
                     <Thead>
                         <Tr my=".8rem" pl="0px" color="gray.400" >
                         <Th pl="0px" borderColor={borderColor} color="gray.400" >
-                            Codigo de factura
+                            Código
                         </Th>
-                        <Th borderColor={borderColor} color="gray.400" >Nombre cajero</Th>
-                        <Th borderColor={borderColor} color="gray.400" >Nombre de cliente</Th>
-                        <Th borderColor={borderColor} color="gray.400" >Notas</Th>
-                        <Th borderColor={borderColor} color="gray.400" >Estado</Th>
-                        <Th borderColor={borderColor} color="gray.400" >Tipo</Th>
-                        <Th borderColor={borderColor} color="gray.400" >Terms</Th>
-                        <Tooltip label="Pendiente de pago">
-                            <Th borderColor={borderColor} color="gray.400" >P.P</Th>
-                        </Tooltip>
-                        <Th borderColor={borderColor}>Total</Th>
+                        <Th borderColor={borderColor} color="gray.400" >Código Factura</Th>
+                        <Th borderColor={borderColor} color="gray.400" >Método de pago</Th>
+                        <Th borderColor={borderColor} color="gray.400" >Monto</Th>
+                        <Th borderColor={borderColor} color="gray.400" >Referencia</Th>
+                        <Th borderColor={borderColor} color="gray.400" >Operador</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
                         
-                        {items.map( (item, index, arr) => {
+                        {items.map((item, index, arr) => {
                         return (
-                            <InvoiceRow
+                            <PaymentRow
                             id={item.id}
                             index={index}
-                            cashierId={item.cashierId}
+                            userId={item.userId}
                             clientId={item.clientId}
-                            notes={item.notes}
-                            //quantity={item.quantity}
-                            status={item.status}
-                            term={item.term}
-                            total={item.total} // model
-                            typeDocument={item.typeDocument}
-                            currentPage={currentPage}
+                            reference={item.reference}
+                            method={item.method}
+                            amount={item.amount}
+                            invoicePaymentId={item.invoicePaymentId}
                             // functions
                             onDelete={handleDelete}
                             onInvoiceCancel={handleInvoiceCancel}
-                            //fillInputsEdit={fillInputsEdit}
-                            //setListBatchStatus={setListBatchStatus}
+                            onUpdateProperty={updateProperty}
                             
                             isLast={false}
                             logo={''}
@@ -502,4 +542,4 @@ function Invoices(){
 }
 
 
-export default Invoices
+export default Payments

@@ -24,4 +24,10 @@ amplifytools.xcconfig
 **.sample
 .env
 build.zip
+.vs
 #amplify-do-not-edit-end
+/src/models
+src/models/index.d.ts
+src/models/index.js
+src/models/schema.d.ts
+src/models/schema.js

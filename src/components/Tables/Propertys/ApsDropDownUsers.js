@@ -40,6 +40,8 @@ import { useTable } from "contexts/TableContext";
 
 import { FiEdit, FiDelete, FiSettings, FiSave, FiArrowLeft } from "react-icons/fi";
 
+import { v4 as uuidv4 } from 'uuid';
+
 function ApsDropDownUsers(props){
     
   const {
@@ -149,7 +151,7 @@ function ApsDropDownUsers(props){
                                     <Flex direction="column" pt={{ base: "120px", md: "15px" }}>
                                       <FormControl id="country">
                                         <FormLabel>Country</FormLabel>
-                                        <Select placeholder={placeholder} value={valueInput} onChange={(e) => setNewValue(e.target.value)} >
+                                        <Select key={uuidv4()} placeholder={placeholder} value={valueInput} onChange={(e) => setNewValue(e.target.value)} >
                                           
                                           {elements.map( (element,index,arr) => {
                                             const user_id = element.Attributes.find(attribute => attribute.Name === 'sub')?.Value;

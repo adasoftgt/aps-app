@@ -7,16 +7,28 @@ import {
   DrawerCloseButton,
   DrawerContent,
   DrawerHeader,
-  Flex, Link,
+  Flex, Link, Spacer,
   Switch,
   Text,
+  Tooltip,
   useColorMode,
-  useColorModeValue
+  useColorModeValue,
+  Input,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import { HSeparator } from "components/Separator/Separator";
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import GitHubButton from "react-github-btn";
 import { FaFacebook, FaTwitter } from "react-icons/fa";
+
+import { useUsers } from "contexts/UsersContext";
+
+import { Customer,Configuration } from "models";
+  
+// Amplify datastore
+import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
+import CustormersRow from "components/Tables/CustormersRow";
+
 
 export default function Configurator(props) {
   const {
@@ -28,7 +40,16 @@ export default function Configurator(props) {
     fixed,
     ...rest
   } = props;
+
+  const {
+    customerAi,setCustomerAi,
+    getValueConfiguration,
+  } = useUsers()
+
   const [switched, setSwitched] = useState(props.isChecked);
+  const [changeSubcription,setChangeSubcription] = useState(false)
+  const customerAiAplicadoRef = useRef(false)
+  
 
   const { colorMode, toggleColorMode } = useColorMode();
 
@@ -42,6 +63,86 @@ export default function Configurator(props) {
   const secondaryButtonColor = useColorModeValue("gray.700", "white");
   const bgDrawer = useColorModeValue("white", "navy.800");
   const settingsRef = React.useRef();
+
+
+  /**
+   * Cargar datos de configuracion de auto-incrementable de customer
+   */
+  useEffect( async()=>{
+    // try{
+    //   const customerAiValue = await getValueConfiguration('customerAi')
+    //   setCustomerAi(customerAiValue)
+    // }catch(err){
+    //   console.log('4cc564c9-4c5e-4ef8-971c-7c7188393c59',err)
+    // }
+    // return () =>{
+
+    // }
+    const subscription = DataStore.observeQuery(
+      Configuration, 
+      //c => c.id.eq('ff35fde6-7616-45f2-967f-8885280a9a4a')
+      c => c.name.eq('customerAi')
+    ).subscribe(snapshot => {
+      const { items, isSynced } = snapshot;
+      console.log('7b0c916c-37a4-4a67-b9ff-a5f9c1ed23ae',items,isSynced,new Date())
+      if(items.length != 0){
+        if(customerAiAplicadoRef.current == false){
+          console.log('102d88b1-b985-4720-8cbc-bfe1fdcdeac1',false,new Date())
+          setCustomerAi(items[0].value)
+        }
+      }
+      
+    })
+    
+    
+
+    return () =>{
+      console.log('834a44b8-bc54-4088-85e7-7766861b7929')
+      subscription.unsubscribe();
+    }
+
+  },[changeSubcription])
+  
+
+  const handleAutoIncremental = async() =>{
+    customerAiAplicadoRef.current = true
+    await DataStore.stop();
+    await DataStore.start();
+    setChangeSubcription(!changeSubcription)
+    const customerAiConfiguration = await DataStore.query(Configuration, 
+      c => c.and( c => [
+        c.name.eq('customerAi')
+      ])
+    );
+
+    if(customerAiConfiguration.length == 0){
+      await DataStore.save(
+        new Configuration({
+          name: 'customerAi',
+          value: customerAi
+        })
+      );
+    }
+
+    console.log('267bab4a-c09b-4c5c-8f80-c83a72885694',customerAiConfiguration,new Date())
+  
+      
+    
+      try{
+        const customerAiConfigurationAux = customerAiConfiguration[0]
+        await DataStore.save(
+          Configuration.copyOf(customerAiConfigurationAux, updated => {
+              updated.value = customerAi
+          })
+        );
+      }catch(err){
+        console.log('b423200e-daac-4f3a-9428-044a3acd6c01',err)
+      }
+    console.log('regreso a falso',new Date())
+    customerAiAplicadoRef.current = false
+    //setCustomerAi(value)
+  }
+
   return (
     <>
       <Drawer
@@ -55,7 +156,7 @@ export default function Configurator(props) {
           <DrawerHeader pt="24px" px="24px">
             <DrawerCloseButton />
             <Text fontSize="xl" fontWeight="bold" mt="16px">
-              Argon Chakra Configurator
+              Aps Farma Configurator
             </Text>
             <Text fontSize="md" mb="16px">
               See your dashboard options.
@@ -99,7 +200,7 @@ export default function Configurator(props) {
               </Flex>
 
               <HSeparator />
-              <Box mt="24px">
+              {/* <Box mt="24px">
                 <Box>
                   <Link
                     href="https://www.creative-tim.com/product/argon-dashboard-chakra?ref=creativetim-pud"
@@ -179,7 +280,39 @@ export default function Configurator(props) {
                     </Link>
                   </Flex>
                 </Box>
-              </Box>
+              </Box> */}
+              <br></br>
+              <Flex
+                justifyContent="space-between"
+                alignItems="center"
+                mb="24px"
+              >
+                <SimpleGrid columns={1} >
+                  <Box height="auto">
+                    <Tooltip label="Customer AutoIncrement">
+                      <Text fontSize="md" fontWeight="600" mb="16px">
+                        Customer_AI
+                      </Text>
+                    </Tooltip>
+                  </Box>
+                  <Box height="auto">
+                    <Flex>
+                      <Input placeholder="25" value={customerAi} width='50%' onChange={(e) => setCustomerAi(e.target.value)}/>
+                      <Spacer />
+                      <Button
+                        onClick={handleAutoIncremental}
+                        color={colorMode === "light" ? "Dark" : "Light"}
+                      >
+                        Aplicar
+                      </Button>
+                    </Flex>
+                  </Box>
+                  
+                 
+                </SimpleGrid>
+                
+              </Flex>
+              <HSeparator />
             </Flex>
           </DrawerBody>
         </DrawerContent>

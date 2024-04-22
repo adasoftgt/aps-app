@@ -34,12 +34,13 @@ import {
 
   import { useToast } from "@chakra-ui/react";
 
-import {React,useEffect,useState,useRef} from "react";
+import {React,useEffect,useState,useRef, isValidElement } from "react";
 
 import { useTable } from "contexts/TableContext";
 
 import { FiEdit, FiDelete, FiSettings, FiSave, FiArrowLeft } from "react-icons/fi";
 
+import { v4 as uuidv4 } from 'uuid';
 function ApsDropDown(props){
     
   const {
@@ -48,6 +49,7 @@ function ApsDropDown(props){
     value,
     keyProperty,
     id,
+    CustomText=false,
 
     //FUNCTIONS
     updateProperty
@@ -66,7 +68,7 @@ function ApsDropDown(props){
     const [editRow,setEditRow] = useState(false)
     const [editPopper,setEditPopper] = useState(false)
 
-    const [newValue,setNewValue] = useState(value)
+    const [newValue,setNewValue] = useState('')
 
     const { editGlobalEnabled, actonRow } = useTable()
 
@@ -76,10 +78,13 @@ function ApsDropDown(props){
 
     const [isChange,setIsChange] = useState(false)
 
-    useEffect( () =>{
-        setValueInput(value)
-    },[value])
+    // useEffect( () =>{
+    //     setValueInput(value)
+    // },[value])
 
+    const handleChange = (value) =>{
+      setNewValue(value)
+    }
 
     const mouseLeaveSlow = () =>{
       if(!isOpen){
@@ -105,25 +110,9 @@ function ApsDropDown(props){
                     fontWeight="bold"
                     minWidth="100%"
                   >
-                      {valueInput}
+                      {!CustomText ? valueInput || value : <CustomText value={valueInput || value}/>}
                   </Text>
-                  {/* {editStatus ? (
-                    <Input 
-                      type={type}
-                      placeholder={placeholder} 
-                      value={valueInput}
-                      onChange={(e) => setValueInput(e.target.value)}  
-                    />
-                  ) : (
-                    <Text
-                      fontSize="md"
-                      color={titleColor}
-                      fontWeight="bold"
-                      minWidth="100%"
-                    >
-                      {valueInput}
-                    </Text>
-                  )} */}
+                 
                 </GridItem>
                 <Stack direction={["column", "row","left"]} spacing="24px">
                   <Box w="40px" h="40px" bg="transparent">
@@ -150,16 +139,20 @@ function ApsDropDown(props){
                                     <PopoverArrow />
                                     <PopoverCloseButton />
                                     <Flex direction="column" pt={{ base: "120px", md: "15px" }}>
-                                      <FormControl id="country">
+                                      <FormControl id="country" key={uuidv4()}>
                                         <FormLabel>Country</FormLabel>
-                                        <Select placeholder={placeholder} value={valueInput} onChange={(e) => setNewValue(e.target.value)} >
+                                        <Select key={uuidv4()} placeholder={placeholder} value={newValue || value} onChange={(e) => handleChange(e.target.value)} >
+                                          {!isValidElement(elements) 
+                                            ?
+                                                elements.map( (element,index,arr) => {
+                                              
+                                                  return (
+                                                    <option value={element}>{element}</option>
+                                                  )
+                                                })
+                                            :elements
+                                          }
                                           
-                                          {elements.map( (element,index,arr) => {
-                                            
-                                            return (
-                                              <option value={element}>{element}</option>
-                                            )
-                                          })}
                                         </Select>
                                       </FormControl>
                                     

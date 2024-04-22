@@ -67,6 +67,25 @@ function Sidebar(props) {
     return location.pathname === routeName ? "active" : "";
   };
 
+  
+  /**
+   * verifies if routeName is the one active into menu (in browser input)
+   * @param {*} routes 
+   * @returns 
+   */
+  const activeOneOfMyRoutes = (routes) => {
+    for (let i = 0; i < routes.length; i++) {
+      const prop = routes[i]
+      const isActive = activeRoute(prop.layout + prop.path)
+      if(isActive === "active"){
+        console.log(prop.path,prop.path)
+        return isActive
+        
+      }
+    }
+    return ""
+  }
+
   const { colorMode } = useColorMode;
   // this function creates the links and collapses that appear in the sidebar (left menu)
   const { sidebarVariant } = props;
@@ -93,6 +112,89 @@ function Sidebar(props) {
       if (prop.redirect) {
         return null;
       }
+
+      if(prop.menu){
+        return(
+          <>
+            {activeOneOfMyRoutes(prop.views) === "active" ? (
+              <Accordion defaultIndex={[0]} borderColor="transparent" allowMultiple key={key}>
+                <AccordionItem borderColor="transparent">
+                  <h2>
+                    <AccordionButton 
+                      bg={activeBg}
+                      boxShadow={sidebarActiveShadow}
+                      sx={{ _focus: { boxShadow: 'none' } }}
+                    >
+                      <Box as="span" flex='1' textAlign='left'>
+                      <Flex>
+                          {typeof prop.icon === "string" ? (
+                            <Icon>{prop.icon}</Icon>
+                          ) : (
+                            <IconBox
+                              bg="blue.500"
+                              color="white"
+                              h="30px"
+                              w="30px"
+                              me="12px"
+                            >
+                              {prop.icon}
+                            </IconBox>
+                          )}
+                          <Text color={activeColor} my="auto" fontSize="sm">
+                            {prop.menu}
+                          </Text>
+                        </Flex>  
+                      </Box>                                            
+                    <AccordionIcon />
+                    </AccordionButton>
+                  </h2>
+                  <AccordionPanel pb={4}>
+                    {createLinks(prop.views)}
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
+            ):(
+              <Accordion defaultIndex={[]} borderColor="transparent" allowMultiple>
+                <AccordionItem borderColor="transparent">
+                  <h2>
+                    <AccordionButton 
+                      bg="transparent"
+                      sx={{ _focus: { boxShadow: 'none' } }}
+                    >
+                      <Box as="span" flex='1' textAlign='left'>
+                      <Flex>
+                          {typeof prop.icon === "string" ? (
+                              <Icon>{prop.icon}</Icon>
+                            ) : (
+                              <IconBox
+                                bg={inactiveBg}
+                                color="blue.500"
+                                h="30px"
+                                w="30px"
+                                me="12px"
+                              >
+                                {prop.icon}
+                              </IconBox>
+                          )}
+                          <Text color={activeColor} my="auto" fontSize="sm">
+                            {prop.menu}
+                          </Text>
+                        </Flex>  
+                      </Box>                                            
+                    <AccordionIcon />
+                    </AccordionButton>
+                  </h2>
+                  <AccordionPanel pb={4}>
+                    {createLinks(prop.views)}
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
+            )}
+          </>
+        )
+      }
+
+
       if (prop.category) {
         var st = {};
         st[prop["state"]] = !state[prop.state];

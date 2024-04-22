@@ -19,21 +19,21 @@ import { Customer } from "models";
 import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
 
 function ContextView(props){
-    const {id, isActiveContext, onCloseContext, onClose} = props
+    const {model, isActiveContext, onCloseContext, onClose, nameCtx, dataCtx,path} = props
 
-    const [customer,setCustomer] = useState([])
+    //const [customer,setCustomer] = useState([])
     
 
-    useEffect( async() =>{
+    // useEffect( async() =>{
         
-        const customer = await DataStore.query(Customer, id);
-        setCustomer(customer ?? [])
-    },[id])
+    //     const customer = await DataStore.query(Customer, id);
+    //     setCustomer(customer ?? [])
+    // },[id])
 
     
     return (
         <>
-            {isActiveContext &&  (
+            {Object.keys(model ?? {}).length != 0 &&  (
                 <HStack spacing="24px">
                     <Box w="40px" h="40px" >
                         <Tooltip label="Close Context">
@@ -41,14 +41,14 @@ function ContextView(props){
                         </Tooltip>
                     </Box>
                     <Box w="150px" h="40px" >
-                        <Text fontSize="xl">Customer</Text>
+                        <Text fontSize="xl">{nameCtx}</Text>
                     </Box>
-                    <Box w="300px" h="40px" >
-                        <Text fontSize="xl">{customer.name ?? ''}</Text>
+                    <Box w="400px" h="40px" >
+                        <Text fontSize="xl">{dataCtx}</Text>
                     </Box>
                     <Box w="40px" h="40px" >
                         <Tooltip label="Cambiar de contexto">
-                            <NavLink to='/admin/customers'>
+                            <NavLink to={path}>
                                 <IconButton icon={<CgInternal />} />
                             </NavLink>
                         </Tooltip>

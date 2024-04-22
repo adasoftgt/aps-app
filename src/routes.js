@@ -18,11 +18,19 @@ import Customers from 'views/Dashboard/Customers';
 
 import PrintAps from 'components/Prints/PrintAps';
 
+import Payments from 'views/Dashboard/Payments';
 
-import { FiPackage,FiFileText } from "react-icons/fi";
+import CreatePayment from 'components/Payments/CreatePayment';
+
+import NoInvoice from 'components/errors/NoInvoice';
+
+
+import { FiPackage,FiFileText, FiDollarSign } from "react-icons/fi";
 import { FaUsersCog } from "react-icons/fa";
-import { FaUserShield } from "react-icons/fa";
-import { FaUsers } from "react-icons/fa6";
+import { FaUserShield,FaPlus } from "react-icons/fa";
+import { FaUsers, FaFileInvoiceDollar } from "react-icons/fa6";
+import { CiCircleList } from "react-icons/ci";
+
 
 import {
   HomeIcon,
@@ -123,7 +131,7 @@ var dashRoutes = [
         path: "/invoices",
         name: "Invoices",
         rtlName: "لوحة القيادة",
-        icon: <FiFileText />,
+        icon: <CiCircleList />,
         component: Invoices,
         layout: "/admin",
         visibleInNav:true,
@@ -133,20 +141,49 @@ var dashRoutes = [
         path: "/invoice_create",
         name: "Invoice Create",
         rtlName: "لوحة القيادة",
-        icon: <FiFileText />,
+        icon: <FaPlus />,
         component: InvoiceCreate,
         layout: "/admin",
-        visibleInNav:false,
+        visibleInNav:true,
         caps:['manage_options']
       },
       {
         path: "/print",
         name: "Invoice Print",
         rtlName: "لوحة القيادة",
-        icon: <FiFileText />,
+        icon: <FaPlus />,
         component: PrintAps,
         layout: "/admin",
         visibleInNav:false,
+        caps:['manage_options']
+      },
+    ]
+  },
+  {
+    menu: "Payments",
+    icon: <FiDollarSign />,
+    layout: "/admin",
+    visibleInNav:true,
+    caps:['manage_options'],
+    views:[
+      {
+        path: "/payments",
+        name: "Payments",
+        rtlName: "لوحة القيادة",
+        icon: <CiCircleList />,
+        component: Payments,
+        layout: "/admin",
+        visibleInNav:true,
+        caps:['manage_options']
+      },
+      {
+        path: "/createpayment",
+        name: "Create Payment",
+        rtlName: "لوحة القيادة",
+        icon: <FaPlus />,
+        component: CreatePayment,
+        layout: "/admin",
+        visibleInNav:true,
         caps:['manage_options']
       },
     ]
@@ -202,6 +239,16 @@ var dashRoutes = [
         visibleInNav:false
       },
     ],
+  },
+  {
+    path: "/noinvoice",
+    name: "NoInvoice",
+    rtlName: "لوحة القيادة",
+    icon: <FaUserShield />,
+    component: NoInvoice,
+    layout: "/admin",
+    visibleInNav:false,
+    caps:['manage_options']
   },
 ];
 export default dashRoutes;

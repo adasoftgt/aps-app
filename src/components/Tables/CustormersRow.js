@@ -76,7 +76,7 @@ function CustormersRow(props) {
   const {
     isLast,logo,
     id,index,
-    name,address,nit,phone,owner,seller,// model
+    code,name,address,nit,phone,owner,seller,// model
     transportation_observations,observations,countryDepartment,municipality,carrier,sector,
     
     
@@ -165,8 +165,18 @@ function CustormersRow(props) {
             fontWeight="bold"
             minWidth="100%"
           >
-            {name}
+            {code}
           </Text>
+        </Td>
+        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
+          <ApsInput
+              updateProperty={updateProperty}
+              id={id} 
+              type="text"
+              placeholder="Ingrese el nombre"
+              value= {name}
+              keyProperty="name"
+          />
         </Td>
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
           <ApsInput
@@ -216,7 +226,7 @@ function CustormersRow(props) {
           <ApsDropDownUsers
               updateProperty={updateProperty}
               id={id} 
-              elements={sellers}
+              elements={sellers ?? {}}
               placeholder="Ingrese la seller"
               value= {seller}
               keyProperty="seller"
@@ -253,7 +263,7 @@ function CustormersRow(props) {
           <ApsDropDown
               updateProperty={updateProperty}
               id={id} 
-              elements={Object.keys(configAsp.departamentos)}
+              elements={Object.keys(configAsp.departamentos ?? {})}
               placeholder="Seleccione el departamento"
               value= {countryDepartment}
               keyProperty="countryDepartment"
@@ -265,7 +275,7 @@ function CustormersRow(props) {
           <ApsDropDown
               updateProperty={updateProperty}
               id={id} 
-              elements={configAsp.departamentos[countryDepartment]}
+              elements={configAsp.departamentos[countryDepartment] ?? {}}
               placeholder="Ingrese el municipio"
               value= {municipality}
               keyProperty="municipality"
@@ -276,7 +286,7 @@ function CustormersRow(props) {
           <ApsDropDown
               updateProperty={updateProperty}
               id={id} 
-              elements={configAsp.carriers}
+              elements={configAsp.carriers ?? {}}
               placeholder="Ingrese el transporte"
               value= {carrier}
               keyProperty="carrier"
@@ -287,7 +297,7 @@ function CustormersRow(props) {
           <ApsDropDown
               updateProperty={updateProperty}
               id={id} 
-              elements={configAsp.sectors}
+              elements={configAsp.sectors ?? {}}
               placeholder="Ingrese el sector"
               value= {sector}
               keyProperty="sector"

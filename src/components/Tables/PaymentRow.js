@@ -33,10 +33,10 @@ import {
 
 import {React,useEffect,useState,useRef, useMemo} from "react";
 
-import {Capability} from "models"
+import {Capability, PaymentMethod, Payment} from "models"
 import { FaLessThanEqual } from "react-icons/fa";
 
-import { FiEdit, FiDelete, FiSettings, FiSave, FiArrowLeft, FiDollarSign, FiCheckCircle, FiBox, FiLayers, FiEye, FiExternalLink} from "react-icons/fi";
+import { FiEdit, FiDelete, FiSettings, FiSave, FiArrowLeft, FiDollarSign, FiCheckCircle, FiBox, FiLayers, FiEye} from "react-icons/fi";
 import { position } from "stylis";
 import ListRoles from "components/dropdowns/ListRoles";
 
@@ -44,8 +44,9 @@ import { useUsers } from "contexts/UsersContext";
 import { useTable } from "contexts/TableContext"; 
 
 import ApsInput from "./Propertys/ApsInput";
+import ApsDropDown from "./Propertys/ApsDropDown";
 
-import {ProductPrice,Batch,BatchStatus,Invoice,InvoiceStatus,Payment} from "models";
+import {ProductPrice,Batch,BatchStatus,Invoice,InvoiceStatus} from "models";
 
 import CustomerName from "components/Customers/CustomerName";
 
@@ -63,20 +64,11 @@ import WhatInvoiceTerm from "components/invoices/WhatInvoiceTerm";
 
 import { FaFileInvoiceDollar } from "react-icons/fa6";
 
+import UserName from "components/Users/UserName";
 
-import { useToast } from "@chakra-ui/react";
+import { OptionsPaymentMethod } from "components/Payments/DropDownPaymentMethod";
 
-import { Redirect } from 'react-router-dom';
-
-function InvoiceRow(props) {
-  
-  const textColor = useColorModeValue("gray.500", "white");
-  const titleColor = useColorModeValue("gray.700", "white");
-  const bgStatus = useColorModeValue("gray.400", "navy.900");
-  const borderColor = useColorModeValue("gray.200", "gray.600");
-  
-  const balanceActivoColor = useColorModeValue("gray", "gray");
-  
+function PaymentRow(props) {
   /**
    * @property {String} displayname nombre a mostrar en el app
    * @property {String} name Nombre del rol
@@ -86,11 +78,11 @@ function InvoiceRow(props) {
   const {
     isLast,logo,
     id,index,
-    cashierId,clientId,notes,status,term,total,typeDocument,
-    currentPage,
+    userId,clientId,reference,method,amount,invoicePaymentId,
     
 
     onInvoiceCancel,
+    onUpdateProperty,
     
     //functions
     fillInputsEdit,
@@ -99,21 +91,14 @@ function InvoiceRow(props) {
     
   } = props;
 
-  const [redirectPayments,setRedirectPayments] = useState(false)
-
-  const toast = useToast()
-
   const {
     invoiceDraft,setInvoiceDraft,
-    invoiceModel,setInvoiceModel,
     openContext,closeContext,isOpenContext,getValueOpenContext,CTX
   } = useUsers()
 
   const [price, setPrice] = useState([])
   const [productBatches,setProductBatches] = useState([])
-  const [remainingBalance,setRemainingBalance] = useState(0)
-
-  const [remainingBalanceColor,setRemainingBalanceColor] = useState('transparent')
+  //const [productQuantity,setProductQuantity] = useState(0)
   
   const productQuantity = useMemo( () =>{
     let contador = 0
@@ -152,7 +137,10 @@ function InvoiceRow(props) {
     }
   },[])
 
-  
+  const textColor = useColorModeValue("gray.500", "white");
+  const titleColor = useColorModeValue("gray.700", "white");
+  const bgStatus = useColorModeValue("gray.400", "navy.900");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
 
 
   const { 
@@ -181,72 +169,10 @@ function InvoiceRow(props) {
     setInvoiceDraft(invoice)
   }
 
-  const handleInvoiceOpenContext = async(id) =>{
-    //const isOpen = await isOpenContext(CTX.INVOICE_ID)
-    //if(!isOpen){
-      await openContext(CTX.INVOICE_ID,id)
-      const invoice = await DataStore.query(Invoice, id);
-      setInvoiceModel(invoice)
-      toast({
-        title: 'Open Context Invoice',
-        description: "We've Open Context for you.",
-        status: 'success',
-        duration: 9000,
-        isClosable: true,
-      })
-    //}
-  }
+  
 
-  const handleInvoicePayment = (id) =>{
-    handleInvoiceOpenContext(id)
-    setRedirectPayments(true)
-   
-    
-    
-    
-  }
-  /**
-   * Este efecto cargar el balance que tienes la facturas
-   */
-  useEffect( async() =>{
-
-    const items = await DataStore.query(Payment, 
-        i => i.invoicePaymentId.eq(id),
-    );
-    // monto pagado
-    var amount = 0
-
-    for (let index = 0; index < items.length; index++) {
-        const element = items[index];
-        amount = amount + element.amount 
-    }
-
-    const balance = parseFloat(total) - parseFloat(amount) 
-    setRemainingBalance(balance)
-    
-    return () =>{
-
-    }
-  },[total,currentPage,id])
-
-
-  useEffect( () =>{
-    console.log('c808d622-b5f9-4e67-bbd5-4790cd749771',remainingBalance)
-    if(remainingBalance != 0){
-      setRemainingBalanceColor(balanceActivoColor)
-    }else{
-      setRemainingBalanceColor('transparent')
-    }
-  },[remainingBalance,currentPage,id])
   return (
     <>
-      {redirectPayments &&(
-        <Redirect 
-            to={{
-                pathname: '/admin/payments',
-            }} 
-        />
-      )}
       <Stack direction={["column", "row","left"]} spacing="24px">
         
         
@@ -257,12 +183,10 @@ function InvoiceRow(props) {
           onEdit={handleEdit} 
           onInvoiceCancel={onInvoiceCancel}
           onDelete={onDelete}
-          onInvoiceOpenContext={handleInvoiceOpenContext}
-          onInvoicePayment={handleInvoicePayment}
           />
 
       </Stack>    
-      <Tr style={{backgroundColor:remainingBalanceColor}}>
+      <Tr>
         <Td
           minWidth={{ sm: "250px" }}
           pl="0px"
@@ -279,40 +203,50 @@ function InvoiceRow(props) {
           </Text>
         </Td>
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-          <Text
-            fontSize="md"
-            color={titleColor}
-            fontWeight="bold"
-            minWidth="100%"
-          >
-            {cashierId}
-          </Text>
-        </Td>
-        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-           <CustomerName id={clientId}/>
-        </Td>
-        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-          <Text
-            fontSize="md"
-            color={titleColor}
-            fontWeight="bold"
-            minWidth="100%"
-          >
-            {notes ? 'SI' : 'NO'}
-          </Text>
-          
-        </Td>
-       
-        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-          <Text
+           <Text
             fontSize="md"
             color={titleColor}
             fontWeight="bold"
             minWidth="100%"
           >
             
-            <WhatInvoiceStatus status={status}/>
+            {invoicePaymentId}
           </Text>
+        </Td>
+        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
+           {/* <WhatPaymentMethod  paymentMethod={method}/> */}
+           <ApsDropDown
+              updateProperty={onUpdateProperty}
+              id={id} 
+              elements={<OptionsPaymentMethod />}
+              placeholder="Ingrese el metodo de pago"
+              value= {method}
+              keyProperty="method"
+              CustomText={WhatPaymentMethod}
+          />
+        </Td>
+        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
+          {/* <Moneda amount={amount}/> */}
+          <ApsInput
+              updateProperty={onUpdateProperty}
+              id={id} 
+              type="text"
+              placeholder="Ingrese el monto"
+              value= {parseFloat(amount).toFixed(2)}
+              keyProperty="amount"
+              isCurrency={true}
+          />
+        </Td>
+       
+        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
+          <ApsInput
+              updateProperty={onUpdateProperty}
+              id={id} 
+              type="text"
+              placeholder="Ingrese la referencia"
+              value= {reference}
+              keyProperty="reference"
+          />
           
         </Td>
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
@@ -322,36 +256,24 @@ function InvoiceRow(props) {
             fontWeight="bold"
             minWidth="100%"
           >
-            <WhatDocument typeDocument={typeDocument} />
+            <UserName userId={userId} />
           </Text>
           
         </Td>
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-          <Text
+          {/* <Text
             fontSize="md"
             color={titleColor}
             fontWeight="bold"
             minWidth="100%"
           >
             <WhatInvoiceTerm term={term} />
-          </Text>
+          </Text> */}
           
         </Td>
-        <Td>
-          <Moneda amount={remainingBalance}/>
-        </Td>
-
-        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-          <Text
-            fontSize="md"
-            color={titleColor}
-            fontWeight="bold"
-            minWidth="100%"
-          >
-            <Moneda amount={parseFloat(total).toFixed(2)}/>
-          </Text>
-          
-        </Td>
+       
+        
+       
         
       </Tr>
     </>
@@ -362,32 +284,29 @@ function InvoiceRow(props) {
 
 
 
-function WhatDocument(props){
-  const {typeDocument} =props
+
+
+function WhatPaymentMethod(props){
+  const {value} = props
   
-  switch(typeDocument){
-    case TypeDocument.INVOICE:
-      return(
-        <>Factura</>
-      )
-    case TypeDocument.SHIPPING:
-      return(
-        <>Envio</>
-      )
-    case TypeDocument.NOTE:
-      return(
-        <>Nota</>
-      )
+  switch(value){
+    case PaymentMethod.CASH:
+      return <>Efectivo</>
+    case PaymentMethod.CREDIT_CARD:
+      return <>Tarjeta de credito</>
+    case PaymentMethod.DEBIT_CARD:
+      return <>Tarjeta de debito</>
+    case PaymentMethod.BANK_TRANSFER:
+      return <>Tranferencia Bancaria</>
+    case PaymentMethod.OTHER:
+      return <>Otro</>
     default:
       return null
-      
-    
-
   }
 }
 
 function Controls(props){
-  const {id,status,onView,onEdit,onInvoiceCancel,onDelete,onInvoicePayment,onInvoiceOpenContext} = props
+  const {id,status,onView,onEdit,onInvoiceCancel,onDelete,onInvoicePayment} = props
   
   switch(status){
     case InvoiceStatus.DRAFT:
@@ -433,11 +352,6 @@ function Controls(props){
                 <IconButton aria-label="Settings" icon={<FaFileInvoiceDollar />} onClick={() => onInvoicePayment(id)} />
               </Tooltip>
             </Box>
-            <Box w="40px" h="40px" bg="transparent">
-              <Tooltip label='Agregar a contexto'>
-                <IconButton aria-label="Settings" icon={<FiExternalLink />} onClick={() => onInvoiceOpenContext(id)} />
-              </Tooltip>
-            </Box>
             
           </>
         )
@@ -447,4 +361,4 @@ function Controls(props){
   }
 }
 
-export default InvoiceRow;
+export default PaymentRow;

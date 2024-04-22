@@ -99,6 +99,8 @@ function ProductsBatchRow(props) {
   const [editNameStatus,setEditNameStatus] = useState(false)
   
   const handleSettings = async(id) =>{
+    // save idnetificator product when select item of list batch
+    productBatchesId.current = idCurrentRow.current
     idCurrentRow.current = id
     await fillInputsEdit()
   }

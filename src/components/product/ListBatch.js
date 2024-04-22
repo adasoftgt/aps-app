@@ -102,6 +102,8 @@ function ListBatch(props){
     const statusRef = useRef(status)
 
     const [updateBatchStatus,setUpdateBatchStatus] = useState(false)
+
+    const productBatchesId = useRef(0)
     
     const days = useMemo( () =>{
         const array = [];
@@ -180,7 +182,7 @@ function ListBatch(props){
           const pageOfset = page - 1
     
           
-          const batches = await DataStore.query(Batch, Predicates.ALL, {
+          const batches = await DataStore.query(Batch, b => b.productBatchesId.eq(idCurrentRow.current), {
             page: pageOfset,
             limit: limit
           })
@@ -396,10 +398,33 @@ function ListBatch(props){
     
 
     const handleCreateBatch = async() =>{
+        // save identificator the product
+        productBatchesId.current = idCurrentRow.current
         await clearInputs()
         setCreateBatchStatus(true)
     }
 
+    const handleDeleteRow = async(id) =>{
+        const batch = await DataStore.query(Batch, id)
+        DataStore.delete(batch)
+        getBatches(currentPage,pageSize)
+        toast({
+            title: 'Delete batch',
+            description: "We've delete the batch for you.",
+            status: 'success',
+            duration: 9000,
+            isClosable: true,
+        })
+    }
+
+    /**
+     * Regresar la lista de batch del producto seleccionado
+     */
+    const handleReturnListBatch = async() =>{
+        idCurrentRow.current = productBatchesId.current
+        setCreateBatchStatus(!createBatchStatus)
+        getBatches(currentPage,pageSize)
+    }
 
     
     return(
@@ -464,6 +489,7 @@ function ListBatch(props){
                                             updateBatchStatus={updateBatchStatus}
                                             setUpdateBatchStatus={setUpdateBatchStatus}
                                             fillInputsEdit={fillInputsEdit}
+                                            deleteRowFunc={handleDeleteRow}
                                         />
                                     )      
                                 })}
@@ -489,7 +515,7 @@ function ListBatch(props){
                                     <FormLabel htmlFor="email-alerts" mb="0">
                                         Regrear a batches
                                     </FormLabel>
-                                    <IconButton aria-label="Search database" onClick={() => setCreateBatchStatus(!createBatchStatus)} icon={<FiArrowLeft />} />
+                                    <IconButton aria-label="Search database" onClick={handleReturnListBatch} icon={<FiArrowLeft />} />
                                     </FormControl>
                                 </CardBody>
                             </Card>

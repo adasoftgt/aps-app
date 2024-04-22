@@ -37,6 +37,8 @@ import { useTable } from "contexts/TableContext";
 
 import { FiEdit, FiDelete, FiSettings, FiSave, FiArrowLeft } from "react-icons/fi";
 
+import Moneda from "components/Monedas/Moneda";
+
 function ApsInput(props){
     
   const {
@@ -45,6 +47,7 @@ function ApsInput(props){
     value,
     keyProperty,
     id,
+    isCurrency = false,
 
     //FUNCTIONS
     updateProperty
@@ -102,7 +105,12 @@ function ApsInput(props){
                     fontWeight="bold"
                     minWidth="100%"
                   >
-                      {valueInput}
+                      {isCurrency ?(
+                        <Moneda amount={valueInput}/>
+                      ):(
+                        <>{valueInput}</>
+                      )}
+                      
                   </Text>
                   {/* {editStatus ? (
                     <Input 
@@ -159,15 +167,14 @@ function ApsInput(props){
                                         icon={<FiSave />} 
                                         
                                         onClick={() => {
-                                            updateProperty(id,keyProperty,newValue)
+                                            if(isCurrency){
+                                              updateProperty(id,keyProperty,parseFloat(newValue))
+                                            }else{
+                                              updateProperty(id,keyProperty,newValue)
+                                            }
+                                            
                                             setValueInput(newValue)
-                                            toast({
-                                              title: 'Update Customer Proprety',
-                                              description: "We've update Customer for you.",
-                                              status: 'success',
-                                              duration: 9000,
-                                              isClosable: true,
-                                            })
+                                            
 
                                         }}
                                       />
