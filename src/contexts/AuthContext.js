@@ -90,32 +90,40 @@ const AuthProvider = ({ children }) => {
     },[])
 
     useEffect(async() => {
-      const { accessToken, idToken } = (await fetchAuthSession()).tokens ?? {};  
-      
-      const { username, userId, signInDetails } = await getCurrentUser();
-      setAccessToken(accessToken.toString())  
-      //setUserId(userId)
-      userIdent.current = userId
-      
-      return () => {
+        try{
+            const { accessToken, idToken } = (await fetchAuthSession()).tokens ?? {};  
         
-      }
+            const { username, userId, signInDetails } = await getCurrentUser();
+            setAccessToken(accessToken.toString())  
+            //setUserId(userId)
+            userIdent.current = userId
+        }catch(err){
+            console.error('User not login')
+        }
+      
+        return () => {
+            
+        }
     },[])
 
 
     // Roles
     useEffect(() => {
+        
         const sub = DataStore.observeQuery(Rol, 
             (rol) => rol.updatedAt.gt(now.current)
         ).subscribe( async({ items }) => {
-            const roles = await DataStore.query(Rol, Predicates.ALL);
-            setRoles(roles)
+            if(accessToken != null){
+                const roles = await DataStore.query(Rol, Predicates.ALL);
+                setRoles(roles)
+            }
         })
+        
 
         return () => {
             sub.unsubscribe()
         }
-    },[])
+    },[accessToken])
 
     /**
      * @property {String} profileValue name de de profile que tiene el usuario auntenticado
