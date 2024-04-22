@@ -64,6 +64,11 @@ const UsersProvider = ({ children }) => {
 
   const [applyChanges,setApplyChanges] = useState(false)
 
+  /**
+   * Buscar elemenntos dentro de las tablas, un solo buscador sin filtros
+   */
+  const [apsSearch,setApsSearch] = useState('')
+
   const { accessToken,userId } = useAuth()
 
   const cognito = new CognitoIdentityServiceProvider()
@@ -503,6 +508,7 @@ const getAutoIncrementConfiguration = async(name) =>{
         verifyContext,
         openContext,closeContext,isOpenContext,getValueOpenContext,CTX,
         applyChanges,setApplyChanges,
+        apsSearch,setApsSearch,
     }}>
       {children}
     </UsersContext.Provider>

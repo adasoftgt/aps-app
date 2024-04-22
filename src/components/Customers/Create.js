@@ -168,14 +168,12 @@ function Create(props){
     useEffect( async() =>{
       const subscription = DataStore.observeQuery(
         Configuration, 
-        c => c.and( c => [
-          c.name.eq('customerAi'),
-          c.id.eq('ff35fde6-7616-45f2-967f-8885280a9a4a')
-          ]),
-          { forceNetwork: true }
+        c => c.name.eq('customerAi'),
+        { forceNetwork: true }
       ).subscribe( async({ items }) => {
-        console.log('252bc465-4eea-47a8-b3b4-3e618709e16d',items)
-        setCustomerAi(items[0].value)
+        if(items.length != 0){
+          setCustomerAi(items[0].value)
+        }
       })
 
       return () =>{

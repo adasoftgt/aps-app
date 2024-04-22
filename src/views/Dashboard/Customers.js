@@ -89,6 +89,7 @@ function Customers(){
         userOperationSelected,setUserOperationSelected,
         invoiceDraft,setInvoiceDraft,
         customerAi,setCustomerAi,
+        apsSearch,setApsSearch,
     } = useUsers()
 
     console.log('userOperationSelected',userOperationSelected)
@@ -112,9 +113,20 @@ function Customers(){
     const getCustomers = async(page = 0,limit = 0) => {
         try{  
           const pageOfset = page - 1
-    
+          let apsPredicated = ''
+          if(apsSearch == ''){
+            apsPredicated = Predicates.ALL 
+          }else{
+            apsPredicated = (c) => c.or( c => [
+                c.code.eq(apsSearch),
+                c.name.contains(apsSearch.toUpperCase()),
+                c.address.contains(apsSearch.toUpperCase()),
+                c.nit.contains(apsSearch),
+                c.phone.contains(apsSearch),
+            ])
+          }
           
-          const customers = await DataStore.query(Customer, Predicates.ALL, {
+          const customers = await DataStore.query(Customer, apsPredicated , {
             page: pageOfset,
             limit: limit
           })
@@ -140,7 +152,7 @@ function Customers(){
         //getProducts() // Tarea de observacion
         await DataStore.start();
         getCustomers(currentPage,pageSize) // pimera pagina
-    }, [total,currentPage,pageSize]);
+    }, [total,currentPage,pageSize,apsSearch]);
 
 
     
