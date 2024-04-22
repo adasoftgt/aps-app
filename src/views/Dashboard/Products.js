@@ -53,6 +53,7 @@ import { FiArrowLeft,FiPlusSquare, FiDollarSign, FiEdit} from "react-icons/fi";
 
 import { useTable } from "contexts/TableContext";
 import { useAuth } from "contexts/AuthContext";
+import { useUsers } from "contexts/UsersContext";
 import { jsx } from "@emotion/react";
 
 import ListBatch from "components/product/ListBatch";
@@ -114,6 +115,9 @@ function Products() {
   const toast = useToast()
 
 
+  const {
+    apsSearch,setApsSearch,
+  } = useUsers()
 
   const { 
     editRow,
@@ -140,9 +144,20 @@ function Products() {
   const getProducts = async(page = 0,limit = 0) => {
     try{  
       const pageOfset = page - 1
-
       
-      const products = await DataStore.query(Product, Predicates.ALL, {
+      let apsPredicated = ''
+      console.log('69c651a1-f111-4cdb-9a4b-003b8ac50931',apsSearch)
+      if(apsSearch == ''){
+        apsPredicated = Predicates.ALL 
+      }else{
+        apsPredicated = (c) => c.or( c => [
+            c.sku.eq(apsSearch),
+            c.name.contains(apsSearch.toUpperCase()),
+            c.description.contains(apsSearch.toUpperCase()),
+        ])
+      }
+      
+      const products = await DataStore.query(Product, apsPredicated, {
         page: pageOfset,
         limit: limit
       })
@@ -177,7 +192,7 @@ function Products() {
    */
   useEffect( async() => {
     getProducts(currentPage,pageSize)
-  },[currentPage])
+  },[currentPage,apsSearch])
 
   /**
    * Obtener la lista de usuarios cuando cambie el useState total
