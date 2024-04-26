@@ -56,6 +56,8 @@ import {
   useDisclosure
 } from "@chakra-ui/react"
 
+import { useAuth } from "contexts/AuthContext";
+
 export default function HeaderLinksSignOut(props) {
     
     const {
@@ -64,7 +66,8 @@ export default function HeaderLinksSignOut(props) {
         secondary,
       } = props;
 
-      
+    
+    const {userData,setUserData} = useAuth()
     const { colorMode } = useColorMode();
 
     const itemColor = useColorModeValue("gray.700", "white");
@@ -139,6 +142,7 @@ export default function HeaderLinksSignOut(props) {
     }
     const handleSignOut = async () => {
       try {
+        setUserData(false)
         await signOut();
         setTimeout(() => {
           history.push({

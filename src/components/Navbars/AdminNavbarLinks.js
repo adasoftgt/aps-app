@@ -20,7 +20,7 @@ import { ArgonLogoDark, ArgonLogoLight, ChakraLogoDark, ChakraLogoLight, Profile
 import { ItemContent } from "components/Menu/ItemContent";
 import { SearchBar } from "components/Navbars/SearchBar/SearchBar";
 import { SidebarResponsive } from "components/Sidebar/Sidebar";
-import React,{ useState } from "react";
+import React,{ useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import routes from "routes.js";
 
@@ -57,7 +57,8 @@ export default function HeaderLinks(props) {
 
   const { 
     userData,setUserData,
-    isUserAuthenticated,setIsUserAuthenticated
+    isUserAuthenticated,setIsUserAuthenticated,
+    recargar,setRecargar
    } = useAuth()
 
   //init
@@ -77,6 +78,13 @@ export default function HeaderLinks(props) {
     navbarIcon = "white";
   }
   
+  useEffect( async() =>{
+    if(userData == false){
+      setRecargar(!recargar)
+    }
+  },[userData])
+
+
   return (
     <Flex
       pe={{ sm: "0px", md: "16px" }}

@@ -62,6 +62,8 @@ function SignInComponent() {
   const bgIcons = useColorModeValue("trasnparent", "navy.700");
   const bgIconsHover = useColorModeValue("gray.50", "whiteAlpha.100");
 
+  const {recargar,setRecargar} = useAuth()
+
   // history
   const history = useHistory();
 
@@ -132,14 +134,16 @@ function SignInComponent() {
     setAlertShow(false)
     try {
       const { isSignedIn, nextStep } = await signIn({ username, password });
-      setAlertShow(true)
-      setAlertText('Login exitoso, redirigiendo')
-      setTimeout(() => {
-        setAlertShow(false)
-        history.push({
-          pathname: "/admin/dashboard",
-        });
-      }, 800); // Delay in milliseconds
+      if(isSignedIn){
+        setAlertShow(true)
+        setAlertText('Login exitoso, redirigiendo')
+        setTimeout(() => {
+          setAlertShow(false)
+          history.push({
+            pathname: "/admin/dashboard",
+          });
+        }, 800); // Delay in milliseconds
+      }
       
     } catch (error) {
       setAlertShow(true)

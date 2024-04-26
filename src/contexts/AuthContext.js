@@ -45,6 +45,8 @@ const AuthProvider = ({ children }) => {
     //const roles = await DataStore.query(Rol, Predicates.ALL);
 
     const [roles,setRoles] = useState([])
+
+    const [recargar,setRecargar] = useState(false)
     //const [capabilities,setCapabilities] = useState([])
     const [attributes,setAttributes] = useState([])
     const [accessToken,setAccessToken] = useState(null)
@@ -70,8 +72,10 @@ const AuthProvider = ({ children }) => {
         return options
     },[roles])
 
-    
-    useEffect( async() =>{
+    /**
+     * Este efecto se elimino y su funcionalidad de paso Docode: 4b4da013-ea1e-4e7a-bb3e-b67c4ea2de2e
+     */
+    /*useEffect( async() =>{
         try {
             const { username, userId, signInDetail } = await getCurrentUser();
             const attributes = await fetchUserAttributes();
@@ -87,13 +91,24 @@ const AuthProvider = ({ children }) => {
         return () =>{
 
         }
-    },[])
+    },[])*/
 
+    /**
+     * Efecto para cargar accesstoken de codgnito
+     * Docode: 4b4da013-ea1e-4e7a-bb3e-b67c4ea2de2e
+     */
     useEffect(async() => {
         try{
             const { accessToken, idToken } = (await fetchAuthSession()).tokens ?? {};  
         
             const { username, userId, signInDetails } = await getCurrentUser();
+            
+            const attributes = await fetchUserAttributes();
+            setUserData(
+                {username,attributes}
+            )
+            
+            
             setAccessToken(accessToken.toString())  
             //setUserId(userId)
             userIdent.current = userId
@@ -104,7 +119,7 @@ const AuthProvider = ({ children }) => {
         return () => {
             
         }
-    },[])
+    },[recargar])
 
 
     // Roles
@@ -209,7 +224,8 @@ const AuthProvider = ({ children }) => {
             capabilities,
             userData,setUserData,
             isUserAuthenticated,setIsUserAuthenticated,
-            ctxAuth,setCtxAuth
+            ctxAuth,setCtxAuth,
+            recargar,setRecargar
         }}>
           {children}
         </AuthContext.Provider>
