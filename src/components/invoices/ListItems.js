@@ -40,7 +40,7 @@ import {
   import Pagination from "components/Pagination/Paginacion.js"
   import Capabilities from "components/Capabilities/Capabilities.js"
   
-  import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, InvoiceStatus, InvoiceItemStatus, UserConfiguration,BatchChunk,Batch} from "models";
+  import { Product, ProductStatus, ProductPrice, ProductPriceStatus, Category, Invoice, InvoiceTerm, InvoiceItem, InvoiceStatus, InvoiceItemStatus, UserConfiguration,BatchChunk,Batch} from "models";
   
   import {USER_OPERATION} from "structures"
   
@@ -128,8 +128,10 @@ function ListItems(){
         //const invoiceItem = items[index]
         const invoiceItem = await DataStore.query(InvoiceItem, items[index].id)
 
+        console.log('003a6be7-012d-49cd-98bd-fd4ea212dcd7',invoiceItem)
         if(property && newValor){
             const newInvoiceItem = InvoiceItem.copyOf(invoiceItem, updated => {
+                console.log('15034c2d-1722-4a2a-8f62-d76c4342458b',updated['productPriceStatus'])
                 updated['price'] = items[index].price
                 updated['total'] = items[index].total
                 updated['status'] = items[index].status
@@ -149,7 +151,6 @@ function ListItems(){
                     
             })
             items[index] = newInvoiceItem
-            
             if(property == 'total'){
                 handleTotal()
             }
@@ -309,6 +310,7 @@ function ListItems(){
             status: InvoiceItemStatus.DRAFT,
             invoice: invoiceDraft,
             dateCreated: date,
+            productPriceStatus: ProductPriceStatus.CUSTOM,
         })
         const newInvoiceItemDraft = await DataStore.save(newItem);
         
@@ -672,6 +674,7 @@ function ListItems(){
                                             total,
                                             status,
                                             productItemsId,
+                                            productPriceStatus,
                                         } = item
                                         
                                         return (
@@ -686,6 +689,7 @@ function ListItems(){
                                                     total={total}
                                                     status={status}
                                                     productItemsId={productItemsId}
+                                                    productPriceStatus={productPriceStatus}
                                                     handleTotal={handleTotal}
                                                     handleDelete={handleDelete}
                                                     onUpdateItem={handleUpdateItem}

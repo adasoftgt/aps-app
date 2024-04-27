@@ -45,19 +45,21 @@ import {
   import DropdownPrice from "components/product/DropdownPrice";
   
   import { v4 as uuidv4 } from 'uuid';
-import { FaGalacticSenate } from "react-icons/fa6";
+  import { FaGalacticSenate } from "react-icons/fa6";
 
 
-import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, InvoiceStatus, InvoiceItemStatus, UserConfiguration,BatchChunkStatus} from "models";
+  import { Product, ProductStatus, ProductPrice, ProductPriceStatus,Category, Invoice, InvoiceTerm, InvoiceItem, InvoiceStatus, InvoiceItemStatus, UserConfiguration,BatchChunkStatus} from "models";
   
-// Amplify datastore
-import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
-import { useTable } from "contexts/TableContext";
-import Moneda from "components/Monedas/Moneda";
+  // Amplify datastore
+  import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
+  import { useTable } from "contexts/TableContext";
+  import Moneda from "components/Monedas/Moneda";
+
+  import InputPrice from "./InputPrice";
 
   function InvoiceCreateRow(props) {
     /*------------------------------ PROPS --------------------- */
-    const { key,itemId,index,price,total,bonus,quantity,productItemsId,handleDelete,handleTotal,onUpdateItem} = props 
+    const { key,itemId,index,price,total,bonus,quantity,productItemsId,productPriceStatus,handleDelete,handleTotal,onUpdateItem} = props 
     
     
     const textColor = useColorModeValue("gray.500", "white");
@@ -80,7 +82,8 @@ import Moneda from "components/Monedas/Moneda";
 
   const [productId,setProductId] = useState('')
   
-  const [typePriceVariable,setTypePriceVariable] = useState(false)
+  const [typePriceVariable,setTypePriceVariable] = useState(productPriceStatus == ProductPriceStatus.CUSTOM)
+  console.log('b98529dd-d644-4264-906e-351f054dfdd4',typePriceVariable)
 
   //const [saleQuantity,setSaleQuantity] = useState(0)
   const [enteredSaleQuantity,setEnteredSaleQuantity] = useState(null)
@@ -103,8 +106,38 @@ import Moneda from "components/Monedas/Moneda";
    * Capturar el cambio de precio del componente del desplegable
    * @param {*} event 
    */
-  const handlePrice = (event) =>{
-    if(event.target.value != ''){
+  const handlePrice = (value) =>{
+    
+    /**
+     * Switch para evaluar el value que regrea dropDonw de precios
+     * 
+     * @id {uuid} d1f652f3-8cdf-4bc1-b1dc-2bc632c89f6e
+     */
+    switch(value){
+      case ProductPriceStatus.CUSTOM:
+          // custom no se guarda price porque esto se tiene que hacer con el input
+          //onUpdateItem(index,false,'productPriceStatus',ProductPriceStatus.CUSTOM)
+          setTypePriceVariable(true)
+          break;
+      default:
+          if(value != ''){
+            
+            //onUpdateItem(index,false,'productPriceStatus',ProductPriceStatus.PRESET)
+            // en esta parte se guarda el precio porque ya viene predefinido
+            onUpdateItem(index,false,'price',value)
+            // se coloca como falso por que no es tipo de precio custom <=> variable
+            setTypePriceVariable(false)
+            // se tea precio como el precio den trada simulando que ingreso por input
+            setEnteredPrice(value);
+          }else{
+            setEnteredPrice(0)
+            setTypePriceVariable(false)
+          }
+          break;
+    }
+    
+    // Se elimino y la funcionalidad se paso a => @id {uuid} d1f652f3-8cdf-4bc1-b1dc-2bc632c89f6e
+    /*if(event.target.value != ''){
       if(event.target.value == '0'){
         setTypePriceVariable(true)
       }else{
@@ -116,7 +149,7 @@ import Moneda from "components/Monedas/Moneda";
     }else{
       setEnteredPrice(0)
       setTypePriceVariable(false)
-    }
+    }*/
   }
 
   const handleQuantity = (_quantity) =>{
@@ -154,10 +187,6 @@ import Moneda from "components/Monedas/Moneda";
   },[enteredSaleQuantity,enteredPrice])
   
 
-
-    const handleSetPrice = async(e) =>{
-      onUpdateItem(index,false,'price',e.target.value)
-    }
 
     const handleSetProduct = async(e) =>{
       const productId = e.target.value
@@ -243,7 +272,12 @@ import Moneda from "components/Monedas/Moneda";
             {typePriceVariable ? (
               <HStack spacing="5px">
                   <Box w="150px" h="40px">
-                    <Input type="text" value={enteredPrice ?? price} onChange={handleSetPrice}/>
+                    <InputPrice
+                      index={index}
+                      onSetEnteredPrice={setEnteredPrice} 
+                      price={price}
+                      onUpdateItem={onUpdateItem}
+                    />
                   </Box>
               </HStack>
             ):(
@@ -268,7 +302,7 @@ import Moneda from "components/Monedas/Moneda";
                 productId={enteredProductItemsId ?? productItemsId} 
                 onUpdateItem={onUpdateItem}
                 onPrice={handlePrice}
-                price={enteredPrice ?? price}
+                price={(typePriceVariable) ? ProductPriceStatus.CUSTOM : enteredPrice ?? price}
               />
             </Text>
           </Td>

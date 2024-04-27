@@ -15,7 +15,7 @@ import React, { useEffect, useMemo, useState } from "react";
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { Product, ProductStatus, ProductPrice, Category, Rol, InvoiceItem, InvoiceStatus} from "models";
+import { Product, ProductStatus, ProductPrice,ProductPriceStatus, Category, Rol, InvoiceItem, InvoiceStatus} from "models";
 // Amplify datastore
 import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
 
@@ -27,7 +27,6 @@ function DropdownPrice(props){
     
     /** --------------------------------PROPS ---------------------- */
     const { itemId, index, productId, price, onUpdateItem,onPrice} = props
-
     const [prices,setPrices] = useState([])
 
     useEffect( async() =>{
@@ -39,11 +38,9 @@ function DropdownPrice(props){
         
     },[productId])
 
-    const handlePriceInterno = async(event) =>{
-        //setPrice(event.target.value)
-        onUpdateItem(index,false,'price',event.target.value)
-        
-        onPrice(event)
+    const handlePriceInterno = async(value) =>{
+        //setPrice(event.target.value)     
+        onPrice(value)
         // actualizar los modelos
         
     }
@@ -52,11 +49,15 @@ function DropdownPrice(props){
         prices.map( (price) => {
             return(
                 <>
-                    <option  key={uuidv4()}  value={'0'}>Price Variable</option>
-                    <option  key={uuidv4()}  value={price.unit}>Price Unit</option>
-                    <option  key={uuidv4()}  value={price.offer}>Price offer</option>
-                    <option  key={uuidv4()}  value={price.et}>Price ET</option>
-                    <option  key={uuidv4()}  value={price.pharmacy}>Price pharmacy</option>
+                    <option  key={uuidv4()}  value={ProductPriceStatus.CUSTOM}>Price Variable</option>
+                    {price.unit != 0 && <option  key={uuidv4()}  value={price.unit}>Price Unit</option>}
+                    {price.offer != 0 && <option  key={uuidv4()}  value={price.offer}>Price offer</option>}
+                    {price.et != 0 && <option  key={uuidv4()}  value={price.et}>Price ET</option>}
+                    {price.pharmacy != 0 && <option  key={uuidv4()}  value={price.pharmacy}>Price pharmacy</option>}
+                    
+                    
+                    
+                    
                 </>
             )   
         } ) 
@@ -65,19 +66,39 @@ function DropdownPrice(props){
     return(
         
         <Controls 
+            index={index}
             priceMap={priceMap}
             price={price}
             onPriceInterno={handlePriceInterno}
+            onUpdateItem={onUpdateItem}
         />
         
     )
 }
 
 function Controls(props){
-    const {priceMap,price,onPriceInterno} = props
+    const {index,onUpdateItem,priceMap,price,onPriceInterno} = props
 
     const {invoiceDraft} = useUsers()
+
+    const [selectDropDown,setSelectDropDown] = useState(null)
     
+    useEffect( async() => {
+        switch(selectDropDown){
+            case ProductPriceStatus.CUSTOM:
+                onUpdateItem(index,false,'productPriceStatus',ProductPriceStatus.CUSTOM)
+                break;
+            default:
+                onUpdateItem(index,false,'productPriceStatus',ProductPriceStatus.PRESET)
+                break;
+        }
+        
+        onPriceInterno(selectDropDown)
+        return () =>{
+
+        }
+    },[selectDropDown])
+
     const textColor = useColorModeValue("gray.500", "white");
     
     switch(invoiceDraft.status ?? ''){
@@ -85,7 +106,7 @@ function Controls(props){
             return(
                 <HStack key={uuidv4()} spacing="24px">
             <Box w="150px" h="40px">
-                <Select placeholder="Select Price" value={price} onChange={onPriceInterno} >
+                <Select placeholder="Select Price" value={selectDropDown ?? price} onChange={(e) => setSelectDropDown(e.target.value)} >
                     {
                         priceMap
                     }

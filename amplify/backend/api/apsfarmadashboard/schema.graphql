@@ -153,6 +153,10 @@ enum InvoiceItemStatus {
   CONFIRMED
 }
 
+enum ProductPriceStatus {
+  PRESET
+  CUSTOM
+}
 
 type InvoiceItem @model {
   id: ID!
@@ -161,6 +165,7 @@ type InvoiceItem @model {
   price: Float!
   total: Float!
   status: InvoiceItemStatus!
+  productPriceStatus: ProductPriceStatus
   invoice: Invoice @belongsTo
   dateCreated: String!
   
