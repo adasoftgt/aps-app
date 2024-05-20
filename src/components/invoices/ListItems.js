@@ -128,46 +128,47 @@ function ListItems(){
         //const invoiceItem = items[index]
         const invoiceItem = await DataStore.query(InvoiceItem, items[index].id)
 
-        console.log('003a6be7-012d-49cd-98bd-fd4ea212dcd7',invoiceItem)
-        if(property && newValor){
-            const newInvoiceItem = InvoiceItem.copyOf(invoiceItem, updated => {
-                console.log('15034c2d-1722-4a2a-8f62-d76c4342458b',updated['productPriceStatus'])
-                updated['price'] = items[index].price
-                updated['total'] = items[index].total
-                updated['status'] = items[index].status
-                updated['dateCreated'] = items[index].dateCreated
+        if(typeof invoiceItem !== 'undefined'){
+            if(property && newValor){
+                const newInvoiceItem = InvoiceItem.copyOf(invoiceItem, updated => {
+                    console.log('15034c2d-1722-4a2a-8f62-d76c4342458b',updated['productPriceStatus'])
+                    updated['price'] = items[index].price
+                    updated['total'] = items[index].total
+                    updated['status'] = items[index].status
+                    updated['dateCreated'] = items[index].dateCreated
+
+                    
+                    switch(property){
+                        case 'price':
+                        case 'total':
+                            console.log('event.target.value',property,newValor)
+                            updated[property] = parseFloat(newValor)
+                            break;
+                        default:
+                            updated[property] = newValor
+                            break;
+                    }
+                        
+                })
+                items[index] = newInvoiceItem
+                if(property == 'total'){
+                    handleTotal()
+                }
+
+                DataStore.save(
+                    newInvoiceItem
+                )
 
                 
-                switch(property){
-                    case 'price':
-                    case 'total':
-                        console.log('event.target.value',property,newValor)
-                        updated[property] = parseFloat(newValor)
-                        break;
-                    default:
-                        updated[property] = newValor
-                        break;
-                }
-                    
-            })
-            items[index] = newInvoiceItem
-            if(property == 'total'){
-                handleTotal()
+                
+            }else{
+                
+            /* items[index] = copyof
+                DataStore.save(
+                    copyof
+                )*/
+
             }
-
-            DataStore.save(
-                newInvoiceItem
-            )
-
-            
-            
-        }else{
-            
-           /* items[index] = copyof
-            DataStore.save(
-                copyof
-            )*/
-
         }
 
     
