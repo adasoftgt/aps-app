@@ -249,8 +249,10 @@ function Products() {
             { sort: (s) => s.dateCreated(SortDirection.DESCENDING),limit: 1 }
           );
 
-          const price = prices[0]
+          
+         
 
+          
           setProductName(product.name)
           productNameRef.current = product.name
           setProductSku(product.sku)
@@ -260,14 +262,20 @@ function Products() {
           //setProductCategory(product.category)
           setProductStatus(product.status)
           productStatusRef.current = product.status
-          setProductPriceUnit(price.unit)
-          productPriceUnitRef.current = price.unit
-          setProductPriceOffer(price.offer)
-          productPriceOfferRef.current = price.offer
-          setProductPriceEt(price.et)
-          productPriceEtRef.current = price.et
-          setProductPricePharmacy(price.pharmacy)
-          productPricePharmacyRef.current = price.pharmacy
+          
+          
+          // Si el conjunto de precios existe se rellenan los inputs del precio
+          if (prices.length !== 0) {
+            const price = prices[0]
+            setProductPriceUnit(price.unit)
+            productPriceUnitRef.current = price.unit
+            setProductPriceOffer(price.offer)
+            productPriceOfferRef.current = price.offer
+            setProductPriceEt(price.et)
+            productPriceEtRef.current = price.et
+            setProductPricePharmacy(price.pharmacy)
+            productPricePharmacyRef.current = price.pharmacy
+          }
           
           setCreateProductStatus(true)
           setSettingStatus(true)
