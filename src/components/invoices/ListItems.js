@@ -175,6 +175,9 @@ function ListItems(){
         
     }
 
+    /**
+     * Cambiar el total, de la factura
+     */
     const handleTotal = async() =>{
         if(invoiceDraft){           
             var amount = 0
@@ -449,6 +452,13 @@ function ListItems(){
                 duration: 9000,
                 isClosable: true,
             })
+            // Cabmiar el total en facturacion cuando se borra un draft
+            const invoice = await DataStore.query(Invoice,invoiceDraft.id)
+            const updatedInvoice = await DataStore.save(
+                Invoice.copyOf(invoice, updated => {
+                    updated['total'] = 0
+                })
+            ); 
             closeContext(CTX.INVOICE_DRAFT)
             setInvoiceDraft(false)
             getItems()
