@@ -140,13 +140,17 @@ function Products() {
     userId
   } = useAuth()
 
-  
+  /**
+   * Funcion que obtiene la lista de productos con DataStore amplify
+   * 
+   * @param {int} page pagina en la posicion del paginador
+   * @param {int} limit limite por pagina
+   */
   const getProducts = async(page = 0,limit = 0) => {
     try{  
       const pageOfset = page - 1
       
       let apsPredicated = ''
-      console.log('69c651a1-f111-4cdb-9a4b-003b8ac50931',apsSearch)
       if(apsSearch == ''){
         apsPredicated = Predicates.ALL 
       }else{
@@ -164,7 +168,6 @@ function Products() {
 
       setProducts(products)
       
-      //const price = await products[0].price
       /*const price = await DataStore.query(ProductPrice, 
         c => c.productPriceProductId.eq(products[0].id),
         { sort: (s) => s.id(SortDirection.DESCENDING),limit: 1 }
@@ -178,35 +181,56 @@ function Products() {
     }
   }
 
-  
-  useEffect( async() => {
-    //getProducts() // Tarea de observacion
-    await DataStore.start();
-    getProducts(currentPage,pageSize) // pimera pagina
-  }, []);
-
-  
-
   /**
-   * Obtener la lista de usuarios cuando cambie el useState currentPage
+   * Inicia el efecto una sola vez para obtener la lista de productos
+   * 
    */
   useEffect( async() => {
-    getProducts(currentPage,pageSize)
-  },[currentPage,apsSearch])
+    // iniciar dataStore
+    //await DataStore.start();
+    // obtener la lista de productos
+    getProducts(currentPage,pageSize) // pimera pagina
+
+    // Terminar el efecto
+    return () =>{}
+  }, [currentPage,apsSearch]);
+
+  
+
+  {
+    /**
+     * Obtener la lista de productos
+     * 
+     * Propiedades del efecto
+     * @property {int} currentPage Pagina actual del paginador
+     * @property {string} apsSearch Cadena de la busqueda general
+     */
+    /*useEffect( async() => {
+      getProducts(currentPage,pageSize)
+      
+      // Terminar el efecto
+      return () =>{}
+    },[currentPage,apsSearch])*/
+  }
 
   /**
    * Obtener la lista de usuarios cuando cambie el useState total
+   * 
+   * Propiedades del efecto
    * @property {int} total es el total de elemetos que se van a paginar
    */
   useEffect( async() => {
     getProducts(currentPage,pageSize)
+    
+    // Terminar el efecto
+    return () =>{}
   },[total])
 
   /**
+   * Rellenar los input de los prodcutos con la informacion del producto
+   * 
    * @property {useRef} idCurrentRow Esta propiedad es un useRef utiliza la propiedad current para obtener el valor
    */
-
-
   const fillInputsEdit = async() =>{
     return new Promise( async(resolve,reject) =>{
       
@@ -261,7 +285,12 @@ function Products() {
     })
   }
 
-
+  /**
+   * Verificar si cambio algun input del formulario al estar editando
+   * 
+   * @param {*} updated 
+   * @returns {boolean} Retornara falso si la data del input no a sido modificada si retorna true el input a sido modificado
+   */
   const verifyChangeDataProduct = (updated) =>{
     if(productName != productNameRef.current){
       return true
@@ -282,6 +311,12 @@ function Products() {
     return false
   }
 
+  /**
+   * Cambiar los datos del objeto updated si value no es igual a la referencia guardada recuperada de base de datos
+   * 
+   * @param {Object} updated Objeto de actualizacion de DataStore
+   * @returns {Object} se retorna objecto ya cargado segun las condiciones
+   */
   const changeProductUpdate = (updated) =>{
     if(productName != productNameRef.current){
       updated['name'] = productName
@@ -303,6 +338,12 @@ function Products() {
 
   }
   
+
+  /**
+   * Verificar si cambio los datos de los precios de los productos
+   * 
+   * @returns {boolean} false: si no esta verificado y true, si esta verificado el cambio
+   */
   const verifyChangePriceProduct = () =>{
     
     if(productPriceUnit != productPriceUnitRef.current){
@@ -328,14 +369,21 @@ function Products() {
 
   }
 
-  /*useEffect( async() =>{
+  // No se tiene claro para que va servir este bloque de codigo, se deja para futuros desarrollos
+  {/*useEffect( async() =>{
     const listaProductStatus = (createProductStatus == true || settingStatus == true) ? false : true
     
     if(listaProductStatus){
       await inputsClear();
     }
-  },[settingStatus,createProductStatus])*/
+  },[settingStatus,createProductStatus])*/}
   
+
+  /**
+   * Limpiar los inputs y volver a obtener la lista de productos
+   * 
+   * @returns VOID
+   */
   const inputsClear = () => {
     return new Promise( async(resolve,reject) =>{
       setProductName('')
@@ -363,7 +411,9 @@ function Products() {
   }
 
   /**
-   * Crear producto
+   * Crear producto un nuevo producto 
+   * 
+   * @returns VOID
    */
   const createProduct = async() => {
     try{
@@ -383,6 +433,8 @@ function Products() {
       );
 
       const date = new Date(Date.now()).toUTCString()
+      
+      // SALVAR LA LISTA PRECIOS DEL PRODUCTO
       const newPrice = DataStore.save(
         new ProductPrice({
           unit: parseFloat(productPriceUnit),
@@ -394,7 +446,8 @@ function Products() {
           product: newProduct
         })
       )
-
+      
+      // MONSTRAR MENSAJE EN PANTALLA
       toast({
         title: 'Create product',
         description: "We've created the product for you.",
@@ -405,7 +458,7 @@ function Products() {
 
       
 
-
+      // LIMPIAR LOS INPUTS
       await inputsClear()
 
       
@@ -417,6 +470,11 @@ function Products() {
     }
   }
 
+  /**
+   * ACTUALIZAR EL PRODUCTO
+   * 
+   * @returns VOID
+   */
   const updateProduct = async() => {
     try{
       const product = await DataStore.query(Product, idCurrentRow.current);
@@ -472,8 +530,10 @@ function Products() {
   
 
   /**
-   * Eliminar una object de DataStore de amplify
+   * Eliminar un object de DataStore de amplify
+   * 
    * @param {String} id Identificador de registro de DataStore aws amplify
+   * @returns VOID
    */
   const deleteRow = async(id) => {
     

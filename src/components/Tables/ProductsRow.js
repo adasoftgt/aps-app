@@ -69,33 +69,68 @@ function ProductsRow(props) {
     
   } = props;
 
+  /**
+   * Cargando contexto de usuarios
+   */
+  const {
+    apsSearch,setApsSearch,
+  } = useUsers()
+
+  /**
+   * Cargando contexto de tabla
+   */
+  const { 
+    editGlobalEnabled,
+    settingStatus,setSettingStatus,
+    idCurrentRow,
+  } = useTable()
+
   const [price, setPrice] = useState([])
   const [productBatches,setProductBatches] = useState([])
-  //const [productQuantity,setProductQuantity] = useState(0)
+  const [productQuantity,setProductQuantity] = useState(0)
   
-  const productQuantity = useMemo( () =>{
-    let contador = 0
-    productBatches.map( (batch) => {
-      contador = contador + batch.quantity 
-    })
+  
+  {
+    /**
+     * Memoriazacion de la cantidad de productos por batches
+     * 
+     */
+    /*const productQuantityMemo = useMemo( () =>{
+      let contador = 0
+      productBatches.map( (batch) => {
+        contador = contador + batch.quantity 
+      })
 
-    return contador
-       
-  },[productBatches])
+      return contador
+        
+    },[productBatches])
 
- 
+  
+    useEffect( async() =>{
+      
+      setProductQuantity(productQuantityMemo)
+      // FINALIZAR EFECTO
+      return () => {}
+    },[productQuantityMemo])*/
+  }
   
 
+  //  EFECTO INICIAL
   useEffect( async() =>{
-    // precios
+    // PRECIOS
+    // Cuando hay mas un objeto relacionado al producto siempre se va elegir el de la fecha mas reciente
     const prices = await DataStore.query(ProductPrice, 
       c => c.productPriceProductId.eq(id),
       { sort: (s) => s.dateCreated(SortDirection.DESCENDING),limit: 1 }
     );
     const price = prices[0]
+    /**
+     * @property {object} price contiene todos los precios configurados al producto
+     */
     setPrice(price)
 
-    // cantidad de producto
+    // CANTIDAD DE PRODUCTO
+    // Obtener la lista de batches con estatus AVAILABLE
     const batches = await DataStore.query(Batch, 
       c => c.and( c => [
         c.productBatchesId.eq(id),
@@ -103,27 +138,33 @@ function ProductsRow(props) {
       ]),
       { sort: (s) => s.expiration_date(SortDirection.ASCENDING) }
     );
+    
+    //console.log('3cd7bc6d-9674-43dc-b59a-b8953d855846',batches)
+    
+    let contador = 0
+    batches.map( (batch) => {
+      contador = contador + batch.quantity 
+    })
 
-    setProductBatches(batches)
+    setProductQuantity(contador)
+    //console.log('e9f686b2-87be-4753-8905-d03be09e7e4e',sku,name,contador)
+    
+
+    //setProductBatches(batches)
 
     //setProductQuantity(contador)
     
-    return () => {
-
-    }
-  },[])
+    // FINALIZAR EFECTO
+    return () => {}
+  },[id])
 
   const textColor = useColorModeValue("gray.500", "white");
   const titleColor = useColorModeValue("gray.700", "white");
   const bgStatus = useColorModeValue("gray.400", "navy.900");
   const borderColor = useColorModeValue("gray.200", "gray.600");
 
-
-  const { 
-    editGlobalEnabled,
-    settingStatus,setSettingStatus,
-    idCurrentRow,
-  } = useTable()
+  
+  
 
   const [editNameStatus,setEditNameStatus] = useState(false)
   
