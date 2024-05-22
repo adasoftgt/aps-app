@@ -31,3 +31,9 @@ src/models/index.d.ts
 src/models/index.js
 src/models/schema.d.ts
 src/models/schema.js
+API.ts
+src/graphql/*.*
+.eslintignore
+src/API.ts
+src/graphql/schema.json
+/src/graphql
