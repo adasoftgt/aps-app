@@ -15,6 +15,7 @@ import Products from "views/Dashboard/Products.js";
 import Invoices from 'views/Dashboard/Invoices';
 import InvoiceCreate from 'views/Dashboard/InvoiceCreate';
 import Customers from 'views/Dashboard/Customers';
+import ProductDashboard from 'views/Dashboard/ProductDashboard';
 
 import PrintAps from 'components/Prints/PrintAps';
 
@@ -118,6 +119,16 @@ var dashRoutes = [
     component: Products,
     layout: "/admin",
     visibleInNav:true,
+    caps:['manage_options']
+  },
+  {
+    path: "/product/:productId",
+    name: "Product Dashbord",
+    rtlName: "لوحة القيادة",
+    icon: <FiPackage />,
+    component: ProductDashboard,
+    layout: "/admin",
+    visibleInNav:false,
     caps:['manage_options']
   },
   {

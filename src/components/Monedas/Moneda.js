@@ -2,11 +2,20 @@ import React from "react";
 import { Badge } from "@chakra-ui/react"
 
 
+
 function Moneda(props){
     
     const {amount} = props
 
-    const formatCurrency = (amount) => {
+    function currencyFormat(num) {
+        try{
+            const strAmount = (num != '0') ? Number.parseFloat(num) : '0.00'
+            return strAmount.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+        }catch(err){
+            console.log('525168a2-4e4f-4bd0-a5b9-c2653e555dc5',err)
+        }
+    }
+    /*const formatCurrency = (amount) => {
         // Convertir a string
         const strAmount = (amount != '0') ? amount.toString() : '0.00'
       
@@ -23,8 +32,8 @@ function Moneda(props){
         return `${formattedIntegerPart}${formattedDecimalPart}`;
     }
 
-    const amountFormat = formatCurrency(amount)
-
+    const amountFormat = formatCurrency(amount)*/
+    const amountFormat = currencyFormat(amount)
 
     return(
         <>

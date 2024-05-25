@@ -36,7 +36,7 @@ import {React,useEffect,useState,useRef, useMemo} from "react";
 import {Capability} from "models"
 import { FaLessThanEqual } from "react-icons/fa";
 
-import { FiEdit, FiDelete, FiSettings, FiSave, FiArrowLeft, FiDollarSign, FiCheckCircle, FiBox, FiLayers} from "react-icons/fi";
+import { FiEdit, FiDelete, FiSettings, FiSave, FiArrowLeft, FiDollarSign, FiCheckCircle, FiBox, FiLayers, FiEye} from "react-icons/fi";
 import { position } from "stylis";
 import ListRoles from "components/dropdowns/ListRoles";
 
@@ -50,6 +50,8 @@ import {ProductPrice,Batch,BatchStatus} from "models";
 
 // Amplify datastore
 import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
+
+import { NavLink } from "react-router-dom/cjs/react-router-dom.min";
 
 function ProductsRow(props) {
   /**
@@ -192,6 +194,13 @@ function ProductsRow(props) {
           <Tooltip label='List Batch'>
             <IconButton aria-label="Settings" icon={<FiLayers />} onClick={() => handleBatch(id)} />
           </Tooltip>
+        </Box>
+        <Box w="40px" h="40px" bg="transparent">
+          <NavLink to={`product/${id}`}>
+            <Tooltip label='Ver Producto'>
+              <IconButton aria-label="Settings" icon={<FiEye />} />
+            </Tooltip>
+          </NavLink>
         </Box>
       </Stack>    
       <Tr>
