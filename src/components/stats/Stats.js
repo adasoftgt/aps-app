@@ -30,7 +30,7 @@ export const ProductBatchQuantity = ({productId}) =>{
     },[])
 
     return(
-        <>{quantityBatch}</>
+        <>{quantityBatch} Lotes</>
     );
 }
 
@@ -86,6 +86,6 @@ export const ProductQuantity = ({items,batchChunkStatus}) =>{
         }
       },[items])
     return(
-        <>{saleQuantity}</>
+        <>{saleQuantity} Productos</>
     );
 }
