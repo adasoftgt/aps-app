@@ -31,6 +31,7 @@ import { FaUsersCog } from "react-icons/fa";
 import { FaUserShield,FaPlus } from "react-icons/fa";
 import { FaUsers, FaFileInvoiceDollar } from "react-icons/fa6";
 import { CiCircleList } from "react-icons/ci";
+import { BiStats } from "react-icons/bi";
 
 
 import {
@@ -167,6 +168,26 @@ var dashRoutes = [
         layout: "/admin",
         visibleInNav:false,
         caps:['manage_options']
+      },
+    ]
+  },
+
+  {
+    menu: "Estadística",
+    icon: <BiStats />,
+    layout: "/admin",
+    visibleInNav:true,
+    caps:['manage_options'],
+    views:[
+      {
+        path: "/vendedor-saldo",
+        name: "Vendedor Saldo",
+        rtlName: "لوحة القيادة",
+        icon: <BiStats />,
+        component: Invoices,
+        layout: "/admin",
+        visibleInNav:true,
+        caps:['manage_options'],
       },
     ]
   },
