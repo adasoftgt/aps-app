@@ -38,7 +38,7 @@ import { Redirect } from 'react-router-dom';
 
 import { useToast } from "@chakra-ui/react";
 
-function UsersRow(props) {
+function UsersRow2(props) {
   /**
    * @property {String} displayname nombre a mostrar en el app
    * @property {String} name Nombre del rol

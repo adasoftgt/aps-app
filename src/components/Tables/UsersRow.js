@@ -38,6 +38,8 @@ import { Redirect } from 'react-router-dom';
 
 import { useToast } from "@chakra-ui/react";
 
+import { UserNameField, UserRolfield  } from "components/Users/UserRowField";
+
 function UsersRow(props) {
   /**
    * @property {String} displayname nombre a mostrar en el app
@@ -146,7 +148,7 @@ function UsersRow(props) {
       {createInvoiceStatus &&(
         <Redirect to={{
             pathname: '/admin/invoice_create',
-        }} />
+        }} /> 
       )}
       
       <Stack direction={["column", "row","left"]} spacing="24px">
@@ -176,83 +178,7 @@ function UsersRow(props) {
           <Flex align="center" py=".8rem" minWidth="100%" flexWrap="nowrap">
             <Avatar src={logo} w="50px" borderRadius="12px" me="18px" />
             <Flex direction="column">
-            <Grid
-              templateRows="repeat(1, 1fr)"
-              templateColumns="repeat(2, 1fr)"
-              //gap={3}
-            >
-              <GridItem rowSpan={1} colSpan={1} bg="transparent" >
-                {editDisplayname ? (
-                  <Input 
-                    type="text"
-                    placeholder="Display Name" 
-                    value={newDisplayName || displayname}
-                    onChange={(e) => setNewDisplayName(e.target.value)}  
-                  />
-                ) : (
-                  <Text
-                    fontSize="md"
-                    color={titleColor}
-                    fontWeight="bold"
-                    minWidth="100%"
-                  >
-                    {newDisplayName || displayname}
-                  </Text>
-                )}
-              </GridItem>
-              <Stack direction={["column", "row","left"]} spacing="24px">
-                <Box w="40px" h="40px" bg="transparent">
-                  {editGlobalEnabled &&(
-                    <>
-                      {editDisplayname ? (
-                        <>
-                          <HStack spacing="10px">
-                            <Box w="40px" h="40px" bg="transparent">
-                              <IconButton 
-                                aria-label="Save" 
-                                icon={<FiSave />} 
-                                onClick={() => editRow(index,{
-                                  key:"displayname",
-                                  typeButton:"Save",
-                                  id: id, 
-                                  newValue: newDisplayName,
-                                  setIsChange: setIsChangeDisplayName,
-                                  setEdit: setEditDisplayname
-                                })}
-                              />
-                            </Box>
-                            <Box w="40px" h="40px" bg="transparent">
-                              <IconButton 
-                                aria-label="Edit" 
-                                icon={<FiArrowLeft />} 
-                                onClick={() => editRow(index,{
-                                  key:"name", 
-                                  typeButton:"Return",
-                                  setEdit: setEditDisplayname
-                                })} 
-                              />
-                            </Box>
-                          </HStack>
-
-                        </>
-                      ):(
-                        <IconButton
-                          isLoading={isChangeDisplayName}
-                          aria-label="Edit" 
-                          icon={<FiEdit />} 
-                          onClick={() => editRow(index,{
-                            key:"displayname",
-                            typeButton:"Edit",
-                            setEdit: setEditDisplayname
-                          })} 
-                        />
-                      )}
-                    </>
-                  )}
-                </Box>
-              </Stack>
-
-            </Grid>
+              <UserNameField id={id} editGlobalEnabled={editGlobalEnabled} dataValue={displayname}  />
               
               
               <Text fontSize="sm" color="gray.400" fontWeight="normal">
@@ -264,75 +190,7 @@ function UsersRow(props) {
 
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
           <Flex direction="column">
-            <Grid
-                templateRows="repeat(1, 1fr)"
-                templateColumns="repeat(2, 1fr)"
-                //gap={3}
-              >
-                <GridItem rowSpan={1} colSpan={1} bg="transparent" >
-                {editName ? (
-                  <ListRoles rol={newName || name} user_operation={user_operation} />
-                ):(
-                  <Text fontSize="md" color={textColor} fontWeight="bold">
-                    {newName || name} 
-                  </Text>
-          )}
-                </GridItem>
-                <GridItem rowSpan={1} bg="transparent" >
-                  {editGlobalEnabled &&(
-                    <>  
-                      {editName ? (
-                        <>
-                          <HStack spacing="10px">
-                            <Box w="40px" h="40px" bg="transparent">
-                              <IconButton 
-                                aria-label="Edit" 
-                                icon={<FiSave />} 
-                                onClick={() => editRow(index,{
-                                  key:"name", 
-                                  typeButton:"Save",
-                                  id: id, 
-                                  newValue: newName,
-                                  setIsChange: setIsChangeName,
-                                  setEdit: setEditName
-                                })} 
-                              /> 
-                            </Box>
-                            <Box w="40px" h="40px" bg="transparent">
-                              <IconButton 
-                                aria-label="Edit" 
-                                icon={<FiArrowLeft />} 
-                                onClick={() => editRow(index,{
-                                  key:"name", 
-                                  typeButton:"Return",
-                                  setEdit: setEditName
-                                })} 
-                              />
-                            </Box>
-                          </HStack>
-                          
-                          
-                        </>
-                        
-                      ):(
-                        <IconButton 
-                          aria-label="Edit" 
-                          icon={<FiEdit />} 
-                          onClick={() => editRow(index,{
-                            key:"name",
-                            typeButton:"Edit",
-                            setEdit: setEditName
-                          })} 
-                          isLoading={isChangeName}
-                        />
-                      )}
-                    </>
-                  )}
-                    
-                </GridItem>
-
-              </Grid>
-          
+            <UserRolfield id={id} editGlobalEnabled={editGlobalEnabled} dataValue={name} user_operation={user_operation}  />
           
           
             

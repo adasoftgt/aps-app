@@ -99,7 +99,7 @@ const UsersProvider = ({ children }) => {
   /**
    * Actualizar los atributos del usario de cognito
    * 
-   * @param {USER_OPERATION} user_operation es una estructura que contiene datos y atributos del usario a ser modificado
+   * @param {import('structures').UserOperation} user_operation es una estructura que contiene datos y atributos del usario a ser modificado
    */
   const updateAttrUser = async(user_operation) => {
     
@@ -115,6 +115,54 @@ const UsersProvider = ({ children }) => {
     };
     await cognito.adminUpdateUserAttributes(params).promise()
   }
+
+  /**
+   * agregar usuario a un grupo especifico
+   * @param {import('structures').UserOperation} user_operation Es una estructura que contiene datos y atributos del usario a ser modificado
+   * @param {String} newGroup nombre del nuevo grupo segun configuracion de cognito 
+   */
+  const addGroupUser = async(user_operation,newGroup) => {
+    
+    const params = {
+      UserPoolId: process.env.REACT_APP_AWS_COGNITO_USER_POOL_ID,
+      Username: user_operation.username,
+      GroupName: newGroup,
+      //AccessToken:accessToken,
+    };
+    await cognito.adminAddUserToGroup(params).promise()
+  }
+
+  /**
+   * remover usuario a un grupo especifico
+   * @param {import('structures').UserOperation} user_operation Es una estructura que contiene datos y atributos del usario a ser modificado
+   * @param {String} newGroup nombre del nuevo grupo segun configuracion de cognito 
+   */
+  const removeGroupUser = async(user_operation,newGroup) => {
+    
+    const params = {
+      UserPoolId: process.env.REACT_APP_AWS_COGNITO_USER_POOL_ID,
+      Username: user_operation.username,
+      GroupName: newGroup,
+      //AccessToken:accessToken,
+    };
+    await cognito.adminRemoveUserFromGroup(params).promise()
+  }
+
+  /**
+   * Obtener la lista de grupos de cognito
+   * @param {String} groupName el nombre del grupo que se quieren encontrar
+   * @return {Promise<Object>} retorna un promesa de object que contine los datos del grupo de lo contrario object vacio 
+   * @deprecated por revison
+   */
+  const getGroup = async(groupName) =>{
+    const params = {
+      UserPoolId: process.env.REACT_APP_AWS_COGNITO_USER_POOL_ID,
+      GroupName: groupName
+    };
+    return await cognito.getGroup(params).promise()
+  }
+
+  
 
   /**
    * Confirmar a un usuario
@@ -489,6 +537,9 @@ const getAutoIncrementConfiguration = async(name) =>{
     <UsersContext.Provider value={{ 
         sellers,
         updateAttrUser,
+        addGroupUser,
+        removeGroupUser,
+        getGroup,
         confirmUser, 
         disableUser,
         enableUser,

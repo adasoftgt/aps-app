@@ -22,11 +22,11 @@ import React, { useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import routes from "routes.js";
 // Custom Chakra theme
-import FixedPlugin from "../components/FixedPlugin/FixedPlugin";
+import FixedPlugin from "../components/FixedPlugin/FixedPlugin.js";
 // Custom components
-import MainPanel from "../components/Layout/MainPanel";
-import PanelContainer from "../components/Layout/PanelContainer";
-import PanelContent from "../components/Layout/PanelContent";
+import MainPanel from "../components/Layout/MainPanel.js";
+import PanelContainer from "../components/Layout/PanelContainer.js";
+import PanelContent from "../components/Layout/PanelContent.js";
 import bgAdmin from "assets/img/admin-background.png";
 
 

@@ -19,35 +19,31 @@ import { useUsers } from "contexts/UsersContext";
 
 import { USER_ATTRIBUTES } from "structures";
 
+import { v4 as uuidv4 } from 'uuid';
 
 
 /**
- * 
- * @prop {useRef} roles variable no afectada por la rederizacion para que no se consulte de mas la base de datos en la nube 
- * @returns 
+ * Crear una dropDown de roles
+ * @param {Object} props
+ * @param {String} props.rolCurrent Cadena que contiene el nombre rol que se tiene actualmete
+ * @param  {import("structures").UserOperation} props.user_operation estructura de datos de usuario cognito
+ * @param {String} rolSelectRef rerencia del rol seleccionado
+ * @returns {React.ReactElement}
  */
-const ListRoles = ({rol,user_operation}) => {
-    
-    const [rolSelect,setRolSelect] = useState(rol)
+const ListRoles = ({rolCurrent,user_operation,rolSelectRef}) => {
+
+    const [rolSelect,setRolSelect] = useState(null)
 
     /**
-     * @property {Array} rolesOptions lista de los nombre de la opciones de roles
+     * @type {Array} rolesOptions lista de los nombre de la opciones de roles
      */
     const { rolesOptions } = useAuth()
-
-    /**
-     * @property {Fuction} updateAttrUser para actualizar los atributos del usuario
-     */
-    const { updateAttrUser } = useUsers()
     
-
-    /**
-     * Manejador para el cambio de rol
-     * @param {*} event Evento del deplegable
-     * @property {USER_ATTRIBUTES} user_operation.attributes Objeto de atributos del usuario de cognito
-     * @property {USER_OPERATION} user_operation
-     */
     useEffect(() => {
+        // Guardar referencia de rol seleccionado
+        rolSelectRef.current = rolSelect
+        
+        // Modificar user_operation de cognito
         user_operation.attributes.map((attribute, index, arr) => {
             switch(attribute.Name){
                 case "profile":
@@ -56,8 +52,9 @@ const ListRoles = ({rol,user_operation}) => {
                 
             }
         })
+
         
-        updateAttrUser(user_operation)
+        
     }, [rolSelect])
     
 
@@ -67,8 +64,9 @@ const ListRoles = ({rol,user_operation}) => {
             <FormControl id="country">
                 <Select 
                     placeholder="Select Rol"
-                    value={rolSelect}
+                    value={rolSelect || rolCurrent}
                     onChange={(e) => setRolSelect(e.target.value) }
+                    key={uuidv4()}
                 >
                     {rolesOptions.map( (option) => {
 

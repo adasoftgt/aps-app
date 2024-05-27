@@ -26,6 +26,8 @@ const USER = {
 
 
 /**
+ * Atributos del usuario dentro de cognito
+ * @typedef UserAttributes
  * @property {String} profile El ID de perfil del usuario en Cognito.
  * @property {String} email El correo electrónico del usuario en Cognito.
  */
@@ -36,8 +38,8 @@ const USER_ATTRIBUTES = {
 
 /**
  * Esta es una estructura que se envia en cada fila de tabla al recuperar la lista de usuarios
- * @typedef {Object} Operation
- * @property {USER_ATTRIBUTES} attributes son los atributos recolectados del usuario de cognito 
+ * @typedef {Object} UserOperation
+ * @property {UserAttributes} attributes son los atributos recolectados del usuario de cognito 
  * @property {string} username nombre de usuario dentro de cognito
  * @property {string} UserStatus nombre de usuario dentro de cognito :: CONFIRMED | 
  * @property {boolean} Confirmed compara UserStatus y verifica si viene CONFIRMED devuelve true or false
