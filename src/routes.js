@@ -16,6 +16,7 @@ import Invoices from 'views/Dashboard/Invoices';
 import InvoiceCreate from 'views/Dashboard/InvoiceCreate';
 import Customers from 'views/Dashboard/Customers';
 import ProductDashboard from 'views/Dashboard/ProductDashboard';
+import VendedorSaldo from 'views/Dashboard/vendedorSaldo';
 
 import PrintAps from 'components/Prints/PrintAps';
 
@@ -184,7 +185,7 @@ var dashRoutes = [
         name: "Vendedor Saldo",
         rtlName: "لوحة القيادة",
         icon: <BiStats />,
-        component: Invoices,
+        component: VendedorSaldo,
         layout: "/admin",
         visibleInNav:true,
         caps:['manage_options'],
