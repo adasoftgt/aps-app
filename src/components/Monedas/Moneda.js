@@ -9,10 +9,10 @@ function Moneda(props){
 
     function currencyFormat(num) {
         try{
-            const strAmount = (num != '0') ? Number.parseFloat(num) : '0.00'
+            const strAmount = (num != '0' ) ? Number.parseFloat(num) : '0.00'
             return strAmount.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
         }catch(err){
-            console.log('525168a2-4e4f-4bd0-a5b9-c2653e555dc5',err)
+            return '0.00'
         }
     }
     /*const formatCurrency = (amount) => {
