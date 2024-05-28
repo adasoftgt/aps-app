@@ -37,6 +37,7 @@
 		"react-big-calendar": "0.33.2",
 		"react-bootstrap-sweetalert": "5.2.0",
 		"react-custom-scrollbars": "^4.2.1",
+		"react-data-table-component": "^7.6.2",
 		"react-datetime": "3.0.4",
 		"react-dom": "17.0.2",
 		"react-github-btn": "^1.2.1",
@@ -48,6 +49,7 @@
 		"react-table": "7.7.0",
 		"react-tagsinput": "3.19.0",
 		"sass": "^1.56.1",
+		"styled-components": "^6.1.11",
 		"stylis": "^4.0.10",
 		"stylis-plugin-rtl": "^2.0.2",
 		"uuid": "^9.0.1"
