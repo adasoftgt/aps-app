@@ -496,11 +496,15 @@ function Payments(){
                         <Th pl="0px" borderColor={borderColor} color="gray.400" >
                             Código
                         </Th>
+                        <Th borderColor={borderColor} color="gray.400" >Nombre Cliente</Th>
+                        <Th borderColor={borderColor} color="gray.400" >Vendedor</Th>
                         <Th borderColor={borderColor} color="gray.400" >Código Factura</Th>
                         <Th borderColor={borderColor} color="gray.400" >Método de pago</Th>
                         <Th borderColor={borderColor} color="gray.400" >Monto</Th>
                         <Th borderColor={borderColor} color="gray.400" >Referencia</Th>
-                        <Th borderColor={borderColor} color="gray.400" >Operador</Th>
+                        <Th borderColor={borderColor} color="gray.400" >Operador de pago</Th>
+                        <Th borderColor={borderColor} color="gray.400" >Fecha</Th>
+                        
                         </Tr>
                     </Thead>
                     <Tbody>
@@ -516,6 +520,7 @@ function Payments(){
                             method={item.method}
                             amount={item.amount}
                             invoicePaymentId={item.invoicePaymentId}
+                            createdAt={item.createdAt}
                             // functions
                             onDelete={handleDelete}
                             onInvoiceCancel={handleInvoiceCancel}

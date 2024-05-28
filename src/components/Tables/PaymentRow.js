@@ -66,6 +66,7 @@ import { FaFileInvoiceDollar } from "react-icons/fa6";
 
 import UserName from "components/Users/UserName";
 
+
 import { OptionsPaymentMethod } from "components/Payments/DropDownPaymentMethod";
 
 function PaymentRow(props) {
@@ -78,7 +79,7 @@ function PaymentRow(props) {
   const {
     isLast,logo,
     id,index,
-    userId,clientId,reference,method,amount,invoicePaymentId,
+    userId,clientId,reference,method,amount,invoicePaymentId,createdAt,
     
 
     onInvoiceCancel,
@@ -98,6 +99,7 @@ function PaymentRow(props) {
 
   const [price, setPrice] = useState([])
   const [productBatches,setProductBatches] = useState([])
+  const [paymentInvoice,setPaymentInvoice] = useState([])
   //const [productQuantity,setProductQuantity] = useState(0)
   
   const productQuantity = useMemo( () =>{
@@ -136,6 +138,16 @@ function PaymentRow(props) {
 
     }
   },[])
+
+  useEffect( async() =>{
+    //invoicePaymentId
+    const invoice = await DataStore.query(Invoice, invoicePaymentId);
+    setPaymentInvoice(invoice)
+    
+    return () =>{
+
+    }
+  },[invoicePaymentId])
 
   const textColor = useColorModeValue("gray.500", "white");
   const titleColor = useColorModeValue("gray.700", "white");
@@ -202,6 +214,31 @@ function PaymentRow(props) {
             {id}
           </Text>
         </Td>
+        
+        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
+           <Text
+            fontSize="md"
+            color={titleColor}
+            fontWeight="bold"
+            minWidth="100%"
+          >
+            {/* {paymentInvoice.clientId} */}
+            <CustomerName id={paymentInvoice.clientId}/>
+            
+          </Text>
+         
+        </Td>
+        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
+          <Text
+            fontSize="md"
+            color={titleColor}
+            fontWeight="bold"
+            minWidth="100%"
+          >
+            <UserName userId={paymentInvoice.cashierId} />
+          </Text>
+          
+        </Td>
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
            <Text
             fontSize="md"
@@ -249,6 +286,7 @@ function PaymentRow(props) {
           />
           
         </Td>
+
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
           <Text
             fontSize="md"
@@ -260,6 +298,19 @@ function PaymentRow(props) {
           </Text>
           
         </Td>
+        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
+          <Text
+            fontSize="md"
+            color={titleColor}
+            fontWeight="bold"
+            minWidth="100%"
+          >
+            {createdAt}
+          </Text>
+          
+        </Td>
+        
+        
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
           {/* <Text
             fontSize="md"
