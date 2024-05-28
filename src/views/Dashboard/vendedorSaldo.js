@@ -92,15 +92,27 @@ function VendedorSaldo(){
             const invoices = await DataStore.query(Invoice, 
                 c => c.cashierId.eq(seller_sub)
             );
-            const saldo = <Moneda amount={invoices.reduce((saldoSum, invoice) => saldoSum + invoice.total, 0)}/>
+            const saldoUnformat = invoices.reduce((saldoSum, invoice) => saldoSum + invoice.total, 0)
+            const saldo = <Moneda amount={saldoUnformat}/>
             
             const item = {
                 sellerUserName: seller.Username,
-                saldo: saldo
+                saldo: saldo,
+                saldoUnFormat:saldoUnformat
             }
 
             items.push(item)
         }))
+
+        const granTotal = items.reduce((itemSum, item) => itemSum + item.saldoUnFormat, 0)
+
+        const itemTotal = {
+            sellerUserName: 'Total',
+            saldo: <Moneda amount={granTotal}/>,
+            saldoUnFormat:granTotal
+        }
+
+        items.push(itemTotal)
         
         setItems(items)
         setColumns([
