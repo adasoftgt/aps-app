@@ -59,6 +59,8 @@ import { Redirect } from "react-router-dom/cjs/react-router-dom";
 
 import Moneda from "components/Monedas/Moneda";
 
+import InfoCustomer from "components/Customers/Info2";
+
 
 function CreatePayment(props){
     const textColor = useColorModeValue("gray.700", "white");
@@ -248,6 +250,7 @@ function CreatePayment(props){
                         }} 
                     />
                 )}
+                <InfoCustomer id={invoiceModel.clientId}/>
                 <Flex style={{padding: "0 0 10px 0"}}>
                     <Card p='16px' >
                       <CardBody px='5px'>
