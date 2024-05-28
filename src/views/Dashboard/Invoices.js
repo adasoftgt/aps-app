@@ -95,7 +95,7 @@ function Invoices(){
 
     const [typeDocument,setTypeDocument] = useState(invoiceDraft.typeDocument ?? TypeDocument.INVOICE)
 
-    const {userId} = useAuth()
+    const {userId,capabilities} = useAuth()
 
     const { 
         editRow,
@@ -120,22 +120,44 @@ function Invoices(){
 
     const getItems = async(page = 0,limit = 0) => {
         try{  
+            
             const pageOfset = page - 1
-            var condicion = (i) => i.and(
-                i => [
-                    i.cashierId.eq(userId),
-                    i.clientId.eq(customerModel.id)
-                ]
-            )
-            if(Object.keys(customerModel).length === 0){
+            var condicion = ''
+            // si el usuario tiene la capacidad de manager_options puede ver facturas creadas por otros usuarios
+            if(capabilities.includes("manage_options")){
                 condicion = (i) => i.and(
                     i => [
-                        i.cashierId.eq(userId)
+                        i.clientId.eq(customerModel.id)
                     ]
                 )
+                
+                if(Object.keys(customerModel).length === 0){
+                    condicion = (i) => i.and(
+                        i => [
+                            
+                        ]
+                    )
+                }
+            }else{
+                condicion = (i) => i.and(
+                    i => [
+                        i.cashierId.eq(userId),
+                        i.clientId.eq(customerModel.id)
+                    ]
+                )
+
+                if(Object.keys(customerModel).length === 0){
+                    condicion = (i) => i.and(
+                        i => [
+                            i.cashierId.eq(userId)
+                        ]
+                    )
+                }
             }
 
-            console.log('8ab636d8-78d6-4b8f-a8dc-25fecaf217f7',condicion)
+            
+
+            //console.log('8ab636d8-78d6-4b8f-a8dc-25fecaf217f7',condicion)
           
           const products = await DataStore.query(Invoice, 
             condicion, 
@@ -447,8 +469,8 @@ function Invoices(){
                         <Th pl="0px" borderColor={borderColor} color="gray.400" >
                             Codigo de factura
                         </Th>
-                        <Th borderColor={borderColor} color="gray.400" >Nombre cajero</Th>
                         <Th borderColor={borderColor} color="gray.400" >Nombre de cliente</Th>
+                        <Th borderColor={borderColor} color="gray.400" >UserName Vendedor</Th>
                         <Th borderColor={borderColor} color="gray.400" >Notas</Th>
                         <Th borderColor={borderColor} color="gray.400" >Estado</Th>
                         <Th borderColor={borderColor} color="gray.400" >Tipo</Th>

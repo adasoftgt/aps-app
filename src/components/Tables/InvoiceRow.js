@@ -68,6 +68,8 @@ import { useToast } from "@chakra-ui/react";
 
 import { Redirect } from 'react-router-dom';
 
+import UserName from "components/Users/UserName";
+
 function InvoiceRow(props) {
   
   const textColor = useColorModeValue("gray.500", "white");
@@ -278,6 +280,11 @@ function InvoiceRow(props) {
             {id}
           </Text>
         </Td>
+        {/* Nombre del cliente */}
+        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
+           <CustomerName id={clientId}/>
+        </Td>
+        {/* UserName del Vendedor */}
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
           <Text
             fontSize="md"
@@ -285,11 +292,8 @@ function InvoiceRow(props) {
             fontWeight="bold"
             minWidth="100%"
           >
-            {cashierId}
+            <UserName userId={cashierId}/>
           </Text>
-        </Td>
-        <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
-           <CustomerName id={clientId}/>
         </Td>
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
           <Text
