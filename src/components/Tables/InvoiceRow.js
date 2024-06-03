@@ -34,7 +34,7 @@ import {
 import {React,useEffect,useState,useRef, useMemo} from "react";
 
 import {Capability} from "models"
-import { FaLessThanEqual } from "react-icons/fa";
+import { FaLessThanEqual,FaPrint  } from "react-icons/fa";
 
 import { FiEdit, FiDelete, FiSettings, FiSave, FiArrowLeft, FiDollarSign, FiCheckCircle, FiBox, FiLayers, FiEye, FiExternalLink} from "react-icons/fi";
 import { position } from "stylis";
@@ -42,6 +42,8 @@ import ListRoles from "components/dropdowns/ListRoles";
 
 import { useUsers } from "contexts/UsersContext";
 import { useTable } from "contexts/TableContext"; 
+
+import { NavLink } from "react-router-dom/cjs/react-router-dom.min";
 
 import ApsInput from "./Propertys/ApsInput";
 
@@ -60,6 +62,7 @@ import { TypeDocument } from "models";
 
 import WhatInvoiceStatus from "components/invoices/WhatInvoiceStatus";
 import WhatInvoiceTerm from "components/invoices/WhatInvoiceTerm";
+import WhatDocument from "components/invoices/WhatDocument";
 
 import { FaFileInvoiceDollar } from "react-icons/fa6";
 
@@ -295,6 +298,7 @@ function InvoiceRow(props) {
             <UserName userId={cashierId}/>
           </Text>
         </Td>
+        {/*notas*/}
         <Td borderColor={borderColor} borderBottom={isLast ? "none" : null}>
           <Text
             fontSize="md"
@@ -364,32 +368,6 @@ function InvoiceRow(props) {
 
 
 
-
-
-function WhatDocument(props){
-  const {typeDocument} =props
-  
-  switch(typeDocument){
-    case TypeDocument.INVOICE:
-      return(
-        <>Factura</>
-      )
-    case TypeDocument.SHIPPING:
-      return(
-        <>Envio</>
-      )
-    case TypeDocument.NOTE:
-      return(
-        <>Nota</>
-      )
-    default:
-      return null
-      
-    
-
-  }
-}
-
 function Controls(props){
   const {id,status,onView,onEdit,onInvoiceCancel,onDelete,onInvoicePayment,onInvoiceOpenContext} = props
   
@@ -441,6 +419,13 @@ function Controls(props){
               <Tooltip label='Agregar a contexto'>
                 <IconButton aria-label="Settings" icon={<FiExternalLink />} onClick={() => onInvoiceOpenContext(id)} />
               </Tooltip>
+            </Box>
+            <Box w="40px" h="40px" bg="transparent">
+              <NavLink to={`document/${id}/print`}>
+                <Tooltip label='Previo de impresión'>
+                  <IconButton aria-label="Settings" icon={<FaPrint/>} />
+                </Tooltip>
+              </NavLink>
             </Box>
             
           </>

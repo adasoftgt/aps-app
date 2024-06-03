@@ -18,6 +18,7 @@ import Customers from 'views/Dashboard/Customers';
 import ProductDashboard from 'views/Dashboard/ProductDashboard';
 import VendedorSaldo from 'views/Dashboard/vendedorSaldo';
 import VentasXsector from 'views/Dashboard/VentasXsector';
+import Document from 'views/Dashboard/Document';
 
 import PrintAps from 'components/Prints/PrintAps';
 
@@ -113,7 +114,16 @@ var dashRoutes = [
     ]
 
   },
-
+  {
+    path: "/document/:id/:type",
+    name: "Document",
+    rtlName: "لوحة القيادة",
+    icon: <FiPackage />,
+    component: Document,
+    layout: "/admin",
+    visibleInNav:false,
+    caps:['manage_options']
+  },
   {
     path: "/products",
     name: "Products",

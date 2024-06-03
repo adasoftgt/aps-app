@@ -44,7 +44,7 @@ import { FaPrint } from "react-icons/fa";
 
 import WhatDocument from "components/invoices/WhatDocument";
 
-const InvoicePdf = (props) => {
+const InvoicePrint = (props) => {
 
     const {invoiceId} = props
     const [invoice,setInvoice] = useState([])
@@ -220,7 +220,7 @@ const InvoiceTableItems = (props) =>{
 }
 
 
-export default InvoicePdf;
+export default InvoicePrint;
 
 
 

@@ -6,7 +6,7 @@ import { Box, Flex, Text, Image } from '@chakra-ui/react';
   import CardBody from "components/Card/CardBody.js";
   import CardHeader from "components/Card/CardHeader.js";
 
-  import InvoicePDF from './InvoicePDF';
+  import InvoicePDF from './InvoicePDF_old';
 
 function PrintAps(props){
   const {invoiceItems = []} = props
