@@ -69,7 +69,7 @@ import {
 } from "@chakra-ui/react"
 
 import InvoicePrint from "components/Prints/Invoice";
-import InvoicePdf from "components/Prints/InvoicePdf";
+import InvoicePdf from "components/Prints/InvoicePDF";
 
 import { useParams } from 'react-router-dom';
 
