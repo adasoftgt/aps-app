@@ -32,9 +32,10 @@ function Name(props){
 
 
     return (
-        <Text fontSize="sm" color="gray.400" fontWeight="normal" key={key}>
-            {name}
-        </Text>
+        <>
+             {name}
+        </>
+           
     )
 }
 

@@ -41,9 +41,9 @@ const DisplayQuantity = (props) =>{
     },[])
 
     return(
-        <Text fontSize="md" color={textColor} fontWeight="bold" pb=".5rem">
+        <>
             {quantity}
-        </Text>
+        </>
     )
 }
 

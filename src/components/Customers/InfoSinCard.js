@@ -27,7 +27,7 @@ import { useUsers } from "contexts/UsersContext";
 // Amplify datastore
 import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
 
-function InfoCustomer(props){
+function InfoCustomerSinCard(props){
     const {id} = props
 
     const [customer,setCustomer] = useState([])
@@ -70,8 +70,6 @@ function InfoCustomer(props){
       <>
        
         <Flex style={{padding: "0 0 0 0"}}>
-          <Card p='16px' >
-              <CardBody px='5px'>
               {/* <Stack direction={["column", "row"]} spacing="5px">
                   <Box w="auto" h="40px">
                       <Text fontSize="lg">Customer:</Text>
@@ -92,21 +90,29 @@ function InfoCustomer(props){
                   >
                     <Box h='auto'>
                       <HStack spacing='24px'>
-                        <Box w='auto' h='40px' >
-                          Fecha: 
+                        <Box w='auto' h='30px'>
+                          <Text bg="blue.500" borderRadius="md" p={1}>
+                            Codigo:
+                          </Text>
                         </Box>
-                        <Box w='auto' h='40px' >
-                          {invoiceDraft.fecha}
+                        <Box w='auto' h='30px' >
+                          <Text p={1}>
+                            {customer.code}
+                          </Text>
                         </Box>
                       </HStack>
                     </Box>
-                    <Box h='40px'>
+                    <Box h='30px'>
                       <HStack spacing='24px'>
-                        <Box w='auto' h='40px' >
-                          Sector: 
+                        <Box w='auto' h='30px' >
+                          <Text bg="blue.500" borderRadius="md" p={1}>
+                            Sector:
+                          </Text> 
                         </Box>
-                        <Box w='auto' h='40px' >
-                          {customer.sector}
+                        <Box w='auto' h='30px' >
+                          <Text p={1}>
+                            {customer.sector}
+                          </Text>
                         </Box>
                       </HStack>
                     </Box>
@@ -119,21 +125,29 @@ function InfoCustomer(props){
                     >
                       <Box h='auto'>
                         <HStack spacing='24px'>
-                          <Box w='auto' h='40px' >
-                            Transporte: 
+                          <Box w='auto' h='30px' >
+                            <Text bg="blue.500" borderRadius="md" p={1}>
+                              Transporte:
+                            </Text> 
                           </Box>
-                          <Box w='auto' h='40px' >
-                            {customer.carrier}
+                          <Box w='auto' h='30px' >
+                            <Text p={1}>
+                              {customer.carrier}
+                            </Text>
                           </Box>
                         </HStack>
                       </Box>
-                      <Box h='40px'>
+                      <Box h='30px'>
                         <HStack spacing='24px'>
-                          <Box w='auto' h='40px' >
-                            Vendedor: 
+                          <Box w='auto' h='30px' >
+                            <Text bg="blue.500" borderRadius="md" p={1}>
+                              Vendedor:
+                            </Text> 
                           </Box>
-                          <Box w='auto' h='40px' >
-                            {sellerUserName}
+                          <Box w='auto' h='30px' >
+                            <Text p={1}>
+                              {sellerUserName}
+                            </Text>
                           </Box>
                         </HStack>
                       </Box>
@@ -146,49 +160,104 @@ function InfoCustomer(props){
                     >
                       <Box h='auto'>
                         <HStack spacing='24px'>
-                          <Box w='auto' h='40px' >
-                            Departamento: 
+                          <Box w='auto' h='30px' >
+                            <Text bg="blue.500" borderRadius="md" p={1}>
+                              Departamento:
+                            </Text> 
                           </Box>
-                          <Box w='auto' h='40px' >
-                            {customer.countryDepartment}
+                          <Box w='auto' h='30px' >
+                            <Text whiteSpace="nowrap" p={1}>
+                              {customer.countryDepartment}
+                            </Text>
                           </Box>
                         </HStack>
                       </Box>
-                      <Box h='40px'>
+                      <Box h='30px'>
                         <HStack spacing='24px'>
-                          <Box w='auto' h='40px' >
-                            Municipio: 
+                          <Box w='auto' h='30px' >
+                            <Text bg="blue.500" borderRadius="md" p={1}>
+                              Municipio:
+                            </Text> 
                           </Box>
-                          <Box w='auto' h='40px' >
-                            {customer.municipality}
+                          <Box w='auto' h='30px' >
+                            <Text p={1}>
+                              {customer.municipality}
+                            </Text>
                           </Box>
                         </HStack>
                       </Box>
                     
                     </VStack>
                 </GridItem>
+                <GridItem p="10px 0 0 0" colSpan={5}  >
+                  <HStack spacing='24px'>
+                    <Box w='auto' h='30px' >
+                      <Text bg="blue.500" borderRadius="md" p={1}>
+                        Cliente:
+                      </Text>
+                      
+                    </Box>
+                    <Box w='auto' h='30px' >
+                      <Text p={1}>
+                        {customer.name}
+                      </Text>
+                    </Box>
+                  </HStack>
+                </GridItem>
                 <GridItem colSpan={3}  >
-                  Cliente: {customer.name}
+                  
+                  <HStack spacing='24px'>
+                    <Box w='auto' h='30px' >
+                      <Text bg="blue.500" borderRadius="md" p={1}>
+                        Nit:
+                      </Text>
+                      
+                    </Box>
+                    <Box w='auto' h='30px' >
+                      <Text p={1}>
+                        {customer.nit}
+                      </Text>
+                    </Box>
+                  </HStack>
                 </GridItem>
-                <GridItem colSpan={1}  >
-                  Nit: {customer.nit}
-                </GridItem>
-                <GridItem colSpan={1}  >
-                  Telefono: {customer.phone}
+                <GridItem colSpan={2}  >
+                  <HStack spacing='24px'>
+                    <Box w='auto' h='30px' >
+                      <Text bg="blue.500" borderRadius="md" p={1}>
+                        Telefono:
+                      </Text>
+                      
+                    </Box>
+                    <Box w='auto' h='30px' >
+                      <Text whiteSpace="nowrap" p={1}>
+                        {customer.phone}
+                      </Text>
+                    </Box>
+                  </HStack>
                 </GridItem>
                 <GridItem colSpan={5}  >
-                  Direccion: {customer.address}
+                  <HStack spacing='24px'>
+                    <Box w='auto' h='30px' >
+                      <Text bg="blue.500" borderRadius="md" p={1}>
+                        Direccion:
+                      </Text>
+                      
+                    </Box>
+                    <Box w='auto' h='30px' >
+                      <Text p={1}>
+                        {customer.address}
+                      </Text>
+                    </Box>
+                  </HStack>
                 </GridItem>
               </Grid>
-              </CardBody>  
-          </Card>
         </Flex>
        
       </>
     )
 }
 
-export default InfoCustomer
+export default InfoCustomerSinCard
 
 
 

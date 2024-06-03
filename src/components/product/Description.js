@@ -35,9 +35,9 @@ function Description(props){
 
 
     return (
-        <Text fontSize="sm" color="gray.400" fontWeight="normal" key={key}>
+        <>
             {description}
-        </Text>
+        </>
     )
 }
 
