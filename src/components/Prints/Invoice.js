@@ -22,7 +22,7 @@ import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
 
-import apsFarma from './apsfarma-removebg-preview.png'
+import apsFarma from './new_logo_aps.png'
 import apsFel from './FEL.png'
 
 import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, TypeDocument, InvoiceStatus,Customer,BatchChunk,Batch,BatchChunkStatus,Payment,PaymentMethod } from "models";
@@ -31,6 +31,7 @@ import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
 
 
 import Name from 'components/product/Name';
+import DisplaySkuProduct from 'components/product/DisplaySkuProduct';
 import Description from 'components/product/Description';
 
 import Moneda from 'components/Monedas/Moneda';
@@ -94,6 +95,18 @@ const InvoicePrint = (props) => {
         <Global
             styles={`
                 @media print {
+                    @page {
+                        margin: 2cm 0; /* Ajusta los márgenes de la página para impresión */
+                    }
+
+                    @page :first {
+                        margin-top: -0.2cm;
+                      }
+                    
+                    @page :last {
+                        //margin-bottom: -0.2cm;
+                    }
+
                     body {
                         font-size: 10pt;
                         color: black;
@@ -102,6 +115,11 @@ const InvoicePrint = (props) => {
                     table {
                         width: 100%;
                         border-collapse: collapse;
+                        page-break-inside: auto;
+                    }
+
+                    thead {
+                        margin-top: 300px
                     }
 
                     th, td {
@@ -120,7 +138,7 @@ const InvoicePrint = (props) => {
                     }
 
                     .print-header, .print-footer {
-                        position: fixed;
+                        position: absolute;
                         width: 85%;
                         text-align: center;
                         background-color: white;
@@ -129,23 +147,25 @@ const InvoicePrint = (props) => {
                     }
 
                     .print-header {
+                        position: absolute !important;
                         top: 25px;
                         border-bottom: 1px solid black;
+                        
                     }
 
                     .print-footer {
-                        bottom: 35px;
+                        bottom: 0.2cm;
                         border-top: 1px solid black;
-                        
                       }
 
-                    @page {
-                        margin: 120x 20px 70px 20px; /* Adjust according to header and footer height */
-                    }
 
                     .print-table {
                         margin-top: 80px; /* Adjust according to header height */
                         margin-bottom: 50px; /* Adjust according to footer height */
+                    }
+
+                    .nameSpacing{
+                        color: white !important;
                     }
                     
                     
@@ -157,24 +177,31 @@ const InvoicePrint = (props) => {
                
 
                 th {
-                    background-color: rgb(56 171 49);
-                    color: black !important;
+                    background-color: rgb(15 62 140);
+                    color: white !important;
                 }
                 
             `}
         />
         <IconButton aria-label='Search database' onClick={handlePrint} icon={<FaPrint />} />
         <Box width="9.5in" height="auto" padding="1in" border="1px solid #e2e8f0"  margin="auto" ref={componentRef}>
-            <VStack spacing={4} align="stretch">
-                <Flex justify="space-between" align="center" className='print-header'>
-                    <Image src={apsFarma} alt="Logo" boxSize="100px" />
+            <Flex align="center" className='print-header'>
+                <Image src={apsFarma} alt="Logo" boxSize="100px" />
+            
+                <VStack align="center" spacing={0}>
+                    <Text className="nameSpacing" fontSize="2xl" letterSpacing="20px" whiteSpace="nowrap" bg="rgb(15 62 140)" borderRadius="md" p="0 0 0 10px" border="2px solid rgb(15 62 140)" fontWeight="bold">APS</Text>
+                    <Text fontSize='xs'>CORPORACION APS FARMA, SOCIEDAD ANONIMA</Text>
+                    <Text>Sector 3 colonia planes de Barcenas Lote 7 sector Encinos S-4 zona 3 Villa Nueva Guatemala</Text>
+                    <HStack>
+                        <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" >Nit:</Text>
+                        <Text>112869645</Text>
+                    </HStack>
+                    
+                </VStack>
+            </Flex>
+            
+            <VStack spacing={4} align="stretch" className='apsmain'  p="50px 0 0 0">
                 
-                    <VStack align="center" spacing={0}>
-                        <Text fontSize="2xl" whiteSpace="nowrap" bg="transparent" borderRadius="md" p={1} border="2px solid rgb(56 171 49)" fontWeight="bold">APS</Text>
-                        <Text fontSize='xs'>CORPORACION APS FARMA, SOCIEDAD ANONIMA</Text>
-                        <Text>Sector 3 colonia planes de Barcenas Lote 7 sector Encinos S-4 zona 3 Villa Nueva Guatemala</Text>
-                    </VStack>
-                </Flex>
 
                 {/* <Flex align="center" p="50px 0 0 62%">
                     
@@ -196,15 +223,22 @@ const InvoicePrint = (props) => {
                     <Text>Ciudad, Estado, Código Postal</Text>
                 </VStack>
                 </Flex> */}
-                <HStack spacing='24px' p="40px 0 0 0">
+                <HStack spacing='24px'>
                     <InfoCustomerSinCard id={customerId}/>
 
-                    <VStack align="flex-end" spacing={0} border="2px solid rgb(56 171 49)" borderRadius="md">
-                        <Text fontSize="2xl" fontWeight="bold"><WhatDocument typeDocument={invoice.typeDocument} /></Text>
-                        <Text>Serie: </Text>
-                        <Text>Autorizacion: </Text>
-                        <Text >No: {invoiceId}</Text>
-                        <Text>Fecha: {invoice.fecha}</Text>
+                    <VStack align="left" spacing={0} border="2px solid rgb(15 62 140)" borderRadius="md" >
+                        <Text align="center" fontSize="2xl" fontWeight="bold"><WhatDocument typeDocument={invoice.typeDocument} /></Text>
+                        <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" w="25%" p="0 0 0 10px">Serie: </Text>
+                        <Text>---</Text>
+                        <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" w="20%" p="0 0 0 10px">No:</Text>
+                        <Text>{invoiceId}</Text>
+                        <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" w="50%" p="0 0 0 10px">Autorizacion: </Text>
+                        <Text>---</Text>
+                        <HStack>
+                            <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" w="25%" >Fecha:</Text>
+                            <Text>{invoice.fecha}</Text>
+                        </HStack>
+                        
                     </VStack>
                 </HStack>
 
@@ -212,17 +246,24 @@ const InvoicePrint = (props) => {
                 
                 <Table variant="simple" fontSize="10px" className="print-table">
                     <Thead color="black">
-                        <Tr bg="blue.500" >
-                            <Th>Codigo</Th>
-                            <Th>Descripción</Th>
-                            <Th isNumeric>Cantidad</Th>
-                            <Th isNumeric>Bonos</Th>
-                            <Th isNumeric>Precio Unitario</Th>
-                            <Th isNumeric>Total</Th>
+                        <Tr bg="rgb(15 62 140)">
+                            <Th>CODIGO</Th>
+                            <Th isNumeric>CANTIDAD</Th>
+                            <Th>DESCRIPCIÓN</Th>
+                            <Th isNumeric>P. UNITARIO</Th>
+                            <Th isNumeric>TOTAL</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
                         <InvoiceTableItems invoiceId={invoiceId} onTotal={setTotal}/>
+                        <Tr>
+                            <Td colSpan={5} border="1px solid black" whiteSpace="nowrap" py={1}>TOTAL EN LETRAS</Td>
+                        </Tr>
+                        <Tr>
+                            <Td colSpan={3} border="1px solid black" whiteSpace="nowrap" py={1}><TotalLetras amount={total}/></Td>
+                            <Td colSpan={1} border="1px solid black" whiteSpace="nowrap" py={1}  bg="rgb(15 62 140)" className="nameSpacing" align="right">TOTAL</Td>
+                            <Td colSpan={1} border="1px solid black" whiteSpace="nowrap" py={1}><Moneda amount={total}/></Td>
+                        </Tr>
                         {/* Añadir más filas según sea necesario */}
                     </Tbody>
                 </Table>
@@ -238,20 +279,7 @@ const InvoicePrint = (props) => {
                             <Text fontWeight="bold">Total en letras</Text>
                             <Text><TotalLetras amount={total}/></Text>
                     </HStack> */}
-                    <HStack spacing='24px'>
-                        <Box w='auto' h='30px' >
-                        <Text whiteSpace="nowrap" bg="blue.500" borderRadius="md" p={1}>
-                            Total en letras:
-                        </Text>
-                        
-                        </Box>
-                        <Box w='auto' h='30px' >
-                        <Text whiteSpace="nowrap" p={1}>
-                            <TotalLetras amount={total}/>
-                        </Text>
-                        </Box>
-                    </HStack>
-                    <VStack align="flex-end" spacing={2}>
+                    {/* <VStack align="flex-end" spacing={2}>
                             <HStack>
                                 <Text fontWeight="bold">Subtotal:</Text>
                                 <Text whiteSpace="nowrap"><Moneda amount={total}/></Text>
@@ -264,23 +292,24 @@ const InvoicePrint = (props) => {
                                 <Text fontWeight="bold">Total:</Text>
                                 <Text whiteSpace="nowrap"><Moneda amount={total}/></Text>
                         </HStack>
-                    </VStack>
+                    </VStack> */}
                      
                    
                 </Flex>
-                <Flex  className="print-footer">
-                    <HStack spacing='24px'>
-                        <Box w='auto' h='30px' >
-                            <Text whiteSpace="nowrap" bg="transparent" borderRadius="md" p={1} border="2px solid blue">
-                                CHEQUES A NOMBRE DE: A P S, S.A
-                            </Text>
-                        </Box>
-                        <Box w='auto' h='30px' >
-                            <Image src={apsFel} alt="fel" boxSize="60px" />
-                        </Box>
-                    </HStack>
-                </Flex>
+                
             </VStack>
+            <Flex  className="print-footer">
+                <HStack spacing='150%'>
+                    <Box w='auto' h='30px' >
+                        <Text whiteSpace="nowrap" bg="transparent" borderRadius="md" p={1} border="2px solid blue">
+                            CHEQUES A NOMBRE DE: A P S, S.A
+                        </Text>
+                    </Box>
+                    
+                    <Image src={apsFel} alt="fel" boxSize="60px" />
+                    
+                </HStack>
+            </Flex>
         </Box>
 
     
@@ -300,9 +329,11 @@ const InvoiceTableItems = (props) =>{
     const [invoiceItems,setInvoiceItems] = useState([])
 
     useEffect( async() =>{
-        const invoiceItems = await DataStore.query(InvoiceItem, 
-            c => c.invoiceItemsId.eq(invoiceId)
-        );
+        // const invoiceItems = await DataStore.query(InvoiceItem, 
+        //     c => c.invoiceItemsId.eq(invoiceId)
+        // );
+
+        const invoiceItems = await DataStore.query(InvoiceItem);
 
         setInvoiceItems(invoiceItems)
         const total = invoiceItems.reduce( (itemSum,item) => itemSum + item.total,0)
@@ -317,10 +348,11 @@ const InvoiceTableItems = (props) =>{
                 const {productItemsId,total,price,id} = invoiceItem
                 return(
                     <Tr border="1px solid black">
-                        <td>22</td>
-                        <Td border="1px solid black" whiteSpace="nowrap" py={1}><Description productId={productItemsId}/></Td>
+                        <td><DisplaySkuProduct productId={productItemsId}/></td>
                         <Td border="1px solid black" whiteSpace="nowrap" py={1}><DisplayQuantity invoiceItemId={id} BatchChunkStatus={BatchChunkStatus.SALES_QUANTITY}/></Td>
-                        <Td border="1px solid black" whiteSpace="nowrap" py={1} isNumeric><DisplayQuantity invoiceItemId={id} BatchChunkStatus={BatchChunkStatus.BONUS_QUANTITY}/></Td>
+                        <Td border="1px solid black" whiteSpace="nowrap" py={1}><Name productId={productItemsId}/></Td>
+                        
+                        {/* <Td border="1px solid black" whiteSpace="nowrap" py={1} isNumeric><DisplayQuantity invoiceItemId={id} BatchChunkStatus={BatchChunkStatus.BONUS_QUANTITY}/></Td> */}
                         <Td border="1px solid black" whiteSpace="nowrap" py={1} isNumeric><Moneda amount={price}/></Td>
                         <Td border="1px solid black" whiteSpace="nowrap" py={1} isNumeric><Moneda amount={total}/></Td>
                     </Tr>

@@ -89,9 +89,9 @@ function InfoCustomerSinCard(props){
                     align='stretch'
                   >
                     <Box h='auto'>
-                      <HStack spacing='24px'>
+                      <HStack spacing='10px'>
                         <Box w='auto' h='30px'>
-                          <Text bg="blue.500" borderRadius="md" p={1}>
+                          <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" p={1}>
                             Codigo:
                           </Text>
                         </Box>
@@ -103,9 +103,9 @@ function InfoCustomerSinCard(props){
                       </HStack>
                     </Box>
                     <Box h='30px'>
-                      <HStack spacing='24px'>
+                      <HStack spacing='10px'>
                         <Box w='auto' h='30px' >
-                          <Text bg="blue.500" borderRadius="md" p={1}>
+                          <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" p={1}>
                             Sector:
                           </Text> 
                         </Box>
@@ -124,9 +124,9 @@ function InfoCustomerSinCard(props){
                       align='stretch'
                     >
                       <Box h='auto'>
-                        <HStack spacing='24px'>
+                        <HStack spacing='10px'>
                           <Box w='auto' h='30px' >
-                            <Text bg="blue.500" borderRadius="md" p={1}>
+                            <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" p={1}>
                               Transporte:
                             </Text> 
                           </Box>
@@ -138,10 +138,10 @@ function InfoCustomerSinCard(props){
                         </HStack>
                       </Box>
                       <Box h='30px'>
-                        <HStack spacing='24px'>
+                        <HStack spacing='10px'>
                           <Box w='auto' h='30px' >
-                            <Text bg="blue.500" borderRadius="md" p={1}>
-                              Vendedor:
+                            <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" p={1}>
+                              R:
                             </Text> 
                           </Box>
                           <Box w='auto' h='30px' >
@@ -159,9 +159,9 @@ function InfoCustomerSinCard(props){
                       align='stretch'
                     >
                       <Box h='auto'>
-                        <HStack spacing='24px'>
+                        <HStack spacing='10px'>
                           <Box w='auto' h='30px' >
-                            <Text bg="blue.500" borderRadius="md" p={1}>
+                            <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" p={1}>
                               Departamento:
                             </Text> 
                           </Box>
@@ -173,9 +173,9 @@ function InfoCustomerSinCard(props){
                         </HStack>
                       </Box>
                       <Box h='30px'>
-                        <HStack spacing='24px'>
+                        <HStack spacing='10px'>
                           <Box w='auto' h='30px' >
-                            <Text bg="blue.500" borderRadius="md" p={1}>
+                            <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" p={1}>
                               Municipio:
                             </Text> 
                           </Box>
@@ -190,9 +190,9 @@ function InfoCustomerSinCard(props){
                     </VStack>
                 </GridItem>
                 <GridItem p="10px 0 0 0" colSpan={5}  >
-                  <HStack spacing='24px'>
+                  <HStack spacing='10px'>
                     <Box w='auto' h='30px' >
-                      <Text bg="blue.500" borderRadius="md" p={1}>
+                      <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" p={1}>
                         Cliente:
                       </Text>
                       
@@ -206,9 +206,9 @@ function InfoCustomerSinCard(props){
                 </GridItem>
                 <GridItem colSpan={3}  >
                   
-                  <HStack spacing='24px'>
+                  <HStack spacing='10px'>
                     <Box w='auto' h='30px' >
-                      <Text bg="blue.500" borderRadius="md" p={1}>
+                      <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" p={1}>
                         Nit:
                       </Text>
                       
@@ -221,9 +221,9 @@ function InfoCustomerSinCard(props){
                   </HStack>
                 </GridItem>
                 <GridItem colSpan={2}  >
-                  <HStack spacing='24px'>
+                  <HStack spacing='10px'>
                     <Box w='auto' h='30px' >
-                      <Text bg="blue.500" borderRadius="md" p={1}>
+                      <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" p={1}>
                         Telefono:
                       </Text>
                       
@@ -236,9 +236,9 @@ function InfoCustomerSinCard(props){
                   </HStack>
                 </GridItem>
                 <GridItem colSpan={5}  >
-                  <HStack spacing='24px'>
+                  <HStack spacing='10px'>
                     <Box w='auto' h='30px' >
-                      <Text bg="blue.500" borderRadius="md" p={1}>
+                      <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" p={1}>
                         Direccion:
                       </Text>
                       
