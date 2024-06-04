@@ -104,7 +104,7 @@ function SignUp() {
       );
       
       // all profiles ingress with collaborator
-      const profile = 'collaborator'
+      const profile = 'seller'
       const { isSignUpComplete, userId, nextStep } = await signUp({
         username,
         password,
