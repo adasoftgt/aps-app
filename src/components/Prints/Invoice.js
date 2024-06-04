@@ -329,11 +329,10 @@ const InvoiceTableItems = (props) =>{
     const [invoiceItems,setInvoiceItems] = useState([])
 
     useEffect( async() =>{
-        // const invoiceItems = await DataStore.query(InvoiceItem, 
-        //     c => c.invoiceItemsId.eq(invoiceId)
-        // );
+        const invoiceItems = await DataStore.query(InvoiceItem, 
+            c => c.invoiceItemsId.eq(invoiceId)
+        );
 
-        const invoiceItems = await DataStore.query(InvoiceItem);
 
         setInvoiceItems(invoiceItems)
         const total = invoiceItems.reduce( (itemSum,item) => itemSum + item.total,0)
