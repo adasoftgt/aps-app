@@ -69,7 +69,7 @@ function ApsDropDownUsers(props){
     const [editPopper,setEditPopper] = useState(false)
     const [userName,setUserName] = useState('')
 
-    const [newValue,setNewValue] = useState(value)
+    const [newValue,setNewValue] = useState(null)
 
     const { editGlobalEnabled, actonRow } = useTable()
 
@@ -150,8 +150,8 @@ function ApsDropDownUsers(props){
                                     <PopoverCloseButton />
                                     <Flex direction="column" pt={{ base: "120px", md: "15px" }}>
                                       <FormControl id="country">
-                                        <FormLabel>Country</FormLabel>
-                                        <Select key={uuidv4()} placeholder={placeholder} value={valueInput} onChange={(e) => setNewValue(e.target.value)} >
+                                        <FormLabel>{placeholder}</FormLabel>
+                                        <Select key={uuidv4()} placeholder={placeholder} value={newValue || value} onChange={(e) => setNewValue(e.target.value)} >
                                           
                                           {elements.map( (element,index,arr) => {
                                             const user_id = element.Attributes.find(attribute => attribute.Name === 'sub')?.Value;
@@ -173,7 +173,7 @@ function ApsDropDownUsers(props){
                                               title: 'Update Customer Proprety',
                                               description: "We've update Customer for you.",
                                               status: 'success',
-                                              duration: 9000,
+                                              duration: 1000,
                                               isClosable: true,
                                             })
 

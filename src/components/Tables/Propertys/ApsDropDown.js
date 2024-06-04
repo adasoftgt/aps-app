@@ -140,7 +140,7 @@ function ApsDropDown(props){
                                     <PopoverCloseButton />
                                     <Flex direction="column" pt={{ base: "120px", md: "15px" }}>
                                       <FormControl id="country" key={uuidv4()}>
-                                        <FormLabel>Country</FormLabel>
+                                        <FormLabel>{placeholder}</FormLabel>
                                         <Select key={uuidv4()} placeholder={placeholder} value={newValue || value} onChange={(e) => handleChange(e.target.value)} >
                                           {!isValidElement(elements) 
                                             ?
@@ -167,7 +167,7 @@ function ApsDropDown(props){
                                               title: 'Update Customer Proprety',
                                               description: "We've update Customer for you.",
                                               status: 'success',
-                                              duration: 9000,
+                                              duration: 1000,
                                               isClosable: true,
                                             })
 
