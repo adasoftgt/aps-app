@@ -50,6 +50,7 @@ import { ApsHanderProvider } from "contexts/ApsHandlerContext";
 import { TableProvider } from "./contexts/TableContext";
 import { UsersProvider } from "./contexts/UsersContext";
 import { ApsUserProvider } from "contexts/ApsUserContext";
+import { ApsProductProvider } from "contexts/ApsProductContext";
 
 
 
@@ -60,14 +61,16 @@ ReactDOM.render(
           <UsersProvider>
             <TableProvider>
               <ApsUserProvider>
-                <HashRouter>
-                  <Switch>
-                    <Route path={`/auth`} component={AuthLayout} />
-                    <Route path={`/admin`} component={AdminLayout} />
-                    <Route path={`/rtl`} component={RTLLayout} />
-                    <Redirect from={`/`} to="/admin/dashboard" />
-                  </Switch>
-                </HashRouter>
+                <ApsProductProvider>
+                  <HashRouter>
+                    <Switch>
+                      <Route path={`/auth`} component={AuthLayout} />
+                      <Route path={`/admin`} component={AdminLayout} />
+                      <Route path={`/rtl`} component={RTLLayout} />
+                      <Redirect from={`/`} to="/admin/dashboard" />
+                    </Switch>
+                  </HashRouter>
+                </ApsProductProvider>
               </ApsUserProvider>
                 
             </TableProvider>

@@ -35,6 +35,7 @@ import {React,useEffect,useState,useRef, useMemo} from "react";
 
 import {Capability} from "models"
 import { FaLessThanEqual } from "react-icons/fa";
+import { IoMdOpen } from "react-icons/io";
 
 import { FiEdit, FiDelete, FiSettings, FiSave, FiArrowLeft, FiDollarSign, FiCheckCircle, FiBox, FiLayers, FiEye} from "react-icons/fi";
 import { position } from "stylis";
@@ -53,6 +54,10 @@ import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
 
 import { NavLink } from "react-router-dom/cjs/react-router-dom.min";
 
+import { useApsProductContext } from "contexts/ApsProductContext";
+
+import { useToast } from "@chakra-ui/react";
+
 function ProductsRow(props) {
   /**
    * @property {String} displayname nombre a mostrar en el app
@@ -70,6 +75,12 @@ function ProductsRow(props) {
     setListBatchStatus
     
   } = props;
+
+  //cargar toast
+  const toast = useToast()
+
+  // Cargar contexto de producto
+  const {apsProductCtxUtils} = useApsProductContext()
 
   /**
    * Cargando contexto de usuarios
@@ -181,6 +192,27 @@ function ProductsRow(props) {
     setListBatchStatus(true)
   }
 
+  const handleOpenContext = async(id) =>{
+    const resOpen = await apsProductCtxUtils.open(id)
+    if(resOpen){
+      toast({
+        title: 'Open Context Operative Product',
+        description: "We've open the operational context Product for you.",
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      })
+    }else{
+      toast({
+        title: 'Upp.....',
+        description: "Not open the operational context Product for you.",
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      })
+    }
+  }
+
   return (
     <>
       <Stack direction={["column", "row","left"]} spacing="24px">
@@ -201,6 +233,11 @@ function ProductsRow(props) {
               <IconButton aria-label="Settings" icon={<FiEye />} />
             </Tooltip>
           </NavLink>
+        </Box>
+        <Box w="40px" h="40px" bg="transparent">
+          <Tooltip label='Open Context'>
+            <IconButton aria-label="Capabilities" icon={<IoMdOpen />} onClick={() => handleOpenContext(id)} />
+          </Tooltip>
         </Box>
       </Stack>    
       <Tr>
