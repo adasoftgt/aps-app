@@ -1,5 +1,5 @@
 // ApsProductContext.js
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, InvoiceStatus, InvoiceItemStatus, UserConfiguration,Customer,Configuration} from "models";
   
@@ -9,8 +9,12 @@ import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore'
 
 import { useApsHandlerContext } from './ApsHandlerContext';
 
+import { useAuth } from './AuthContext';
+
 // Crear el contexto
 const ApsProductContext = createContext();
+
+
 
 // Crear un proveedor del contexto
 const ApsProductProvider = ({ children }) => {
@@ -37,6 +41,9 @@ const ApsProductProvider = ({ children }) => {
     const [apsProductModel,setApsProductModel] = useState({})
 
     const { apsHandlerCtxUtils } = useApsHandlerContext()
+
+    // Access token for authenticating API requests.
+    const { accessToken,userId } = useAuth()
   
     // FUNCTIONS
     /**
@@ -44,9 +51,9 @@ const ApsProductProvider = ({ children }) => {
      * @param {Object} obj el objecto que contiene el modelo del producto
      * @returns {Boolean}
      */
-    const isOpenCtxOpsState = (obj) =>{
+    const isOpenCtxOpsState = () =>{
         return new Promise( async(resolve,reject) =>{
-            if(obj.length != 0){
+            if(apsProductModel.length != 0){
                 resolve(true)
             }else{
                 resolve(false)
@@ -62,9 +69,8 @@ const ApsProductProvider = ({ children }) => {
      */
     const getModel = async(id) =>{
         return new Promise( async(resolve,reject) =>{
-            const models = await DataStore.query(Product,id)
+            const model = await DataStore.query(Product,id)
             try{
-                const model = models[0]
                 resolve(model)
             }catch(err){
                 resolve({})
@@ -84,7 +90,7 @@ const ApsProductProvider = ({ children }) => {
             if(resOpen){
                 
                 setApsProductId(value)
-                const productModel = await getModel()
+                const productModel = await getModel(value)
                 setApsProductModel(productModel)
             }
             return resOpen
@@ -120,6 +126,27 @@ const ApsProductProvider = ({ children }) => {
           return resGetValue
         }
     }
+
+    useEffect(async() =>{
+        const resIsOpen = await apsHandlerCtxUtils.isOpen(ctx)
+        
+        const resIsOpenCtxOpsState = await isOpenCtxOpsState()
+        
+        console.log('b5dfb560-9a37-4d43-a994-2594b667549b',resIsOpen,!resIsOpenCtxOpsState)
+        if(resIsOpen && !resIsOpenCtxOpsState){
+            // identificador de usuario extraido del contexto operativo
+            const ctxProductId = await apsHandlerCtxUtils.getValue(ctx)
+          
+            setApsProductId(ctxProductId)
+            const productModel = await getModel(ctxProductId)
+            setApsProductModel(productModel)
+          
+        }
+    
+        return () =>{
+    
+        }
+    },[userId])
 
   
 
