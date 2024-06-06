@@ -29,6 +29,7 @@ import { Invoice,Customer } from "models";
 import { DataStore } from "@aws-amplify/datastore";
 
 import { useApsUserContext } from "contexts/ApsUserContext";
+import { useApsProductContext } from "contexts/ApsProductContext";
 
 //import { useDisclosure } from "@chakra-ui/react
 
@@ -48,6 +49,10 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
      * @type {import("structures").UserOperation}
      */
     const { userOperation, apsUserCtxUtils } = useApsUserContext()
+
+    // Cargar contexto de producto
+    const { apsProductCtxUtils,apsProductId, apsProductModel } = useApsProductContext()
+    
 
   
     const [placement, setPlacement] = React.useState("top")
@@ -97,6 +102,10 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
       setInvoiceModel({})
     }
 
+    const closeContextProduct = async() =>{
+      apsProductCtxUtils.close()
+    }
+
     
 
 
@@ -111,6 +120,7 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
               <ContextView model={customerModel} onCloseContext={closeContextCustomer} onClose={onClose} nameCtx="Customer" dataCtx={customerModel?.name ?? ''} path="/admin/customers"/>
               <ContextView model={invoiceModel} onCloseContext={closeContextInvoice} onClose={onClose} nameCtx="Invoice" dataCtx={invoiceModel.id} path="/admin/invoices"/>
               <ContextView model={userOperation} onCloseContext={closeContextUser} onClose={onClose} nameCtx="User" dataCtx={`${userOperation.username} / ${userOperation.profile}`} path="/admin/users"/>
+              <ContextView model={apsProductModel} onCloseContext={closeContextProduct} onClose={onClose} nameCtx="User" dataCtx={`${apsProductModel.sku} / ${apsProductModel.name}`} path="/admin/products"/>
               
               
               <p></p>
