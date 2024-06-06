@@ -120,7 +120,7 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
               <ContextView model={customerModel} onCloseContext={closeContextCustomer} onClose={onClose} nameCtx="Customer" dataCtx={customerModel?.name ?? ''} path="/admin/customers"/>
               <ContextView model={invoiceModel} onCloseContext={closeContextInvoice} onClose={onClose} nameCtx="Invoice" dataCtx={invoiceModel.id} path="/admin/invoices"/>
               <ContextView model={userOperation} onCloseContext={closeContextUser} onClose={onClose} nameCtx="User" dataCtx={`${userOperation.username} / ${userOperation.profile}`} path="/admin/users"/>
-              <ContextView model={apsProductModel} onCloseContext={closeContextProduct} onClose={onClose} nameCtx="User" dataCtx={`${apsProductModel.sku} / ${apsProductModel.name}`} path="/admin/products"/>
+              <ContextView model={apsProductModel} onCloseContext={closeContextProduct} onClose={onClose} nameCtx="Product" dataCtx={`${apsProductModel.sku} / ${apsProductModel.name}`} path="/admin/products"/>
               
               
               <p></p>
