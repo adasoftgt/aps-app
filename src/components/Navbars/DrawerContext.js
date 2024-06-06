@@ -22,11 +22,13 @@ import { Tooltip } from "@chakra-ui/react";
 import React,{ useEffect, useState } from "react";
 
 import Cita from "components/Users/Cita";
-import ContextView from "components/Customers/ContextView";
+import {ContextView} from "components/Customers/ContextView";
 
 import { Invoice,Customer } from "models";
 
 import { DataStore } from "@aws-amplify/datastore";
+
+import { useApsUserContext } from "contexts/ApsUserContext";
 
 //import { useDisclosure } from "@chakra-ui/react
 
@@ -41,6 +43,13 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
       openContext,closeContext,isOpenContext,getValueOpenContext,CTX
     } = useUsers()
 
+    /**
+     * Contexto de usuario cargando el contexto operativo
+     * @type {import("structures").UserOperation}
+     */
+    const { userOperation, apsUserCtxUtils } = useApsUserContext()
+
+  
     const [placement, setPlacement] = React.useState("top")
     const [userId,setUserId] = useState(0)
     const [isUser,setIsUser] = useState();
@@ -72,8 +81,9 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
     },[isOpen])
 
     const closeContextUser = async() =>{
-      setIsUser(false)
-      await closeContext(CTX.USER_ID)
+      //setIsUser(false)
+      //await closeContext(CTX.USER_ID)
+      await apsUserCtxUtils.close()
       
     }
 
@@ -87,6 +97,8 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
       setInvoiceModel({})
     }
 
+    
+
 
     return (
       <>
@@ -98,6 +110,7 @@ function DrawerContext({ isOpen, onOpen, onClose }) {
               <h2>Contexts</h2>
               <ContextView model={customerModel} onCloseContext={closeContextCustomer} onClose={onClose} nameCtx="Customer" dataCtx={customerModel?.name ?? ''} path="/admin/customers"/>
               <ContextView model={invoiceModel} onCloseContext={closeContextInvoice} onClose={onClose} nameCtx="Invoice" dataCtx={invoiceModel.id} path="/admin/invoices"/>
+              <ContextView model={userOperation} onCloseContext={closeContextUser} onClose={onClose} nameCtx="User" dataCtx={`${userOperation.username} / ${userOperation.profile}`} path="/admin/users"/>
               
               
               <p></p>

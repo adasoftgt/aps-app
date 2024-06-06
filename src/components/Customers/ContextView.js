@@ -1,4 +1,5 @@
 /**
+ * @package 
  * Esto se va mostrar en drawer de contextos
  */
 
@@ -18,7 +19,21 @@ import { Customer } from "models";
 // Amplify datastore
 import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
 
-function ContextView(props){
+/**
+ * Vissualizar los contexto dento de un Drawer chakra UI
+ * 
+ * @component
+ * @param {*} props
+ * @property {Object} props.model conjunto de datos extraido de DataStore sobre lo que se quiera visualizar
+ * @ignore  {Boolean} props.isActiveContext Verificar si el contexto esta activo
+ * @property {Function} props.onCloseContext cerrar el contexto activo en se momento
+ * @ignore {Function} props.onClose cerrar elemento visual Drawer
+ * @property {String} props.nameCtx nombre a visualizar dentro del Drawer el contexto
+ * @property {String} props.dataCtx datos a mostrar del contexto que se va mostrar el Drawer
+ * @property {Sting} props.path ruta donde va dirigir a lista elementos del contexto
+ * @returns {JSX.Element}
+ */
+export function ContextView(props){
     const {model, isActiveContext, onCloseContext, onClose, nameCtx, dataCtx,path} = props
 
     //const [customer,setCustomer] = useState([])
@@ -59,7 +74,6 @@ function ContextView(props){
     )
 }
 
-export default ContextView
 
 
 

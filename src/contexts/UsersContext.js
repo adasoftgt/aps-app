@@ -390,9 +390,16 @@ const UsersProvider = ({ children }) => {
 
   /**
    * Verifiar los contexto antes de utilizarlos
+   * @returns {objContexts}
    */
   const verifyContext = async() =>{
-    var data = {'invoiceModel':{},'customerModel':{}}
+    /**
+     * @typedef objContexts
+     * @property {Object} invoiceModel Es el modelo que contiene todos los datos de factura seleccionada como contexto extraida de DataStore
+     * @property {Object} customerModel Es el modelo que cotiene todos los datos de cosumidor seleccioando como contexto extraido de DataStore
+     */
+    var objContexts = {'invoiceModel':{},'customerModel':{}}
+    // retorno de promesa
     return new Promise( async(resolve,reject) => {
       /**
        * Ver si existe contexto de customer
@@ -404,7 +411,7 @@ const UsersProvider = ({ children }) => {
           if(isOpen){
             const id = await getValueOpenContext(CTX.CUSTOMER_ID)
             const model = await DataStore.query(Customer, id);
-            data.customerModel = model 
+            objContexts.customerModel = model 
             setCustomerModel(model)
           }
         }
@@ -420,13 +427,13 @@ const UsersProvider = ({ children }) => {
           if(isOpen){
             const id = await getValueOpenContext(CTX.INVOICE_ID)
             const model = await DataStore.query(Invoice, id);
-            data.invoiceModel = model
+            objContexts.invoiceModel = model
             setInvoiceModel(model)
           }
         }
       }
 
-      resolve(data)
+      resolve(objContexts)
     })
   }
 

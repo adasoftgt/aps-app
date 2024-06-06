@@ -46,26 +46,33 @@ DataStore.configure({
 });
 
 import { AuthProvider } from "./contexts/AuthContext";
+import { ApsHanderProvider } from "contexts/ApsHandlerContext";
 import { TableProvider } from "./contexts/TableContext";
 import { UsersProvider } from "./contexts/UsersContext";
+import { ApsUserProvider } from "contexts/ApsUserContext";
 
 
 
 ReactDOM.render(
     <ChakraProvider theme={theme} resetCss={false} position="relative">
       <AuthProvider>
-        <UsersProvider>
-          <TableProvider>
-            <HashRouter>
-              <Switch>
-                <Route path={`/auth`} component={AuthLayout} />
-                <Route path={`/admin`} component={AdminLayout} />
-                <Route path={`/rtl`} component={RTLLayout} />
-                <Redirect from={`/`} to="/admin/dashboard" />
-              </Switch>
-            </HashRouter>
-          </TableProvider>
-        </UsersProvider>
+        <ApsHanderProvider>
+          <UsersProvider>
+            <TableProvider>
+              <ApsUserProvider>
+                <HashRouter>
+                  <Switch>
+                    <Route path={`/auth`} component={AuthLayout} />
+                    <Route path={`/admin`} component={AdminLayout} />
+                    <Route path={`/rtl`} component={RTLLayout} />
+                    <Redirect from={`/`} to="/admin/dashboard" />
+                  </Switch>
+                </HashRouter>
+              </ApsUserProvider>
+                
+            </TableProvider>
+          </UsersProvider>
+        </ApsHanderProvider>
       </AuthProvider>
     </ChakraProvider>,
     document.getElementById("root")

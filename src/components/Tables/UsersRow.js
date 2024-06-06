@@ -40,6 +40,9 @@ import { useToast } from "@chakra-ui/react";
 
 import { UserNameField, UserRolfield  } from "components/Users/UserRowField";
 
+// cargando el contexto de usuario
+import { useApsUserContext } from "contexts/ApsUserContext";
+
 function UsersRow(props) {
   /**
    * @property {String} displayname nombre a mostrar en el app
@@ -50,6 +53,9 @@ function UsersRow(props) {
     id, index, edit, editRow, setTableRolDisplayName, setTableRolName, editGlobalEnabled,handleCapabilities,
     user_operation,user_confirmed
   } = props;
+
+  const { apsUserCtxUtils } = useApsUserContext()
+
   const textColor = useColorModeValue("gray.500", "white");
   const titleColor = useColorModeValue("gray.700", "white");
   const bgStatus = useColorModeValue("gray.400", "navy.900");
@@ -127,14 +133,18 @@ function UsersRow(props) {
   const handleOpenContextCustomer = (user_operation) =>{
     //setCreateInvoiceStatus(true)
     //setUserOperationSelected(user_operation.userId)
-    openContext(CTX.USER_ID,user_operation.userId)
-    toast({
-      title: 'Open context Customer',
-      description: "We've open the Context customer Draft for you.",
-      status: 'success',
-      duration: 9000,
-      isClosable: true,
-    })
+    //openContext(CTX.USER_ID,user_operation.userId)
+    
+    const resOpen = apsUserCtxUtils.open(user_operation.username)
+    if(resOpen){
+      toast({
+        title: 'Open context User',
+        description: "We've open the Context Uesr Draft for you.",
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      })
+    }
   } 
 
   const handleCreateInvoice = (user_operation) =>{

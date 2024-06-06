@@ -52,7 +52,8 @@ const USER_OPERATION = {
     UserStatus: "",
     Confirmed: "",
     Enabled: "",
-    userId: ""
+    userId: "",
+    profile:"",
 }
 
 
