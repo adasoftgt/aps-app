@@ -241,7 +241,7 @@ function Invoices(){
                     total: 0,
                     status: InvoiceStatus.DRAFT,
                     term: InvoiceTerm.PAYMENT_ON_DELIVERY,
-                    fecha: format(new Date(), 'dd/MM/yy'),
+                    fecha: new Date().toISOString(), // IS0 8601 AAAA-MM-DD
                     typeDocument: typeDocument
                 })
             );
