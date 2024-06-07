@@ -113,7 +113,9 @@ function VentasXsector(){
                     async(customer) => {
                        
                         const startDateFix = new Date(starDate); // June 1st, 2024 (month starts at 0)
+                        startDateFix.setHours(0, 0, 0, 0);
                         const endDateFix = new Date(endDate); // June 7th, 2024
+                        endDateFix.setHours(23, 59, 59, 999);
 
                         const invoices = await DataStore.query(
                             Invoice, 
