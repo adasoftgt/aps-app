@@ -72,7 +72,9 @@ import {
 
 
   import { ApsDataTable } from "components/Data/Table/DataTable";
-import Moneda from "components/Monedas/Moneda";
+  import Moneda from "components/Monedas/Moneda";
+
+  import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
 
 function VendedorSaldo(){
@@ -82,6 +84,10 @@ function VendedorSaldo(){
     const [items,setItems] = useState([])
     const [columns,setColumns] = useState([])
 
+    // DATEPICKER
+    const [starDate, setStarDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    
     useEffect( async() =>{
         const items = []
         await Promise.all(sellers.map( async(seller) =>{
@@ -134,6 +140,21 @@ function VendedorSaldo(){
     
     return(
         <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
+            <Card p='16px' alignItems="center" >
+                <HStack spacing='24px'>
+                    <SingleDatepicker
+                        name="date-input"
+                        date={starDate}
+                        onDateChange={setStarDate}
+                    />
+                    <Text>A</Text>
+                    <SingleDatepicker
+                        name="date-input"
+                        date={endDate}
+                        onDateChange={setEndDate}
+                    />
+                </HStack>
+            </Card>
             <Card p='16px' alignItems="center" >
                 
                 <CardBody px='5px'>
