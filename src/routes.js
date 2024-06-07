@@ -18,6 +18,7 @@ import Customers from 'views/Dashboard/Customers';
 import ProductDashboard from 'views/Dashboard/ProductDashboard';
 import VentasXVendedor from 'views/Dashboard/VentasXVendedor';
 import VentasXsector from 'views/Dashboard/VentasXsector';
+import ClientesXsector from 'views/Dashboard/ClientesXsector';
 import Document from 'views/Dashboard/Document';
 
 import PrintAps from 'components/Prints/PrintAps';
@@ -207,6 +208,16 @@ var dashRoutes = [
         rtlName: "لوحة القيادة",
         icon: <BiStats />,
         component: VentasXsector,
+        layout: "/admin",
+        visibleInNav:true,
+        caps:['manage_options'],
+      },
+      {
+        path: "/clientesxsector",
+        name: "Clientes X Sector",
+        rtlName: "لوحة القيادة",
+        icon: <BiStats />,
+        component: ClientesXsector,
         layout: "/admin",
         visibleInNav:true,
         caps:['manage_options'],
