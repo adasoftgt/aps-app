@@ -1,5 +1,5 @@
 // ApsProductContext.js
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 
 import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, InvoiceItem, InvoiceStatus, InvoiceItemStatus, UserConfiguration,Customer,Configuration} from "models";
   
@@ -39,6 +39,7 @@ const ApsProductProvider = ({ children }) => {
 
     const [apsProductId,setApsProductId] = useState('')
     const [apsProductModel,setApsProductModel] = useState({})
+    const [apsProductModels,setApsProductModels] = useState({})
 
     const { apsHandlerCtxUtils } = useApsHandlerContext()
 
@@ -148,10 +149,18 @@ const ApsProductProvider = ({ children }) => {
         }
     },[userId])
 
+    useEffect( async() => {
+        const products = await DataStore.query(Product)
+        setApsProductModels(products)
+        return () =>{
+            
+        }
+    },[userId])
+
   
 
     return (
-        <ApsProductContext.Provider value={{ apsProductCtxUtils, apsProductId, apsProductModel  }}>
+        <ApsProductContext.Provider value={{ apsProductCtxUtils, apsProductId, apsProductModel, apsProductModels }}>
         {children}
         </ApsProductContext.Provider>
     );
