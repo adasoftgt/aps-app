@@ -24,6 +24,7 @@ import VentasXProducto from 'views/Stats/VentasXProducto';
 import UnidadesXPlaforma from 'views/Stats/UnidadesXPlaforma';
 import DocsXVendedor from 'views/Stats/DocsXVendedor';
 import CobrosXVendedor from 'views/Stats/CobrosXVendedor';
+import CobrosPenXVendedor from 'views/Stats/CobrosPenXVendedor';
 
 import Document from 'views/Dashboard/Document';
 
@@ -264,6 +265,16 @@ var dashRoutes = [
         rtlName: "لوحة القيادة",
         icon: <BiStats />,
         component: CobrosXVendedor,
+        layout: "/admin",
+        visibleInNav:true,
+        caps:['manage_options'],
+      },
+      {
+        path: "/cobrospenxvendedor",
+        name: "Co.Pen. x Vendedor",
+        rtlName: "لوحة القيادة",
+        icon: <BiStats />,
+        component: CobrosPenXVendedor,
         layout: "/admin",
         visibleInNav:true,
         caps:['manage_options'],
