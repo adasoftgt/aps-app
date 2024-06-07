@@ -99,11 +99,52 @@ function VendedorSaldo(){
     useEffect( async() =>{
         setIsLoad(true)
         const items = []
-        await Promise.all(sellers.map( async(seller) =>{
+        
+        const totalVentas = await sellers.reduce (async(ventasSum,seller) => {
             /**
              * @type {String} indentificador unico de usuario cognito
              */
             const seller_sub = seller.Attributes.find(attr => attr.Name === 'sub').Value;
+
+            const startDateFix = new Date(starDate); // June 1st, 2024 (month starts at 0)
+            startDateFix.setHours(0, 0, 0, 0);
+            const endDateFix = new Date(endDate); // June 7th, 2024
+            endDateFix.setHours(23, 59, 59, 999);
+
+
+            const invoices = await DataStore.query(Invoice,
+                c => c.and( c => [
+                    c.cashierId.eq(seller_sub),
+                    c.fecha.ge(startDateFix.toISOString()),
+                    c.fecha.le(endDateFix.toISOString()),
+                ]),
+            );
+            
+            
+    
+            
+            const saldoUnformat = invoices.reduce((saldoSum, invoice) => saldoSum + invoice.total, 0)
+            const saldo = <Moneda amount={saldoUnformat}/>
+            
+            const item = {
+                sellerUserName: seller.Username,
+                saldo: saldo,
+                saldoUnFormat:saldoUnformat
+            }
+
+            items.push(item)
+
+            const ventasSumNumber = await ventasSum
+
+            return ventasSumNumber + saldoUnformat
+
+        },Promise.resolve(0))
+        
+        
+        /*await Promise.all(sellers.map( async(seller) =>{
+            
+             // @type {String} indentificador unico de usuario cognito
+             const seller_sub = seller.Attributes.find(attr => attr.Name === 'sub').Value;
             
             const startDateFix = new Date(starDate); // June 1st, 2024 (month starts at 0)
             startDateFix.setHours(0, 0, 0, 0);
@@ -132,10 +173,11 @@ function VendedorSaldo(){
             }
 
             items.push(item)
-        }))
+        }))*/
 
-        const granTotal = items.reduce((itemSum, item) => itemSum + item.saldoUnFormat, 0)
+        //const granTotal = items.reduce((itemSum, item) => itemSum + item.saldoUnFormat, 0)
 
+        const granTotal = totalVentas
         const itemTotal = {
             sellerUserName: 'Total',
             saldo: <Moneda amount={granTotal}/>,
