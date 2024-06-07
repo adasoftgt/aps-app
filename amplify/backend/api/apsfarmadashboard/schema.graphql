@@ -135,6 +135,7 @@ type Payment @model {
   clientId: String!       # user_id cliente seleccionado
   batch: BatchPayment @belongsTo
   invoice: Invoice @belongsTo
+  fecha: String!
 }
 
 
