@@ -22,6 +22,7 @@ import VentasXsector from 'views/Stats/VentasXsector';
 import ClientesXsector from 'views/Stats/ClientesXsector';
 import VentasXProducto from 'views/Stats/VentasXProducto';
 import UnidadesXPlaforma from 'views/Stats/UnidadesXPlaforma';
+import DocsXVendedor from 'views/Stats/DocsXVendedor';
 
 import Document from 'views/Dashboard/Document';
 
@@ -238,10 +239,20 @@ var dashRoutes = [
       },
       {
         path: "/unidadesxvendedor",
-        name: "Unidades por plataforma",
+        name: "Unidades x plataforma",
         rtlName: "لوحة القيادة",
         icon: <BiStats />,
         component: UnidadesXPlaforma,
+        layout: "/admin",
+        visibleInNav:true,
+        caps:['manage_options'],
+      },
+      {
+        path: "/docsxvendedor",
+        name: "Docs x Vendedor",
+        rtlName: "لوحة القيادة",
+        icon: <BiStats />,
+        component: DocsXVendedor,
         layout: "/admin",
         visibleInNav:true,
         caps:['manage_options'],
