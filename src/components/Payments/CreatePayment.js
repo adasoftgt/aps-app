@@ -148,7 +148,7 @@ function CreatePayment(props){
                 method: paymentMethod,
                 reference: referencia,
                 userId: userId,
-                clientId: userId,
+                clientId: invoiceModel.clientId,
                 invoice: invoiceModel,
                 fecha: new Date().toISOString()
                 
