@@ -24,6 +24,7 @@ import {
     Box,
     Tooltip,
   } from "@chakra-ui/react";
+  import { CircularProgress, CircularProgressLabel } from '@chakra-ui/react'
   // Custom components
   import Card from "components/Card/Card.js";
   import CardBody from "components/Card/CardBody.js";
@@ -76,7 +77,6 @@ import {
 
   import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
-
 function VendedorSaldo(){
     
     const {sellers} = useUsers()
@@ -87,17 +87,39 @@ function VendedorSaldo(){
     // DATEPICKER
     const [starDate, setStarDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
+    const [isGenerate,setIsGenerate] = useState(false)
+
+    // LOADERS
+    const [isLoad,setIsLoad] = useState(false)
+
+    const handleGenerate = () =>{
+        setIsGenerate(!isGenerate)
+    }
     
     useEffect( async() =>{
+        setIsLoad(true)
         const items = []
         await Promise.all(sellers.map( async(seller) =>{
             /**
              * @type {String} indentificador unico de usuario cognito
              */
             const seller_sub = seller.Attributes.find(attr => attr.Name === 'sub').Value;
-            const invoices = await DataStore.query(Invoice, 
-                c => c.cashierId.eq(seller_sub)
+            
+            const startDateFix = new Date(starDate); // June 1st, 2024 (month starts at 0)
+            const endDateFix = new Date(endDate); // June 7th, 2024
+
+
+            const invoices = await DataStore.query(Invoice,
+                c => c.and( c => [
+                    c.cashierId.eq(seller_sub),
+                    c.fecha.ge(startDateFix.toISOString()),
+                    c.fecha.le(endDateFix.toISOString()),
+                ]),
             );
+            
+            
+    
+            
             const saldoUnformat = invoices.reduce((saldoSum, invoice) => saldoSum + invoice.total, 0)
             const saldo = <Moneda amount={saldoUnformat}/>
             
@@ -135,30 +157,41 @@ function VendedorSaldo(){
 
         ])
 
+        setTimeout(() => {
+            setIsLoad(false)
+        }, 200);
+        
 
-    },[])
+    },[isGenerate])
     
     return(
         <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
             <Card p='16px' alignItems="center" >
-                <HStack spacing='24px'>
-                    <SingleDatepicker
-                        name="date-input"
-                        date={starDate}
-                        onDateChange={setStarDate}
-                    />
-                    <Text>A</Text>
-                    <SingleDatepicker
-                        name="date-input"
-                        date={endDate}
-                        onDateChange={setEndDate}
-                    />
-                </HStack>
+                <VStack spacing='24px'>
+                    <HStack spacing='24px'>
+                        <SingleDatepicker
+                            name="date-input"
+                            date={starDate}
+                            onDateChange={setStarDate}
+                        />
+                        <Text>A</Text>
+                        <SingleDatepicker
+                            name="date-input"
+                            date={endDate}
+                            onDateChange={setEndDate}
+                        />
+                    </HStack>
+                    <Button colorScheme='blue' onClick={handleGenerate}>Generar</Button>
+                </VStack>
+                {isLoad && (
+                    <CircularProgress isIndeterminate color='yellow.300' />
+                )}
+                
             </Card>
             <Card p='16px' alignItems="center" >
                 
                 <CardBody px='5px'>
-                    VENDEDOR - SALDO
+                    VENTAS POR VENDEDOR
                 </CardBody>
             </Card>
             <ApsDataTable data={items} columns={columns}/>

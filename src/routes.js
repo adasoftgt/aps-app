@@ -16,7 +16,7 @@ import Invoices from 'views/Dashboard/Invoices';
 import InvoiceCreate from 'views/Dashboard/InvoiceCreate';
 import Customers from 'views/Dashboard/Customers';
 import ProductDashboard from 'views/Dashboard/ProductDashboard';
-import VendedorSaldo from 'views/Dashboard/vendedorSaldo';
+import VentasXVendedor from 'views/Dashboard/VentasXVendedor';
 import VentasXsector from 'views/Dashboard/VentasXsector';
 import Document from 'views/Dashboard/Document';
 
@@ -192,11 +192,11 @@ var dashRoutes = [
     caps:['manage_options'],
     views:[
       {
-        path: "/vendedor-saldo",
-        name: "Vendedor Saldo",
+        path: "/ventasxvendedor",
+        name: "Ventas X Vendedor",
         rtlName: "لوحة القيادة",
         icon: <BiStats />,
-        component: VendedorSaldo,
+        component: VentasXVendedor,
         layout: "/admin",
         visibleInNav:true,
         caps:['manage_options'],
