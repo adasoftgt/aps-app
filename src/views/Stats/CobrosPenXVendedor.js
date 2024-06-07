@@ -213,7 +213,7 @@ function CobrosPenXVendedor(){
             <Card p='16px' alignItems="center" >
                 
                 <CardBody px='5px'>
-                    VENTAS POR VENDEDOR
+                    COBROS PENDIENTES POR VENDEDOR
                 </CardBody>
             </Card>
             <ApsDataTable data={items} columns={columns}/>
