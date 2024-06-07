@@ -16,9 +16,11 @@ import Invoices from 'views/Dashboard/Invoices';
 import InvoiceCreate from 'views/Dashboard/InvoiceCreate';
 import Customers from 'views/Dashboard/Customers';
 import ProductDashboard from 'views/Dashboard/ProductDashboard';
-import VentasXVendedor from 'views/Dashboard/VentasXVendedor';
-import VentasXsector from 'views/Dashboard/VentasXsector';
-import ClientesXsector from 'views/Dashboard/ClientesXsector';
+// STATS
+import VentasXVendedor from 'views/Stats/VentasXVendedor';
+import VentasXsector from 'views/Stats/VentasXsector';
+import ClientesXsector from 'views/Stats/ClientesXsector';
+
 import Document from 'views/Dashboard/Document';
 
 import PrintAps from 'components/Prints/PrintAps';
