@@ -24,6 +24,7 @@ import {
     Box,
     Tooltip,
   } from "@chakra-ui/react";
+  import { CircularProgress, CircularProgressLabel } from '@chakra-ui/react'
   // Custom components
   import Card from "components/Card/Card.js";
   import CardBody from "components/Card/CardBody.js";
@@ -75,6 +76,7 @@ import {
 import Moneda from "components/Monedas/Moneda";
 import configAsp from "config/config";
 
+import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
 function VentasXsector(){
     
@@ -83,7 +85,20 @@ function VentasXsector(){
     const [items,setItems] = useState([])
     const [columns,setColumns] = useState([])
 
+     // DATEPICKER
+     const [starDate, setStarDate] = useState(new Date());
+     const [endDate, setEndDate] = useState(new Date());
+     const [isGenerate,setIsGenerate] = useState(false)
+ 
+     // LOADERS
+     const [isLoad,setIsLoad] = useState(false)
+ 
+     const handleGenerate = () =>{
+         setIsGenerate(!isGenerate)
+     }
+
     useEffect( async() =>{
+        setIsLoad(true)
         const items = []
         await Promise.all(configAsp.sectors.map( async(sector) =>{
             const customers = await DataStore.query(Customer, 
@@ -97,9 +112,16 @@ function VentasXsector(){
                 customers.map( 
                     async(customer) => {
                        
+                        const startDateFix = new Date(starDate); // June 1st, 2024 (month starts at 0)
+                        const endDateFix = new Date(endDate); // June 7th, 2024
+
                         const invoices = await DataStore.query(
                             Invoice, 
-                            c => c.clientId.eq(customer.id)
+                            c => c.and( c => [
+                                c.clientId.eq(customer.id),
+                                c.fecha.ge(startDateFix.toISOString()),
+                                c.fecha.le(endDateFix.toISOString()),
+                            ]),
                         )
                         //console.log('33368bcc-766c-489a-9d9d-65b2e6d7084a',invoices,customer.id)
                         //if (Array.isArray(invoices)) {
@@ -152,11 +174,35 @@ function VentasXsector(){
 
         ])
 
-
-    },[])
+        setTimeout(() => {
+            setIsLoad(false)
+        }, 200);
+    },[isGenerate])
     
     return(
         <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
+            <Card p='16px' alignItems="center" >
+                <VStack spacing='24px'>
+                    <HStack spacing='24px'>
+                        <SingleDatepicker
+                            name="date-input"
+                            date={starDate}
+                            onDateChange={setStarDate}
+                        />
+                        <Text>A</Text>
+                        <SingleDatepicker
+                            name="date-input"
+                            date={endDate}
+                            onDateChange={setEndDate}
+                        />
+                    </HStack>
+                    <Button colorScheme='blue' onClick={handleGenerate}>Generar</Button>
+                </VStack>
+                {isLoad && (
+                    <CircularProgress isIndeterminate color='yellow.300' />
+                )}
+                
+            </Card>
             <Card p='16px' alignItems="center" >
                 
                 <CardBody px='5px'>
