@@ -149,8 +149,10 @@ function CreatePayment(props){
                 reference: referencia,
                 userId: userId,
                 clientId: userId,
-                invoice: invoiceModel
-            })
+                invoice: invoiceModel,
+                fecha: new Date().toISOString()
+                
+              })
         );
         toast({
             title: 'Created Payment',
