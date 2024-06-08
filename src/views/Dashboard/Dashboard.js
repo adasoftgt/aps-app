@@ -52,6 +52,7 @@ import { useApsStatsContext } from "contexts/ApsStatsContext";
 import BestSellingProduct from "components/Dashboard/BestSellingProduct";
 import BestCollectionsBySeller from "components/Dashboard/BestCollectionsBySeller";
 import TotalSoldPerYear from "components/Dashboard/TotalSoldPerYear";
+import TotalSoldPerMonthInCurrentYear from "components/Dashboard/TotalSoldPerMonthInCurrentYear";
 
 export default function Dashboard() {
   // Chakra Color Mode
@@ -268,14 +269,14 @@ export default function Dashboard() {
         <Card p='0px' maxW={{ sm: "320px", md: "100%" }}>
           <Flex direction='column' mb='40px' p='28px 0px 0px 22px'>
             <Text color='gray.400' fontSize='sm' fontWeight='bold' mb='6px'>
-              PERFORMANCE
+              TOTAL DE VENTAS 
             </Text>
             <Text color={textColor} fontSize='lg' fontWeight='bold'>
-              Total orders
+               Por mes en el año actual
             </Text>
           </Flex>
           <Box minH='300px'>
-            <BarChart chartData={barChartData} chartOptions={barChartOptions} />
+            <TotalSoldPerMonthInCurrentYear />
           </Box>
         </Card>
         <Card p='0px' maxW={{ sm: "320px", md: "100%" }}>
