@@ -37,7 +37,7 @@ import Description from 'components/product/Description';
 import Moneda from 'components/Monedas/Moneda';
 import TotalLetras from 'components/Monedas/Letras';
 
-import DisplayQuantity from 'components/product/DisplayQuantity';
+import {DisplayQuantity,checkQuantityChunksExtenal} from 'components/product/DisplayQuantity';
 
 import InfoCustomer from 'components/Customers/Info2';
 import InfoCustomerSinCard from 'components/Customers/InfoSinCard';
@@ -50,6 +50,7 @@ import { FaPrint } from "react-icons/fa";
 import WhatDocument from "components/invoices/WhatDocument";
 
 import { Global } from "@emotion/react";
+import { useFilters } from 'react-table';
 
 const InvoicePrint = (props) => {
 
@@ -344,23 +345,64 @@ const InvoiceTableItems = (props) =>{
     return(
         <>
             {invoiceItems?.map( (invoiceItem, index, arr) =>{
+                
                 const {productItemsId,total,price,id} = invoiceItem
                 return(
-                    <Tr border="1px solid black">
-                        <td><DisplaySkuProduct productId={productItemsId}/></td>
-                        <Td border="1px solid black" whiteSpace="nowrap" py={1}><DisplayQuantity invoiceItemId={id} BatchChunkStatus={BatchChunkStatus.SALES_QUANTITY}/></Td>
-                        <Td border="1px solid black" whiteSpace="nowrap" py={1}><Name productId={productItemsId}/></Td>
-                        
-                        {/* <Td border="1px solid black" whiteSpace="nowrap" py={1} isNumeric><DisplayQuantity invoiceItemId={id} BatchChunkStatus={BatchChunkStatus.BONUS_QUANTITY}/></Td> */}
-                        <Td border="1px solid black" whiteSpace="nowrap" py={1} isNumeric><Moneda amount={price}/></Td>
-                        <Td border="1px solid black" whiteSpace="nowrap" py={1} isNumeric><Moneda amount={total}/></Td>
-                    </Tr>
+                    <>
+                        <Tr border="1px solid black">
+                            <Td border="1px solid black" whiteSpace="nowrap" py={1}><DisplaySkuProduct productId={productItemsId}/></Td>
+                            <Td border="1px solid black" whiteSpace="nowrap" py={1}><DisplayQuantity invoiceItemId={id} BatchChunkStatus={BatchChunkStatus.SALES_QUANTITY}/></Td>
+                            <Td border="1px solid black" whiteSpace="nowrap" py={1}><Name productId={productItemsId}/></Td>
+                            
+                            {/* <Td border="1px solid black" whiteSpace="nowrap" py={1} isNumeric><DisplayQuantity invoiceItemId={id} BatchChunkStatus={BatchChunkStatus.BONUS_QUANTITY}/></Td> */}
+                            <Td border="1px solid black" whiteSpace="nowrap" py={1} isNumeric><Moneda amount={price}/></Td>
+                            <Td border="1px solid black" whiteSpace="nowrap" py={1} isNumeric><Moneda amount={total}/></Td>
+                        </Tr>
+                        <BonusTr invoiceItem={invoiceItem}  />
+                    </>
                 )
           })}
         </>
         
        
     )
+}
+
+const BonusTr = (props) =>{
+    const {invoiceItem} = props
+    
+    const {productItemsId,total,price,id} = invoiceItem
+
+    const [isBonus,setIsBonus] = useState(false)
+
+    useEffect( async() =>{
+        const bonusQuantity = await checkQuantityChunksExtenal(id,BatchChunkStatus.BONUS_QUANTITY)
+        console.log('92e74eab-4710-4497-b4e4-a2502a1fdd6c',bonusQuantity)
+        if(bonusQuantity > 0){
+            setIsBonus(true)
+        }else{
+            setIsBonus(false)
+        }
+        return () =>{
+            
+        }
+    },[invoiceItem])
+
+
+    return(
+        <>
+            {isBonus && (
+                <Tr border="1px solid black">
+                    <Td border="1px solid black" whiteSpace="nowrap" py={1}><DisplaySkuProduct productId={productItemsId}/></Td>
+                    <Td border="1px solid black" whiteSpace="nowrap" py={1} isNumeric><DisplayQuantity invoiceItemId={id} BatchChunkStatus={BatchChunkStatus.BONUS_QUANTITY}/></Td>
+                    <Td border="1px solid black" whiteSpace="nowrap" py={1}><Name productId={productItemsId}/></Td>
+                    <Td border="1px solid black" whiteSpace="nowrap" py={1} isNumeric><Moneda amount={0}/></Td>
+                    <Td border="1px solid black" whiteSpace="nowrap" py={1} isNumeric><Moneda amount={0}/></Td>
+                </Tr>
+            )}
+        </>
+    )
+    
 }
 
 

@@ -8,6 +8,26 @@ import { Product, ProductStatus, ProductPrice, Category, Invoice, InvoiceTerm, I
 import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
 
 
+const checkQuantityChunksExtenal = async(invoiceItemId,BatchChunkStatus) =>{
+    return new Promise( async(resolve,reject) =>{
+        const chunks  = await DataStore.query(BatchChunk, 
+            c => c.and( c => [
+                c.invoiceItemChunksId.eq(invoiceItemId),
+                c.status.eq(BatchChunkStatus) //BONUS_QUANTITY
+            ]),
+            { sort: (s) => s.dateCreated(SortDirection.ASCENDING) }
+        );
+        
+        const disponible = chunks.reduce( (chunkSum,chunk) => chunkSum + chunk.quantity, 0)
+        
+    
+        resolve(disponible)
+    })    
+    
+    
+}
+
+
 const DisplayQuantity = (props) =>{
 
     const {invoiceItemId,BatchChunkStatus} = props
@@ -41,11 +61,11 @@ const DisplayQuantity = (props) =>{
     },[])
 
     return(
-        <>
+        <Text textAlign="center">
             {quantity}
-        </>
+        </Text>
     )
 }
 
 
-export default DisplayQuantity
+export {DisplayQuantity,checkQuantityChunksExtenal}

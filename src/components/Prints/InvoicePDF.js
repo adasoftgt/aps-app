@@ -34,7 +34,7 @@ import Description from 'components/product/Description';
 
 import Moneda from 'components/Monedas/Moneda';
 
-import DisplayQuantity from 'components/product/DisplayQuantity';
+import {DisplayQuantity} from 'components/product/DisplayQuantity';
 
 import InfoCustomer from 'components/Customers/Info2';
 

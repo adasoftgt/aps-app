@@ -32,9 +32,9 @@ function DisplaySkuProduct(props){
 
 
     return (
-        <>
+        <Text textAlign="center">
              {sku}
-        </>
+        </Text>
            
     )
 }
