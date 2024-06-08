@@ -92,11 +92,66 @@ const ApsStatsProvider = ({ children }) => {
 
         }
     },[sellers])
+
+
+    // PENDIENTE COBRAR DEL AÑO ACTUAL
+
+    const[saldoPendiente,setSaldoPendiente] = useState(<></>)
+
+    const getStartOfYear = () => {
+        const now = new Date();
+        return new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0);
+    };
+    
+    const getEndOfYear = () => {
+        const now = new Date();
+        return new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
+    };
+
+    useEffect( async() =>{
+        const startDateFix = getStartOfYear();
+        const endDateFix = getEndOfYear();
+        
+        const invoices = await DataStore.query(Invoice,
+            c => c.and( c => [
+                c.fecha.ge(startDateFix.toISOString()),
+                c.fecha.le(endDateFix.toISOString()),
+                c.status.eq(InvoiceStatus.SENT)
+            ]),
+        );
+        
+        
+
+        
+        const saldoUnformat = await invoices.reduce(async(saldoSum, invoice) =>{
+            const invoiceId = invoice.id
+            const invoiceTotal = invoice.total
+            const payments = await DataStore.query(Payment,
+                c => c.and( c => [
+                    c.invoicePaymentId.eq(invoiceId)
+                ]),
+            );
+
+            const saldoSumNumber = await saldoSum
+            
+            return  saldoSumNumber + (invoiceTotal - payments.reduce((saldoSum, payment) => saldoSum + payment.amount, 0))
+
+        }, Promise.resolve(0))
+        
+        setSaldoPendiente(<Moneda amount={saldoUnformat}/>)
+
+        
+        return () =>{
+
+        }   
+    },[])
+
+    
   
     
     
     return (
-        <ApsStatsContext.Provider value={{ apsStatsLineChart }}>
+        <ApsStatsContext.Provider value={{ apsStatsLineChart,saldoPendiente }}>
         {children}
         </ApsStatsContext.Provider>
     );

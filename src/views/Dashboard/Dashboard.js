@@ -32,6 +32,9 @@ import {
   GlobeIcon,
   WalletIcon,
 } from "components/Icons/Icons.js";
+
+import { FaSearchDollar } from "react-icons/fa";
+
 import React from "react";
 // Variables
 import {
@@ -57,7 +60,12 @@ export default function Dashboard() {
 
   const { colorMode } = useColorMode();
 
-  const {apsStatsLineChart} = useApsStatsContext()
+  /**
+   * @property {Object} apsStatsLineChart contiene options y data para la grafica
+   * @property {JSX.Element} saldoPendiente 
+   * 
+   */
+  const {apsStatsLineChart,saldoPendiente} = useApsStatsContext()
 
   console.log('1515f60c-8de4-4cc9-8771-73e1ade93b73',apsStatsLineChart)
 
@@ -78,11 +86,11 @@ export default function Dashboard() {
                   color='gray.400'
                   fontWeight='bold'
                   textTransform='uppercase'>
-                  Today's Money
+                  Saldo por cobrar
                 </StatLabel>
                 <Flex>
                   <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
-                    $53,897
+                    {saldoPendiente}
                   </StatNumber>
                 </Flex>
               </Stat>
@@ -92,14 +100,14 @@ export default function Dashboard() {
                 h={"45px"}
                 w={"45px"}
                 bg={iconBlue}>
-                <WalletIcon h={"24px"} w={"24px"} color={iconBoxInside} />
+                <FaSearchDollar h={"24px"} w={"24px"} color={iconBoxInside} />
               </IconBox>
             </Flex>
             <Text color='gray.400' fontSize='sm'>
               <Text as='span' color='green.400' fontWeight='bold'>
-                +3.48%{" "}
+                
               </Text>
-              Since last month
+              En año acual
             </Text>
           </Flex>
         </Card>
