@@ -33,7 +33,7 @@ import {
   WalletIcon,
 } from "components/Icons/Icons.js";
 
-import { FaSearchDollar } from "react-icons/fa";
+import { FaSearchDollar,FaFileInvoiceDollar } from "react-icons/fa";
 
 import React from "react";
 // Variables
@@ -50,6 +50,7 @@ import { pageVisits, socialTraffic } from "variables/general";
 import { useApsStatsContext } from "contexts/ApsStatsContext";
 
 import BestSellingProduct from "components/Dashboard/BestSellingProduct";
+import BestCollectionsBySeller from "components/Dashboard/BestCollectionsBySeller";
 
 export default function Dashboard() {
   // Chakra Color Mode
@@ -166,11 +167,11 @@ export default function Dashboard() {
                   color='gray.400'
                   fontWeight='bold'
                   textTransform='uppercase'>
-                  New Clients
+                  Mejor cobro por Vendedor
                 </StatLabel>
                 <Flex>
                   <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
-                    +2,503
+                    <BestCollectionsBySeller />
                   </StatNumber>
                 </Flex>
               </Stat>
@@ -180,14 +181,14 @@ export default function Dashboard() {
                 h={"45px"}
                 w={"45px"}
                 bg={iconBlue}>
-                <DocumentIcon h={"24px"} w={"24px"} color={iconBoxInside} />
+                <FaFileInvoiceDollar h={"24px"} w={"24px"} color={iconBoxInside} />
               </IconBox>
             </Flex>
             <Text color='gray.400' fontSize='sm'>
               <Text as='span' color='red.500' fontWeight='bold'>
-                -2.82%{" "}
+                
               </Text>
-              Since last month
+              Mes actual
             </Text>
           </Flex>
         </Card>
