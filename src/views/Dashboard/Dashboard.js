@@ -49,6 +49,8 @@ import { pageVisits, socialTraffic } from "variables/general";
 
 import { useApsStatsContext } from "contexts/ApsStatsContext";
 
+import BestSellingProduct from "components/Dashboard/BestSellingProduct";
+
 export default function Dashboard() {
   // Chakra Color Mode
   const iconBlue = useColorModeValue("blue.500", "blue.500");
@@ -125,11 +127,11 @@ export default function Dashboard() {
                   color='gray.400'
                   fontWeight='bold'
                   textTransform='uppercase'>
-                  Today's Users
+                  Mejor pruducto vendido
                 </StatLabel>
                 <Flex>
                   <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
-                    $3,200
+                    <BestSellingProduct />
                   </StatNumber>
                 </Flex>
               </Stat>
@@ -144,9 +146,9 @@ export default function Dashboard() {
             </Flex>
             <Text color='gray.400' fontSize='sm'>
               <Text as='span' color='green.400' fontWeight='bold'>
-                +5.2%{" "}
+                
               </Text>
-              Since last month
+              En el mes actual
             </Text>
           </Flex>
         </Card>
