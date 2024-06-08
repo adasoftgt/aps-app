@@ -95,7 +95,7 @@ export const lineChartOptions = {
     curve: "smooth",
   },
   xaxis: {
-    type: "datetime",
+    type: "string",
     categories: [
       "Jan",
       "Feb",

@@ -40,7 +40,11 @@ import {
   lineChartData,
   lineChartOptions,
 } from "variables/charts";
+
+
 import { pageVisits, socialTraffic } from "variables/general";
+
+import { useApsStatsContext } from "contexts/ApsStatsContext";
 
 export default function Dashboard() {
   // Chakra Color Mode
@@ -52,6 +56,10 @@ export default function Dashboard() {
   const textTableColor = useColorModeValue("gray.500", "white");
 
   const { colorMode } = useColorMode();
+
+  const {apsStatsLineChart} = useApsStatsContext()
+
+  console.log('1515f60c-8de4-4cc9-8771-73e1ade93b73',apsStatsLineChart)
 
   return (
     <Flex flexDirection='column' pt={{ base: "120px", md: "75px" }}>
@@ -227,19 +235,21 @@ export default function Dashboard() {
           maxW={{ sm: "320px", md: "100%" }}>
           <Flex direction='column' mb='40px' p='28px 0px 0px 22px'>
             <Text color='#fff' fontSize='lg' fontWeight='bold' mb='6px'>
-              Sales Overview
+              Ventas por Vendedor
             </Text>
             <Text color='#fff' fontSize='sm'>
+            
               <Text as='span' color='green.400' fontWeight='bold'>
-                (+5) more{" "}
+                Mes actual 
               </Text>
-              in 2022
-            </Text>
+               in {new Date().getFullYear()}
+              </Text>
           </Flex>
           <Box minH='300px'>
-            <LineChart
-              chartData={lineChartData}
-              chartOptions={lineChartOptions}
+            <LineChart 
+              chartData={apsStatsLineChart.data}
+              chartOptions={apsStatsLineChart.options}
+              key={apsStatsLineChart.key}
             />
           </Box>
         </Card>

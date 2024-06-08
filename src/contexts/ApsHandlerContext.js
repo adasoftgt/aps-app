@@ -142,7 +142,20 @@ const ApsHanderProvider = ({ children }) => {
       }else{
         return ''
       }
-    }
+    },
+    /**
+     * Converir un currency para formaterala como tipo moneda
+     * @param {String || Number} num 
+     * @returns {String} valor convertido en una moneda
+     */
+    currencyFormat(num) {
+      try{
+          const strAmount = (num != '0' ) ? Number.parseFloat(num) : '0.00'
+          return strAmount.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,') + ' GTQ'
+      }catch(err){
+          return '0.00' + ' GTQ'
+      }
+  }
   }
 
   
