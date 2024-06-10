@@ -69,6 +69,8 @@ import {
 
   import DropDownTypeDocument from "components/invoices/DropDownTypeDocument";
 
+  import DetalleDownload from "components/Downloads/Download";
+
 
 function Invoices(){
     const textColor = useColorModeValue("gray.700", "white");
@@ -432,6 +434,12 @@ function Invoices(){
                 <Card p='16px' >
                 
                     <CardBody px='5px'>
+                    <FormControl display="flex" alignItems="center">
+                        <FormLabel htmlFor="email-alerts" mb="0">
+                        Descargar todo el detalle
+                        </FormLabel>
+                        <DetalleDownload/>
+                    </FormControl>
                     
                     <FormControl display="flex" alignItems="center">
                         <FormLabel htmlFor="email-alerts" mb="0">
