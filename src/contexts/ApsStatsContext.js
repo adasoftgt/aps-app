@@ -112,39 +112,51 @@ const ApsStatsProvider = ({ children }) => {
         const startDateFix = getStartOfYear();
         const endDateFix = getEndOfYear();
         
-        const invoices = await DataStore.query(Invoice,
-            c => c.and( c => [
-                c.fecha.ge(startDateFix.toISOString()),
-                c.fecha.le(endDateFix.toISOString()),
-                c.status.eq(InvoiceStatus.SENT)
-            ]),
-        );
         
+        const totalVentas = await sellers.reduce (async(ventasSum,seller) => {
+            /**
+             * @type {String} indentificador unico de usuario cognito
+             */
+            const seller_sub = seller.Attributes.find(attr => attr.Name === 'sub').Value;
         
-
-        
-        const saldoUnformat = await invoices.reduce(async(saldoSum, invoice) =>{
-            const invoiceId = invoice.id
-            const invoiceTotal = invoice.total
-            const payments = await DataStore.query(Payment,
+            const invoices = await DataStore.query(Invoice,
                 c => c.and( c => [
-                    c.invoicePaymentId.eq(invoiceId)
+                    c.cashierId.eq(seller_sub),
+                    c.fecha.ge(startDateFix.toISOString()),
+                    c.fecha.le(endDateFix.toISOString()),
+                    c.status.eq(InvoiceStatus.SENT)
                 ]),
             );
-
-            const saldoSumNumber = await saldoSum
             
-            return  saldoSumNumber + (invoiceTotal - payments.reduce((saldoSum, payment) => saldoSum + payment.amount, 0))
+                    
+            const saldoUnformat = await invoices.reduce(async(saldoSum, invoice) =>{
+                const invoiceId = invoice.id
+                const invoiceTotal = invoice.total
+                const payments = await DataStore.query(Payment,
+                    c => c.and( c => [
+                        c.invoicePaymentId.eq(invoiceId)
+                    ]),
+                );
 
-        }, Promise.resolve(0))
+                const saldoSumNumber = await saldoSum
+                
+                return  saldoSumNumber + (invoiceTotal - payments.reduce((saldoSum, payment) => saldoSum + payment.amount, 0))
+
+            }, Promise.resolve(0))
         
-        setSaldoPendiente(<Moneda amount={saldoUnformat}/>)
+            const ventasSumNumber = await ventasSum
+
+            return ventasSumNumber + saldoUnformat
+
+        },Promise.resolve(0))
+        
+        setSaldoPendiente(<Moneda amount={totalVentas}/>)
 
         
         return () =>{
 
         }   
-    },[])
+    },[sellers])
 
     
   
