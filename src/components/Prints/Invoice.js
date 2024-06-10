@@ -63,6 +63,8 @@ const InvoicePrint = (props) => {
     const [customerId,setCustomerId] = useState(0)
     const [fecha,setFecha] = useState('')
 
+    const [sellerUserName,setSellerUserName] = useState('')
+
     const convertirFecha = (isoDate) => {
         const fechaUTC = moment(isoDate);
         const fechaSolo = fechaUTC.format('YYYY-MM-DD');
@@ -282,6 +284,26 @@ const InvoicePrint = (props) => {
                                     </Box>
                                 </HStack>
                             </GridItem>
+                            <GridItem colSpan={2} >
+                                <HStack
+                                align='stretch'
+                                >
+                                    <Box h='auto'>
+                                        <HStack spacing='5px'>
+                                        <Box w='auto' h='30px'>
+                                            <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" p={1}>
+                                            RDN:
+                                            </Text>
+                                        </Box>
+                                        <Box w='auto' h='30px' >
+                                            <Text p={1} w="auto">
+                                                {sellerUserName}
+                                            </Text>
+                                        </Box>
+                                        </HStack>
+                                    </Box>
+                                </HStack>
+                            </GridItem>
                         </Grid>
                     </VStack>
                     <VStack align="left" pacing={0} border="2px solid rgb(15 62 140)" borderRadius="md" w="100%" p="10px 0 0 0" >
@@ -297,7 +319,7 @@ const InvoicePrint = (props) => {
                 </HStack>
                 
                 <HStack spacing='24px' >
-                    <InfoCustomerSinCard id={customerId} fecha={fecha}/>
+                    <InfoCustomerSinCard id={customerId} fecha={fecha} onSellerUserName={setSellerUserName}/>
                 </HStack>
                 
 

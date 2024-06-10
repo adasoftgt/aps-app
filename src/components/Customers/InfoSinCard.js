@@ -32,7 +32,7 @@ import { DataStore, Predicates, SortDirection } from '@aws-amplify/datastore';
  * @property {String} id identificador de custormer
  * @property {String} fecha fecha del documento
  */
-function InfoCustomerSinCard({id,fecha}){
+function InfoCustomerSinCard({id,fecha,onSellerUserName}){
 
     const [customer,setCustomer] = useState([])
     const [sellerUserName,setSellerUserName] = useState('')
@@ -58,7 +58,8 @@ function InfoCustomerSinCard({id,fecha}){
         const seller = sellers[index];
         const user_id = seller.Attributes.find(attribute => attribute.Name === 'sub')?.Value;
         if(customer.seller == user_id){
-          setSellerUserName(seller.Username)
+          onSellerUserName(seller.Username.toUpperCase())
+          //setSellerUserName(seller.Username)
           break;
         }
         
@@ -137,7 +138,7 @@ function InfoCustomerSinCard({id,fecha}){
                           </Box>
                         </HStack>
                       </Box>
-                      <Box h='30px'>
+                      {/* <Box h='30px'>
                         <HStack spacing='10px'>
                           <Box w='auto' h='30px' >
                             <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" p={1}>
@@ -150,7 +151,7 @@ function InfoCustomerSinCard({id,fecha}){
                             </Text>
                           </Box>
                         </HStack>
-                      </Box>
+                      </Box> */}
                      
                     </HStack>
                 </GridItem>
