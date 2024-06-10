@@ -15,6 +15,7 @@ import {
   Th,
   Td,
   IconButton,
+  Grid, GridItem,
 } from '@chakra-ui/react';
 
 // Custom components
@@ -52,13 +53,22 @@ import WhatDocument from "components/invoices/WhatDocument";
 import { Global } from "@emotion/react";
 import { useFilters } from 'react-table';
 
+import moment from 'moment';
+
 const InvoicePrint = (props) => {
 
     const {invoiceId} = props
     const [invoice,setInvoice] = useState([])
     const [total,setTotal] = useState(0)
     const [customerId,setCustomerId] = useState(0)
+    const [fecha,setFecha] = useState('')
 
+    const convertirFecha = (isoDate) => {
+        const fechaUTC = moment(isoDate);
+        const fechaSolo = fechaUTC.format('YYYY-MM-DD');
+        const fechaGuatemala = fechaUTC.locale('es-GT').format('DD-MM-YYYY'); // Formato de fecha local
+        setFecha(fechaGuatemala);
+      };
 
     useEffect( async() =>{
         const invoice = await DataStore.query(Invoice,invoiceId);
@@ -68,7 +78,7 @@ const InvoicePrint = (props) => {
         setCustomerId(clientId)
         setInvoice(invoice)
         
-        
+        convertirFecha(invoice.fecha)
         
         
         /*const invoiceItems = await DataStore.query(InvoiceItem, 
@@ -150,13 +160,13 @@ const InvoicePrint = (props) => {
                     .print-header {
                         position: absolute !important;
                         top: 25px;
-                        border-bottom: 1px solid black;
+                        //border-bottom: 1px solid black;
                         
                     }
 
                     .print-footer {
                         bottom: 0.2cm;
-                        border-top: 1px solid black;
+                        //border-top: 1px solid black;
                       }
 
 
@@ -193,10 +203,6 @@ const InvoicePrint = (props) => {
                     <Text className="nameSpacing" fontSize="2xl" letterSpacing="20px" whiteSpace="nowrap" bg="rgb(15 62 140)" borderRadius="md" p="0 0 0 10px" border="2px solid rgb(15 62 140)" fontWeight="bold">APS</Text>
                     <Text fontSize='xs'>CORPORACION APS FARMA, SOCIEDAD ANONIMA</Text>
                     <Text>Sector 3 colonia planes de Barcenas Lote 7 sector Encinos S-4 zona 3 Villa Nueva Guatemala</Text>
-                    <HStack>
-                        <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" >Nit:</Text>
-                        <Text>112869645</Text>
-                    </HStack>
                     
                 </VStack>
             </Flex>
@@ -224,24 +230,76 @@ const InvoicePrint = (props) => {
                     <Text>Ciudad, Estado, Código Postal</Text>
                 </VStack>
                 </Flex> */}
-                <HStack spacing='24px'>
-                    <InfoCustomerSinCard id={customerId}/>
-
-                    <VStack align="left" spacing={0} border="2px solid rgb(15 62 140)" borderRadius="md" >
-                        <Text align="center" fontSize="2xl" fontWeight="bold"><WhatDocument typeDocument={invoice.typeDocument} /></Text>
-                        <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" w="25%" p="0 0 0 10px">Serie: </Text>
-                        <Text>---</Text>
-                        <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" w="20%" p="0 0 0 10px">No:</Text>
-                        <Text>{invoiceId}</Text>
-                        <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" w="50%" p="0 0 0 10px">Autorizacion: </Text>
-                        <Text>---</Text>
-                        <HStack>
-                            <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" w="25%" >Fecha:</Text>
-                            <Text>{invoice.fecha}</Text>
-                        </HStack>
-                        
+                
+                
+                <HStack spacing='38%' justifyContent="flex-end"  >
+                    
+                    <VStack>
+                        <Grid
+                            h="200px"
+                            w="auto"
+                            templateRows="repeat(3, 1fr)"
+                            templateColumns="repeat(2, 1fr)"
+                            gap={0}
+                        >
+                            <GridItem colSpan={2} >
+                                <HStack
+                                align='stretch'
+                                >
+                                    <Box h='auto'>
+                                        <HStack spacing='5px'>
+                                        <Box w='auto' h='30px'>
+                                            <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" p={1}>
+                                            MONEDA:
+                                            </Text>
+                                        </Box>
+                                        <Box w='auto' h='30px' >
+                                            <Text p={1} w="auto">
+                                                GTQ
+                                            </Text>
+                                        </Box>
+                                        </HStack>
+                                    </Box>
+                                </HStack>
+                            </GridItem>
+                            <GridItem colSpan={2} >
+                                <HStack
+                                align='stretch'
+                                >
+                                    <Box h='auto'>
+                                        <HStack spacing='5px'>
+                                        <Box w='auto' h='30px'>
+                                            <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" p={1}>
+                                            NIT:
+                                            </Text>
+                                        </Box>
+                                        <Box w='auto' h='30px' >
+                                            <Text p={1} w="auto">
+                                                112869645
+                                            </Text>
+                                        </Box>
+                                        </HStack>
+                                    </Box>
+                                </HStack>
+                            </GridItem>
+                        </Grid>
                     </VStack>
+                    <VStack align="left" pacing={0} border="2px solid rgb(15 62 140)" borderRadius="md" w="100%" p="10px 0 0 0" >
+                        <Text align="center" fontSize="2xl" fontWeight="bold"><WhatDocument typeDocument={invoice.typeDocument} /></Text>
+                        <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" w="25%" p="0 0 0 10px">SERIE: </Text>
+                        <Text p="0 0 0 10px">---</Text>
+                        <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" w="20%" p="0 0 0 10px">NO:</Text>
+                        <Text p="0 0 0 10px">{invoiceId}</Text>
+                        <Text className="nameSpacing" bg="rgb(15 62 140)" borderRadius="md" w="50%" p="0 0 0 10px">AUTORIZACIÓN: </Text>
+                        <Text p="0 0 0 10px">---</Text>
+                    </VStack>
+                    
                 </HStack>
+                
+                <HStack spacing='24px' >
+                    <InfoCustomerSinCard id={customerId} fecha={fecha}/>
+                </HStack>
+                
 
                 {/* <Divider /> */}
                 
@@ -303,7 +361,7 @@ const InvoicePrint = (props) => {
                 <HStack spacing='150%'>
                     <Box w='auto' h='30px' >
                         <Text whiteSpace="nowrap" bg="transparent" borderRadius="md" p={1} border="2px solid blue">
-                            CHEQUES A NOMBRE DE: A P S, S.A
+                            CHEQUES A NOMBRE DE: A P S, S.A.
                         </Text>
                     </Box>
                     
