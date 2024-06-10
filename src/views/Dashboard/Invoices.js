@@ -164,7 +164,7 @@ function Invoices(){
             {
             page: pageOfset,
             limit: limit,
-            sort: (i) => i.createdAt(SortDirection.ASCENDING)
+            sort: (i) => i.createdAt(SortDirection.DESCENDING)
           })
     
           setItems(products)
