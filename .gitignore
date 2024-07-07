@@ -2,6 +2,18 @@ node_modules
 package-lock.json
 build
 
+/src/models
+src/models/index.d.ts
+src/models/index.js
+src/models/schema.d.ts
+src/models/schema.js
+API.ts
+src/graphql/*.*
+.eslintignore
+src/API.ts
+src/graphql/schema.json
+/src/graphql
+
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
 amplify/.config/local-*
@@ -23,17 +35,5 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 .env
-build.zip
-.vs
 #amplify-do-not-edit-end
-/src/models
-src/models/index.d.ts
-src/models/index.js
-src/models/schema.d.ts
-src/models/schema.js
-API.ts
-src/graphql/*.*
-.eslintignore
-src/API.ts
-src/graphql/schema.json
-/src/graphql
+
